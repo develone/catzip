@@ -140,7 +140,7 @@ module	toplevel(i_clk,
 	assign	s_clk = i_clk;
 `else
 	wire	clk_40mhz, pll_locked;
-	SB_PLL40_PAD #(
+	SB_PLL40_CORE #(
 		.FEEDBACK_PATH("SIMPLE"),
 		.DELAY_ADJUSTMENT_MODE_FEEDBACK("FIXED"),
 		.DELAY_ADJUSTMENT_MODE_RELATIVE("FIXED"),
@@ -152,7 +152,7 @@ module	toplevel(i_clk,
 		.DIVF(7'd31),		// Multiply by (DIVF+1)= 1
 		.FILTER_RANGE(3'b010)
 	) plli (
-		.PACKAGEPIN     (i_clk        ),
+		.REFERENCECLK     (i_clk        ),
 		.PLLOUTCORE     (clk_40mhz    ),
 		.LOCK           (pll_locked  ),
 		.BYPASS         (1'b0         ),

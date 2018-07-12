@@ -1,0 +1,12 @@
+111c111
+< 			if (m_trace) m_trace->dump(m_time_ps - 22);
+---
+> 			if (m_trace) m_trace->dump((vluint64_t)(m_time_ps - 22));
+116c116
+< 		if (m_trace) m_trace->dump(m_time_ps);
+---
+> 		if (m_trace) m_trace->dump((vluint64_t)(m_time_ps));
+120c120
+< 			m_trace->dump(m_time_ps + 44);
+---
+> 			m_trace->dump((vluint64_t)(m_time_ps + 44));

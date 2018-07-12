@@ -1,12 +1,24 @@
-111c111
-< 			if (m_trace) m_trace->dump(m_time_ps - 22);
----
-> 			if (m_trace) m_trace->dump((vluint64_t)(m_time_ps - 22));
-116c116
-< 		if (m_trace) m_trace->dump(m_time_ps);
----
-> 		if (m_trace) m_trace->dump((vluint64_t)(m_time_ps));
-120c120
-< 			m_trace->dump(m_time_ps + 44);
----
-> 			m_trace->dump((vluint64_t)(m_time_ps + 44));
+diff --git a/sim/verilated/testb.h b/sim/verilated/testb.h
+index a9f0d45..f96f382 100644
+--- a/sim/verilated/testb.h
++++ b/sim/verilated/testb.h
+@@ -108,16 +108,16 @@ public:
+ 		sim_clk_tick();
+ 		if (m_changed) {
+ 			eval();
+-			if (m_trace) m_trace->dump(m_time_ps - 22);
++			if (m_trace) m_trace->dump((vluint64_t)(m_time_ps - 22));
+ 		}
+ 
+ 		m_core->i_clk = 1;
+ 		eval();
+-		if (m_trace) m_trace->dump(m_time_ps);
++		if (m_trace) m_trace->dump((vluint64_t)(m_time_ps));
+ 		m_core->i_clk = 0;
+ 		eval();
+ 		if (m_trace) {
+-			m_trace->dump(m_time_ps + 44);
++			m_trace->dump((vluint64_t)(m_time_ps + 44));
+ 			m_trace->flush();
+ 		}
+ 	}

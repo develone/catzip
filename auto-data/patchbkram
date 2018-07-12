@@ -1,0 +1,13 @@
+diff --git a/auto-data/bkram.txt b/auto-data/bkram.txt
+index 385002d..517f187 100644
+--- a/auto-data/bkram.txt
++++ b/auto-data/bkram.txt
+@@ -75,7 +75,7 @@ _@$(MEM.NAME) = ORIGIN(@$(MEM.NAME))
+ @SIM.INCLUDE=
+ #include "byteswap.h"
+ @SIM.DEFINES=
+-#define	block_ram	@$(VERILATOR_PREFIX)__DOT__@$(PREFIX)i__DOT__mem
++#define         block_ram VVAR(_bkrami__DOT__mem)
+ @SIM.LOAD=
+ 			start = start & (-4);
+ 			wlen = (wlen+3)&(-4);

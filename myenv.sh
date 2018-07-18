@@ -1,5 +1,5 @@
 #!/bin/bash
-export VERILATOR_ROOT=/home/pi/verilator
+export VERILATOR_ROOT=~/verilator
 echo $VERILATOR_ROOT
-export PATH=/home/pi/verilator/bin:/home/pi/zipcpu/sw/install/cross-tools/bin:$PATH
+export PATH=~/verilator/bin:~/zipcpu/sw/install/cross-tools/bin:$PATH
 echo $PATH

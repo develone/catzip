@@ -68,13 +68,14 @@ module	speechpp(i_clk, o_ledg, o_ledr,
 	reg	[1:0]	wb_addr;
 	reg	[31:0]	wb_data;
 
-
+ 
+	
 	wire		s_clk;
 `ifdef	VERILATOR
 	assign	s_clk = i_clk;
 `else
-	wire	clk_66mhz, pll_locked;
-	SB_PLL40_PAD #(
+	wire    clk_66mhz, pll_locked;
+	SB_PLL40_CORE #(
 		.FEEDBACK_PATH("SIMPLE"),
 		.DELAY_ADJUSTMENT_MODE_FEEDBACK("FIXED"),
 		.DELAY_ADJUSTMENT_MODE_RELATIVE("FIXED"),
@@ -82,17 +83,16 @@ module	speechpp(i_clk, o_ledg, o_ledr,
 		.FDA_FEEDBACK(4'b1111),
 		.FDA_RELATIVE(4'b1111),
 		.DIVR(4'd8),		// Divide by (DIVR+1)
-		.DIVQ(3'd3),		// Divide by 2^(DIVQ)
-		.DIVF(7'd47),		// Multiply by (DIVF+1)
+		.DIVQ(3'd4),		// Divide by 2^(DIVQ)
+		.DIVF(7'd94),		// Multiply by (DIVF+1)
 		.FILTER_RANGE(3'b001)
 	) plli (
-		.PACKAGEPIN     (i_clk        ),
+		.REFERENCECLK    (i_clk        ),
 		.PLLOUTCORE     (clk_66mhz    ),
 		.LOCK           (pll_locked  ),
 		.BYPASS         (1'b0         ),
 		.RESETB         (1'b1         )
 	);
-
 	assign	s_clk = clk_66mhz;
 `endif
 

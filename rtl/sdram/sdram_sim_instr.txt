@@ -48,3 +48,5 @@ sdram_test.py:231: UserWarning:
 /usr/local/lib/python2.7/dist-packages/myhdl-1.0.dev0-py2.7.egg/myhdl/conversion/_toVerilog.py:327: ToVerilogWarning: Signal is driven but not read: sdramCntl_inst_host_intf_rdPending_o
   category=ToVerilogWarning
   
+make creates the sdram_test.bin
+This is what is reported with icetime Timing estimate: 12.06 ns (82.93 MHz)

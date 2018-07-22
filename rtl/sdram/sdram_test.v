@@ -204,7 +204,7 @@ assign reset = ((!initialized) || (!pb_debounced));
 assign sdram_clk_o = master_clk_i;
 assign clk = sdram_clk_i;
 
-parameter	INITIAL_UART_SETUP = 31'd434;
+parameter	INITIAL_UART_SETUP = 31'd217;
  
 `ifdef	OPT_STANDALONE
 	wire	[30:0]	i_setup;
@@ -273,6 +273,7 @@ reg	[7:0]	message	[0:26];
 			tx_stb <= 1'b1;
 		else if ((tx_stb)&&(!tx_busy)&&(tx_index==5'h1A))
 			tx_stb <= 1'b0;
+ 
 	// Bypass any hardware flow control
 	wire	cts_n;
 	assign	cts_n = 1'b0;

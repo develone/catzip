@@ -8,7 +8,7 @@
 `define OPT_STANDALONE
 `endif
 module sdram_test (
-    master_clk_i,
+    inp_clk,
     sdram_clk_o,
     sdram_clk_i,
     led_disp_d0_o,
@@ -33,9 +33,7 @@ module sdram_test (
     sdramCntl_inst_sd_intf_dq,
     o_uart_tx
 );
-
-
-input master_clk_i;
+input inp_clk;
 output sdram_clk_o;
 wire sdram_clk_o;
 input sdram_clk_i;
@@ -181,12 +179,32 @@ assign sdramCntl_inst_sd_intf_dq = sdramCntl_inst_sDriver;
 
 assign reset = ((!initialized) || (!pb_debounced));
 
+	wire	clk_50mhz, pll_locked;
+	SB_PLL40_CORE #(
+		.FEEDBACK_PATH("SIMPLE"),
+		.DELAY_ADJUSTMENT_MODE_FEEDBACK("FIXED"),
+		.DELAY_ADJUSTMENT_MODE_RELATIVE("FIXED"),
+		.PLLOUT_SELECT("GENCLK"),
+		.FDA_FEEDBACK(4'b1111),
+		.FDA_RELATIVE(4'b1111),
+		.DIVR(4'b0000),		// Divide by (DIVR+1)
+		.DIVQ(3'b100),		// Divide by 2^(DIVQ)
+		.DIVF(7'b0000111),		// Multiply by (DIVF+1)
+		.FILTER_RANGE(3'b001)
+	) plli (
+		.REFERENCECLK    (inp_clk        ),
+		.PLLOUTCORE     (clk_50mhz    ),
+		.LOCK           (pll_locked  ),
+		.BYPASS         (1'b0         ),
+		.RESETB         (1'b1         )
+	); 
+	assign master_clk_i = clk_50mhz;
 
 
 assign sdram_clk_o = master_clk_i;
 assign clk = sdram_clk_i;
 
-parameter	INITIAL_UART_SETUP = 31'd868;
+parameter	INITIAL_UART_SETUP = 31'd434;
  
 `ifdef	OPT_STANDALONE
 	wire	[30:0]	i_setup;
@@ -194,7 +212,6 @@ parameter	INITIAL_UART_SETUP = 31'd868;
 `else
 	input	[30:0]	i_setup;
 `endif
- 
 	reg	pwr_reset;
 	initial	pwr_reset = 1'b1;
 	always @(posedge master_clk_i)

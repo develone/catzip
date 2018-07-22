@@ -8,7 +8,7 @@ set_io led_disp_d6_o B15
 set_io led_disp_d2_o B12 
 set_io led_disp_d3_o B11 
 set_io led_disp_d1_o B10 
-set_io master_clk_i C8 
+set_io inp_clk C8 
 set_io led_disp_d4_o B14 
 #set_io sw1_i A16
 #set_io sw2_i B9

@@ -480,10 +480,73 @@ always @(posedge clk, posedge memory_test_inst_host_intf_rst_i) begin: SDRAM_TES
         sdramCntl_inst_state_r <= sdramCntl_inst_state_x;
         sdramCntl_inst_cmd_r <= sdramCntl_inst_cmd_x;
         sdramCntl_inst_sAddr_r <= sdramCntl_inst_sAddr_x;
+		if (sdramCntl_inst_sAddr_r[15:12] > 9) begin
+			message[11] <= sdramCntl_inst_sAddr_r[15:12]+(8'd55);
+		end
+        else
+        begin
+			message[11] <= sdramCntl_inst_sAddr_r[15:12]|(8'd48);
+		end
+		
+        if (sdramCntl_inst_sdramData_r[11:8] > 9) begin
+			message[12] <= sdramCntl_inst_sAddr_r[11:8]+(8'd55);
+		end
+        else
+        begin
+			message[12] <= sdramCntl_inst_sAddr_r[11:8]|(8'd48);
+		end
+		
+        if (sdramCntl_inst_sdramData_r[7:4] > 9) begin
+			message[13] <= sdramCntl_inst_sAddr_r[7:4]+(8'd55);
+		end
+        else
+        begin
+			message[13] <= sdramCntl_inst_sAddr_r[7:4]|(8'd48);
+		end
+		
+        if (sdramCntl_inst_sAddr_r[3:0] > 9) begin
+			message[14] <= sdramCntl_inst_sAddr_r[3:0]+(8'd55);
+		end
+        else
+        begin
+			message[14] <= sdramCntl_inst_sAddr_r[3:0]|(8'd48);
+		end
+        
         sdramCntl_inst_sData_r <= sdramCntl_inst_sData_x;
         sdramCntl_inst_sDataDir_r <= sdramCntl_inst_sDataDir_x;
         sdramCntl_inst_activeBank_r <= sdramCntl_inst_activeBank_x;
         sdramCntl_inst_sdramData_r <= sdramCntl_inst_sdramData_x;
+		if (sdramCntl_inst_sdramData_r[15:12] > 9) begin
+			message[20] <= sdramCntl_inst_sdramData_r[15:12]+(8'd55);
+		end
+        else
+        begin
+			message[20] <= sdramCntl_inst_sdramData_r[15:12]|(8'd48);
+		end
+		
+        if (sdramCntl_inst_sdramData_r[11:8] > 9) begin
+			message[21] <= sdramCntl_inst_sdramData_r[11:8]+(8'd55);
+		end
+        else
+        begin
+			message[21] <= sdramCntl_inst_sdramData_r[11:8]|(8'd48);
+		end
+		
+        if (sdramCntl_inst_sdramData_r[7:4] > 9) begin
+			message[22] <= sdramCntl_inst_sdramData_r[7:4]+(8'd55);
+		end
+        else
+        begin
+			message[22] <= sdramCntl_inst_sdramData_r[7:4]|(8'd48);
+		end
+		
+        if (sdramCntl_inst_sdramData_r[3:0] > 9) begin
+			message[23] <= sdramCntl_inst_sdramData_r[3:0]+(8'd55);
+		end
+        else
+        begin
+			message[23] <= sdramCntl_inst_sdramData_r[3:0]|(8'd48);
+		end
         sdramCntl_inst_wrPipeline_r <= sdramCntl_inst_wrPipeline_x;
         sdramCntl_inst_rdPipeline_r <= sdramCntl_inst_rdPipeline_x;
         sdramCntl_inst_ba_r <= sdramCntl_inst_ba_x;

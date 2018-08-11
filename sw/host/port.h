@@ -40,8 +40,8 @@
 #ifndef	PORT_H
 #define	PORT_H
 
-// #define	FPGAHOST	"localhost"
-#define	FPGAHOST	"rpi"
+#define	FPGAHOST	"localhost"
+//#define	FPGAHOST	"rpi"
 #define	FPGAPORT	8363
 
 #define	FPGAOPEN(V) V= new FPGA(new NETCOMMS(FPGAHOST, FPGAPORT))

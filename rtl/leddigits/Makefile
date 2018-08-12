@@ -36,7 +36,7 @@
 ################################################################################
 ##
 ##
-all: hellopp speechpp linepp
+all: leddigits
 
 # GNU Make automatic variables (since I can never remember these ...)
 # $@	- name of the target
@@ -48,17 +48,16 @@ all: hellopp speechpp linepp
 	arachne-pnr -d 8k -p $*.pcf -o $@ $<
 
 %.bin: %.asc
-	icetime -d hx8k -c 50 $<
+	icetime -d hx8k -c 70 $<
 	icepack $< $@
 
-.PHONY: hellopp speechpp linepp
-hellopp:   hellopp.bin
-speechpp:  speechpp.bin
-linepp:    linepp.bin
+.PHONY: leddigits
 
-speechpp.blif:   speechpp.v $(addprefix ../pport/,pport.v ppio.v ufifo.v wbpport.v)
-hellopp.blif:    hellopp.v  ../pport/pport.v ../pport/ppio.v
-linepp.blif:     linepp.v   ../pport/pport.v ../pport/ppio.v
+leddigits:	leddigits.bin
+
+
+leddigits.blif:   leddigits.v
+
 
 .PHONY: clean
 clean:

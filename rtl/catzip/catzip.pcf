@@ -158,4 +158,60 @@ set_io o_dbgwires[0] J1	#B5	HDR1-1
 # io_ram_data[15]	K3	# IO16B
 # o_ram_lb	J4	# IO12A
 # o_ram_ub	J3	# IO14A
-#
+
+# SDRAM 10/24/18
+#o_ram_clk, o_ram_cke, o_ram_cs_n, o_ram_ras_n, o_ram_cas_n,
+#o_ram_we_n, o_ram_bs, o_ram_addr, o_ram_udqm, o_ram_ldqm,
+#io_ram_data, o_ram_dqm, o_debug
+set_io o_ram_bs[0] H14
+set_io o_ram_bs[1] G13
+set_io i_ram_feedback_clk G16
+set_io o_ram_clk H16
+set_io o_ram_cke G15 -pullup yes
+set_io o_ram_cs_n H13 -pullup yes
+set_io o_ram_ras_n K16
+set_io o_ram_cas_n K15
+set_io o_ram_we_n J14
+
+#dqmh J15 dqml J13 
+set_io o_ram_udqm J15
+set_io o_ram_ldqm J13
+#???? 10/15/18
+#'F13', 'E14', 'E13', 'D14',   0-3 from rhea/rhea/boards/lattice/_catboard.py
+set_io o_ram_addr[0] F13
+set_io o_ram_addr[1] E14
+set_io o_ram_addr[2] E13
+set_io o_ram_addr[3] D14
+#'B16', 'C16', 'D15', 'D16',    4-7 from rhea/rhea/boards/lattice/_catboard.py
+set_io o_ram_addr[4] B16
+set_io o_ram_addr[5] C16
+set_io o_ram_addr[6] D15
+set_io o_ram_addr[7] D16
+#'E16', 'F15', 'F14', 'F16',    8-11 from rhea/rhea/boards/lattice/_catboard.py
+set_io o_ram_addr[8] E16
+set_io o_ram_addr[9] F15
+set_io o_ram_addr[10] F14
+set_io o_ram_addr[11] F16
+set_io o_ram_addr[12] G14
+
+#D0 D1 D2 D3 D4 D5 D6 D7 D8 D9 D10 D11 D12 D13 D14 D15 ???? 10/15/18
+#'R14', 'P14', 'M13', 'M14', 0-3 from rhea/rhea/boards/lattice/_catboard.py
+set_io io_ram_data[0] R14
+set_io io_ram_data[1] P14
+set_io io_ram_data[2] M13 
+set_io io_ram_data[3] M14
+#L13', 'L14', 'K13', 'K14',  4-7 from rhea/rhea/boards/lattice/_catboard.py
+set_io io_ram_data[4] L13
+set_io io_ram_data[5] L14
+set_io io_ram_data[6] K13
+set_io io_ram_data[7] K14
+#J16', 'L16', 'M16', 'M15', 8-11 from rhea/rhea/boards/lattice/_catboard.py
+set_io io_ram_data[8] J16
+set_io io_ram_data[9] L16
+set_io io_ram_data[10] M16
+set_io io_ram_data[11] M15
+#'N16', 'P16', 'P15', 'R15', 12-15 from rhea/rhea/boards/lattice/_catboard.py
+set_io io_ram_data[12] N16
+set_io io_ram_data[13] P16
+set_io io_ram_data[14] P15
+set_io io_ram_data[15] R15

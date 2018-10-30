@@ -1,0 +1,26 @@
+extra_pkgs.sh
+
+sudo apt-get install geany
+sudo apt-get install git
+sudo apt install autoconf
+
+sudo apt-get install gitk
+sudo apt-get install tcl-dev
+sudo apt-get install diffuse
+
+git clone https://github.com/develone/zipcpu.git
+git clone https://github.com/develone/xulalx25soc.git
+git clone https://github.com/cliffordwolf/icestorm.git
+git clone https://github.com/develone/arachne-pnr.git
+git clone https://github.com/develone/autofpga.git
+cd autofpga 
+make 
+sudo su 
+ln -sf /home/vidal/autofpga/sw/autofpga autofpga
+
+git clone http://git.veripool.org/git/verilator
+
+autoconf
+./configure
+
+rsync -avl pi@mypi3-1:~/catzip .

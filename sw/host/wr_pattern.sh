@@ -1,0 +1,27 @@
+#!/bin/bash
+./arm-wbregs 0x2000000 0x01010101
+./arm-wbregs 0x2000000
+./arm-wbregs 0x2000004 0x10101010 
+./arm-wbregs 0x2000004
+./arm-wbregs 0x2000008 0x20202020 
+./arm-wbregs 0x2000008
+./arm-wbregs 0x200000C 0x03030303
+./arm-wbregs 0x200000C 
+./arm-wbregs 0x2000010 0x30303030
+./arm-wbregs 0x2000010
+./arm-wbregs 0x2000014 0x04040404
+./arm-wbregs 0x2000014 
+./arm-wbregs 0x2000018 0x40404040
+./arm-wbregs 0x2000018 
+./arm-wbregs 0x200001C 0x05050505
+./arm-wbregs 0x200001C
+./arm-wbregs 0x2000020 0x50505050
+./arm-wbregs 0x2000020
+./arm-wbregs 0x2000024 0x06060606
+./arm-wbregs 0x2000024
+./arm-wbregs 0x2000028 0x60606060
+./arm-wbregs 0x2000028
+./arm-wbregs 0x200002C 0x07070707
+./arm-wbregs 0x200002C
+./arm-wbregs 0x2000030 0x70707070
+./arm-wbregs 0x2000030

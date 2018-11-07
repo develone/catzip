@@ -13,3 +13,17 @@
 ./arm-wbregs 0x200002C
 ./arm-wbregs 0x2000030
 
+ 
+./arm-wbregs 0x2000034
+./arm-wbregs 0x2000038
+./arm-wbregs 0x2000040
+./arm-wbregs 0x2000044 
+./arm-wbregs 0x2000048
+./arm-wbregs 0x200004C 
+./arm-wbregs 0x2000050 
+./arm-wbregs 0x2000054
+./arm-wbregs 0x2000058
+./arm-wbregs 0x200005C
+./arm-wbregs 0x2000060
+./arm-wbregs 0x2000064
+./arm-wbregs 0x2000068

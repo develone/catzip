@@ -25,3 +25,30 @@
 ./arm-wbregs 0x200002C
 ./arm-wbregs 0x2000030 0x70707070
 ./arm-wbregs 0x2000030
+
+./arm-wbregs 0x2000034 0x01010101
+./arm-wbregs 0x2000034
+./arm-wbregs 0x2000038 0x10101010 
+./arm-wbregs 0x2000038
+./arm-wbregs 0x2000040 0x20202020 
+./arm-wbregs 0x2000040
+./arm-wbregs 0x2000044 0x03030303
+./arm-wbregs 0x2000044 
+./arm-wbregs 0x2000048 0x30303030
+./arm-wbregs 0x2000048
+./arm-wbregs 0x200004C 0x04040404
+./arm-wbregs 0x200004C 
+./arm-wbregs 0x2000050 0x40404040
+./arm-wbregs 0x2000050 
+./arm-wbregs 0x2000054 0x05050505
+./arm-wbregs 0x2000054
+./arm-wbregs 0x2000058 0x50505050
+./arm-wbregs 0x2000058
+./arm-wbregs 0x200005C 0x06060606
+./arm-wbregs 0x200005C
+./arm-wbregs 0x2000060 0x60606060
+./arm-wbregs 0x2000060
+./arm-wbregs 0x2000064 0x07070707
+./arm-wbregs 0x2000064
+./arm-wbregs 0x2000068 0x70707070
+./arm-wbregs 0x2000068

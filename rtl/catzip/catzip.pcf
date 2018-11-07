@@ -102,6 +102,18 @@ set_io o_dbgwires[2] H1	#B6	HDR1-3
 set_io o_dbgwires[1] K1	#B3	HDR1-2
 set_io o_dbgwires[0] J1	#B5	HDR1-1
 
+#these wires are new for sdramscope 11/07/18
+set_io o_dbgwires_scope[7] C1	#A5 HDR1-18  
+set_io o_dbgwires_scope[6] C2	#A2	HDR1-17  
+set_io o_dbgwires_scope[5] D2	#C3	HDR1-16  
+set_io o_dbgwires_scope[4] E3	#B4	HDR1-14  
+
+set_io o_dbgwires_scope[3]  D1 #B7 HDR1-13
+#set_io o_dbgwires[3] B7 # BOT,edg	# 28
+set_io o_dbgwires_scope[2] F3	#B6	HDR1-12
+set_io o_dbgwires_scope[1] E2	#B3	HDR1-11
+set_io o_dbgwires_scope[0] F1	#B5	HDR1-10
+
 
 #
 # SPI Flash, also controlled by RPI_ICE_x through MachXO2

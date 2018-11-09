@@ -118,7 +118,7 @@ arachne: catzip.asc
 
 catzip.bin: catzip.asc
 	icepack catzip.asc catzip.bin
-	icetime -d hx8k -c 40 catzip.asc
+	icetime -d hx8k -c 45 catzip.asc
 
 #
 #

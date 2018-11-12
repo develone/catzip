@@ -54,7 +54,7 @@
 						: o_ram_data[15:0]
 				};
 	wbscope #(.LGMEM(4), .SYNCHRONOUS(1), .HOLDOFFBITS(4))
-		@$(PREFIX)i(i_clk, 1'b1, (!o_ram_cs_n), sdram_debug,
+		@$(PREFIX)i(i_clk, 1'b1, (!o_ram_we_n), sdram_debug,
 			i_clk, wb_cyc, (wb_stb)&&(@$(PREFIX)_sel),
 			wb_we, wb_addr[0], wb_data,
 			@$(PREFIX)_ack, @$(PREFIX)_stall, @$(PREFIX)_data,

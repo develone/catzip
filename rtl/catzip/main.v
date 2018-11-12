@@ -896,7 +896,7 @@ wbsdram sdrami(i_clk,
 						: o_ram_data[15:0]
 				};
 	wbscope #(.LGMEM(4), .SYNCHRONOUS(1), .HOLDOFFBITS(4))
-		sdramscopei(i_clk, 1'b1, (!o_ram_cs_n), sdram_debug,
+		sdramscopei(i_clk, 1'b1, (!o_ram_we_n), sdram_debug,
 			i_clk, wb_cyc, (wb_stb)&&(sdramscope_sel),
 			wb_we, wb_addr[0], wb_data,
 			sdramscope_ack, sdramscope_stall, sdramscope_data,

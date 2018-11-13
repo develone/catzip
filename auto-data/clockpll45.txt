@@ -91,6 +91,7 @@
 ##		.BYPASS(1'b0),
 ##		.REFERENCECLK(clock_in),
 ##		.PLLOUTCORE(clock_out)
+##		.PLLOUTGLOBAL(clock_out)
 ##		);
 ##
 ## endmodule	
@@ -136,6 +137,9 @@
 		.DELAY_ADJUSTMENT_MODE_FEEDBACK("FIXED"),
 		.DELAY_ADJUSTMENT_MODE_RELATIVE("FIXED"),
 		.PLLOUT_SELECT("SHIFTREG_90deg"),
+		.SHIFTREG_DIV_MODE(1'b0),
+		//0 --> Div 4
+		//1 --> Div 7
 		.FDA_FEEDBACK(4'b1111),
 		.FDA_RELATIVE(4'b1111),
 		.DIVR(4'b1000),		// DIVR =  8
@@ -144,30 +148,31 @@
 		.FILTER_RANGE(3'b001)	// FILTER_RANGE = 1
 	) plli (
 		.REFERENCECLK     (i_clk        ),
-		.PLLOUTCORE     (clk_90_45mhz    ),
-		.LOCK           (pll_90_locked  ),
-		.BYPASS         (1'b0         ),
-		.RESETB         (1'b1         )
-	);
-	SB_PLL40_CORE #(
-		.FEEDBACK_PATH("SIMPLE"),
-		.DELAY_ADJUSTMENT_MODE_FEEDBACK("FIXED"),
-		.DELAY_ADJUSTMENT_MODE_RELATIVE("FIXED"),
-		.PLLOUT_SELECT("GENCLK"),
-		.FDA_FEEDBACK(4'b1111),
-		.FDA_RELATIVE(4'b1111),
-		.DIVR(4'b0100),		// DIVR =  4
-		.DIVQ(3'b100),		// DIVQ =  4
-		.DIVF(7'b0100011),		// DIVF =  35
-		.FILTER_RANGE(3'b010)	// FILTER_RANGE = 2
-	) uut (
-		.REFERENCECLK     (i_clk        ),
 		.PLLOUTCORE     (clk_45mhz    ),
+		.PLLOUTGLOBAL(clk_90_45mhz    ),
 		.LOCK           (pll_locked  ),
 		.BYPASS         (1'b0         ),
 		.RESETB         (1'b1         )
 	);
-       	//SB_GB global_buffer(clk_45mhz, s_clk);
+##	SB_PLL40_CORE #(
+##		.FEEDBACK_PATH("SIMPLE"),
+##		.DELAY_ADJUSTMENT_MODE_FEEDBACK("FIXED"),
+##		.DELAY_ADJUSTMENT_MODE_RELATIVE("FIXED"),
+##		.PLLOUT_SELECT("GENCLK"),
+##		.FDA_FEEDBACK(4'b1111),
+##		.FDA_RELATIVE(4'b1111),
+##		.DIVR(4'b0100),		// DIVR =  4
+##		.DIVQ(3'b100),		// DIVQ =  4
+##		.DIVF(7'b0100011),		// DIVF =  35
+##		.FILTER_RANGE(3'b010)	// FILTER_RANGE = 2
+##	) uut (
+##		.REFERENCECLK     (i_clk        ),
+##		.PLLOUTCORE     (clk_45mhz    ),
+##		.LOCK           (pll_locked  ),
+##		.BYPASS         (1'b0         ),
+##		.RESETB         (1'b1         )
+##	);
+##       	//SB_GB global_buffer(clk_45mhz, s_clk);
 	assign	s_clk = clk_45mhz;
 `endif
 

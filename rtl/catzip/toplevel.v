@@ -188,7 +188,7 @@ module	toplevel(i_clk,
 	ppio #(.W(16))
 		sdramioi(o_ram_we_n, io_ram_data, o_ram_data, i_ram_data);
 	
-	assign o_ram_clk = clk_45mhz;
+	assign o_ram_clk = clk_90_45mhz;
 
 	assign	i_gpio = { i_btn };
 	assign	o_ledr = o_gpio[0];
@@ -203,7 +203,25 @@ module	toplevel(i_clk,
 `ifdef	VERILATOR
 	assign	s_clk = i_clk;
 `else
-	wire	clk_45mhz, pll_locked;
+	wire	clk_45mhz, pll_locked, clk_90_45mhz,pll_90_locked;
+	SB_PLL40_CORE #(
+		.FEEDBACK_PATH("PHASE_AND_DELAY"),
+		.DELAY_ADJUSTMENT_MODE_FEEDBACK("FIXED"),
+		.DELAY_ADJUSTMENT_MODE_RELATIVE("FIXED"),
+		.PLLOUT_SELECT("SHIFTREG_90deg"),
+		.FDA_FEEDBACK(4'b1111),
+		.FDA_RELATIVE(4'b1111),
+		.DIVR(4'b1000),		// DIVR =  8
+		.DIVQ(3'b100),		// DIVQ = 4 
+		.DIVF(7'b0000011),		// DIVF =  3
+		.FILTER_RANGE(3'b001)	// FILTER_RANGE = 1
+	) plli (
+		.REFERENCECLK     (i_clk        ),
+		.PLLOUTCORE     (clk_90_45mhz    ),
+		.LOCK           (pll_90_locked  ),
+		.BYPASS         (1'b0         ),
+		.RESETB         (1'b1         )
+	);
 	SB_PLL40_CORE #(
 		.FEEDBACK_PATH("SIMPLE"),
 		.DELAY_ADJUSTMENT_MODE_FEEDBACK("FIXED"),
@@ -212,10 +230,10 @@ module	toplevel(i_clk,
 		.FDA_FEEDBACK(4'b1111),
 		.FDA_RELATIVE(4'b1111),
 		.DIVR(4'b0100),		// DIVR =  4
-		.DIVQ(7'b0100011),		// DIVQ =  35
-		.DIVF(3'b100),		// DIVF =  4
+		.DIVQ(3'b100),		// DIVQ =  4
+		.DIVF(7'b0100011),		// DIVF =  35
 		.FILTER_RANGE(3'b010)	// FILTER_RANGE = 2
-	) plli (
+	) uut (
 		.REFERENCECLK     (i_clk        ),
 		.PLLOUTCORE     (clk_45mhz    ),
 		.LOCK           (pll_locked  ),

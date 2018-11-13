@@ -107,7 +107,7 @@
 	ppio #(.W(16))
 		sdramioi(o_ram_we_n, io_ram_data, o_ram_data, i_ram_data);
 	
-	assign o_ram_clk = clk_45mhz;
+	assign o_ram_clk = clk_90_45mhz;
 @TOP.DEFNS=
 	wire	[15:0]		i_ram_data, o_ram_data;
 @MAIN.PORTLIST	

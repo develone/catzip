@@ -4,37 +4,37 @@
 echo "The date built"
 ./arm-wbregs version
 #sleep 2
-./arm-wbregs 0x1000000 0x10000001
+./arm-wbregs 0x1400000 0x10000001
 #sleep 2 
-./arm-wbregs 0x1000004 0x10000002
+./arm-wbregs 0x1400004 0x10000002
 #sleep 2
-./arm-wbregs 0x1000008 0x10000003
+./arm-wbregs 0x1400008 0x10000003
 #sleep 2
-./arm-wbregs 0x100000c 0x10000004
+./arm-wbregs 0x140000c 0x10000004
 #sleep 2
-./arm-wbregs 0x1000000 0x10000001
+./arm-wbregs 0x1400000 0x10000001
 #sleep 2 
-./arm-wbregs 0x1000004 0x10000002
+./arm-wbregs 0x1400004 0x10000002
 #sleep 2
-./arm-wbregs 0x1000008 0x10000003
+./arm-wbregs 0x1400008 0x10000003
 #sleep 2
-./arm-wbregs 0x100000c 0x10000004
+./arm-wbregs 0x140000c 0x10000004
 #sleep 2
-./arm-wbregs 0x1000000 
+./arm-wbregs 0x1400000 
 #sleep 2
-./arm-wbregs 0x1000004 
+./arm-wbregs 0x1400004 
 #sleep 2
-./arm-wbregs 0x1000008 
+./arm-wbregs 0x1400008 
 #sleep 2
-./arm-wbregs 0x100000c
+./arm-wbregs 0x140000c
 #sleep 2 
-./arm-wbregs 0x1000000 
+./arm-wbregs 0x1400000 
 #sleep 2 
-./arm-wbregs 0x1000004 
+./arm-wbregs 0x1400004 
 #sleep 2
-./arm-wbregs 0x1000008 
+./arm-wbregs 0x1400008 
 #sleep 2
-./arm-wbregs 0x100000c
+./arm-wbregs 0x140000c
 #sleep 2
 echo "Turning on the 4th led "
 ./arm-wbregs gpio 0x00010001

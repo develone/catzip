@@ -147,4 +147,4 @@ clean:
 
 # yosys -p synth_ice40 -blif catzip.blif toplevel.v main.v wbubus/wbconsole.v wbubus/wbubus.v wbubus/wbucompactlines.v wbubus/wbucompress.v wbubus/wbuconsole.v wbubus/wbudecompress.v wbubus/wbudeword.v wbubus/wbuexec.v wbubus/wbufifo.v wbubus/wbuidleint.v wbubus/wbuinput.v wbubus/wbuoutput.v wbubus/wbureadcw.v wbubus/wbusixchar.v wbubus/wbutohex.v cpu/busdelay.v cpu/cpudefs.v cpu/cpuops.v cpu/dblfetch.v cpu/div.v cpu/icontrol.v cpu/idecode.v cpu/memops.v cpu/pfcache.v cpu/pipefetch.v cpu/pipemem.v cpu/prefetch.v cpu/wbarbiter.v cpu/wbdblpriarb.v cpu/wbdmac.v cpu/wbpriarbiter.v cpu/wbwatchdog.v cpu/zipbones.v cpu/zipcounter.v cpu/zipcpu.v cpu/zipjiffies.v cpu/zipsystem.v cpu/ziptimer.v ../pport/ppio.v ../pport/pport.v ../pport/wbpport.v memdev.v ufifo.v
 # arachne-pnr -d 8k -p catzip.pcf catzip.blif -o catzip.asc
-# icetime -d hx8k -c 75 catzip.asc
+# icetime -d hx8k -c 45 catzip.asc

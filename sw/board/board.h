@@ -105,6 +105,7 @@ static volatile unsigned *const _buserr = ((unsigned *)16777216);
 static volatile unsigned *const _bustimer = ((unsigned *)0x00800000);
 #endif	// BUSTIMER_ACCESS
 #ifdef	BKRAM_ACCESS
+#define	_BOARD_HAS_BKRAM
 extern char	_bkram[0x00000100];
 #endif	// BKRAM_ACCESS
 #ifdef	BUSPIC_ACCESS

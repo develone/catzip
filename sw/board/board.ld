@@ -44,7 +44,32 @@ ENTRY(_start)
 
 MEMORY
 {
+	   bkram(wx) : ORIGIN = 0x01400000, LENGTH = 0x00000100
 	   sdram(wx) : ORIGIN = 0x02000000, LENGTH = 0x02000000
 }
 
+_bkram    = ORIGIN(bkram);
 _sdram    = ORIGIN(sdram);
+SECTIONS
+{
+	.rocode 0x01400000 : ALIGN(4) {
+		_boot_address = .;
+		*(.start) *(.boot)
+	} > bkram
+	_kernel_image_start = . ;
+	_kernel_image_end = . ;
+	_ram_image_start = . ;
+	.ramcode : ALIGN_WITH_INPUT {
+		*(.kernel)
+		*(.text.startup)
+		*(.text*)
+		*(.rodata*) *(.strings)
+		*(.data) *(COMMON)
+		}> sdram AT> bkram
+	_ram_image_end = . ;
+	.bss : ALIGN_WITH_INPUT {
+		*(.bss)
+		_bss_image_end = . ;
+		} > sdram
+	_top_of_heap = .;
+}

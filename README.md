@@ -23,7 +23,8 @@
 # need to have verilator & zipcpu built
 # set the PATH to where verilator & zipcpu with 
 # . myenv.sh
-
+# /home/pi/verilator
+/home/pi/verilator/bin:/home/pi/zipcpu/sw/install/cross-tools/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/games:/usr/games
 # make datestamp
 # make autodata
 # cd rtl/catzip

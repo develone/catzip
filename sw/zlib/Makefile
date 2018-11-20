@@ -41,11 +41,11 @@
 CC := zip-gcc
 AR := zip-ar
 OBJDIR  := obj-zip
-INCS    := -I. -I../../rtl/icozip
+INCS    := -I. -I../../rtl/catzip
 CFLAGS  := -O3 $(INCS)
 LIBSRCS := udiv.c umod.c syscalls.c crt0.c
 LIBOBJS := $(addprefix $(OBJDIR)/,$(subst .c,.o,$(LIBSRCS)))
-ZIPLIB  := libicozip.a
+ZIPLIB  := libcatzip.a
 all: $(ZIPLIB)
 
 $(OBJDIR)/%.o: %.c

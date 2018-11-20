@@ -20,6 +20,10 @@
 
 # git clone https://github.com/develone/catzip.git
 # cd catzip
+# need to have verilator & zipcpu built
+# set the PATH to where verilator & zipcpu with 
+# . myenv.sh
+
 # make datestamp
 # make autodata
 # cd rtl/catzip

@@ -1,3 +1,53 @@
+# Both icozip & catzip provide a verilated simulation which allows one to 
+# test some of the features of the project.
+# The Goal currently is to get two C programs running on the catboard
+# This requires commpiling several catzip/sw/host programs
+# arm-zipload, arm-zipstate, and arm-zipdbg in addition to 
+# Need to modify sw/host/port.h 
+# -// #define     FPGAHOST        "localhost"
+# -#define        FPGAHOST        "rpi"
+# +#define        FPGAHOST        "localhost"
+# +//#define      FPGAHOST        "rpi"
+
+# pi@mypi3-1:~/testbuilds/icozip/sim/verilated $ ./arm-main_tb start the simulator 
+# Only if running on icoboard pi@mypi3-1:~/testbuilds/icozip/sw/host $ ./arm-netpport listen for C commands
+# pi@mypi3-1:~/testbuilds/icozip/sw/host $ ./arm-zipload ../board/hello
+# Or pi@mypi3-1:~/testbuilds/icozip/sw/host $ ./arm-zipload ../board/cputest
+# Halting the CPU
+# Loading: ../board/cputest
+# CPU Status is: 0000060f
+# pi@mypi3-1:~/testbuilds/icozip/sw/host $ ./arm-wbregs cpu 0x0f
+# Running CPU self-test
+# -----------------------------------
+# SIM Instructions                Is this a simulator?
+# CIS Instructions                Supported
+# Break test #1                   Pass
+# Break test #2                   Pass
+# Break test #3                   Pass
+# Early Branch test               Pass
+# Trap test/AND                   Pass
+# Trap test/CLR                   Pass
+# Overflow test                   Pass
+# Carry test                      Pass
+# Loop test                       Pass
+# Shift test                      Pass
+# Pipeline test                   Pass
+# Mem-Pipeline test               Pass
+# Conditional Execution test      Pass
+# No-waiting pipeline test        Pass
+# Conditional Branching test      Pass
+# Ill Instruction test, NULL PC   Pass
+# Ill Instruction test, two       Pass
+# Comparison test, ==             Pass
+# Comparison test, !=             Pass
+# CC Register test                Pass
+# Multi-Arg test                  Pass
+# Multiply test                   No Multiply Implemented
+# Divide test                     No divide unit installed
+# 
+# -----------------------------------
+# All tests passed.  Halting CPU.
+
 ## The catboard was created by Dave Vandenbout [XESS](http://www.xess.com/)
 ## This work would not be possible without the work of [ZIPCPU](https://github.com/ZipCPU)
 ## Dave is working on [ver 0.3](https://hackaday.io/project/7982-cat-board/log/145610-resurrection)

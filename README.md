@@ -1,5 +1,5 @@
 ## The catboard was created by Dave Vandenbout [XESS](http://www.xess.com/)
-## This work would not be possible without the work of [ZIPCPU](https://github.com/ZipCPU]
+## This work would not be possible without the work of [ZIPCPU](https://github.com/ZipCPU)
 ## Dave is working on [ver 0.3](https://hackaday.io/project/7982-cat-board/log/145610-resurrection)
 # Dan Gisselquist and his [Blog](https://zipcpu.com/)
 # Clifford Wolfe [YOSYS Tools](https://github.com/cliffordwolf/icestorm)

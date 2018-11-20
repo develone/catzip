@@ -2,7 +2,7 @@
 ## This work would not be possible without the work of [ZIPCPU](https://github.com/ZipCPU]
 ## Dave is working on [ver 0.3](https://hackaday.io/project/7982-cat-board/log/145610-resurrection)
 # Dan Gisselquist and his [Blog](https://zipcpu.com/)
-# Cliford Wolfe [YOSYS Tools](https://github.com/cliffordwolf/icestorm)
+# Clifford Wolfe [YOSYS Tools](https://github.com/cliffordwolf/icestorm)
 # Chris Felton & Many others 
 # Differece between [Catboard & ICOBoar](https://github.com/develone/catzip/blob/master/doc/zipcpu.pdf) 
 # CATZIP status as of 11/20/18
@@ -10,6 +10,7 @@
 # [Pmod USB](https://www.digikey.com/products/en/development-boards-kits-programmers/evaluation-boards-expansion-boards-daughter-cards/797?k=Pmod%20USB#images)
 # [PMOD OLEDrgb 98x64 Display](https://store.digilentinc.com/pmod-oledrgb-96-x-64-rgb-oled-display-with-16-bit-color-resolution/)
 # [Catboard branch](https://github.com/develone/otl-icoboard-pmodoledrgb-demo/tree/catboard)
+# [catboard OLED](https://photos.google.com/share/AF1QipM7ZcSN7J_qatKbRPyHkwrrLKjgE6Jp9yX76Mo92Ld-JZCW971uc5vPukQT4TGsWw?key=NWd0QjNmOTlOa05HTmUzSE4ycVNLMTVBYUZuSk5R)
 # Requirements 
 [learning_hdl](https://github.com/develone/learning_hdl)
 # After building autofpga create a link in /usr/local/bin

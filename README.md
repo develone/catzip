@@ -1,4 +1,6 @@
 # CATZIP status as of 11/20/18
+# Requirements 
+[learning_hdl](https://github.com/develone/learning_hdl)
 Current testing is being done on ver 0.1 catboard 
 # This verison has issues with the spiflash.
 

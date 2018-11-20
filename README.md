@@ -47,7 +47,8 @@
 # 
 # -----------------------------------
 # All tests passed.  Halting CPU.
-
+# [cputest.c](https://github.com/develone/catzip/blob/master/sw/board/cputest.c)
+# [boardram.ld](https://github.com/develone/catzip/blob/master/sw/board/boardram.ld)
 ## The catboard was created by Dave Vandenbout [XESS](http://www.xess.com/)
 ## This work would not be possible without the work of [ZIPCPU](https://github.com/ZipCPU)
 ## Dave is working on [ver 0.3](https://hackaday.io/project/7982-cat-board/log/145610-resurrection)

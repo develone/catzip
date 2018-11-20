@@ -1,7 +1,19 @@
+## The catboard was created by Dave Vandenbout [XESS](http://www.xess.com/)
+## This work would not be possible without the work of [ZIPCPU](https://github.com/ZipCPU]
+# Dan Gisselquist and his [Blog](https://zipcpu.com/)
+# Cliford Wolfe [YOSYS Tools](https://github.com/cliffordwolf/icestorm)
+# Chris Felton & Many others 
+# Differece between [Catboard & ICOBoar](https://github.com/develone/catzip/blob/master/doc/zipcpu.pdf) 
 # CATZIP status as of 11/20/18
+# [Hardware Eight 7-segment LEDs ](http://www.xess.com/shop/product/stickit-leddigits/)
+# [Pmod USB](https://www.digikey.com/products/en/development-boards-kits-programmers/evaluation-boards-expansion-boards-daughter-cards/797?k=Pmod%20USB#images)
+# [PMOD OLEDrgb 98x64 Display](https://store.digilentinc.com/pmod-oledrgb-96-x-64-rgb-oled-display-with-16-bit-color-resolution/)
+# [Catboard branch](https://github.com/develone/otl-icoboard-pmodoledrgb-demo/tree/catboard)
 # Requirements 
 [learning_hdl](https://github.com/develone/learning_hdl)
-Current testing is being done on ver 0.1 catboard 
+# After building autofpga create a link in /usr/local/bin
+# autofpga -> /home/pi/autofpga/sw/autofpga
+# Current testing is being done on ver 0.1 catboard 
 # This verison has issues with the spiflash.
 
 # git clone https://github.com/develone/catzip.git
@@ -31,6 +43,9 @@ Current testing is being done on ver 0.1 catboard
 # Displays the date the bin file was created.
 # ./arm-wbregs version
 01000010 ( VERSION) : [....] 20181120
+# Write SDRAM ./arm-wbregs 0x2001000  0x1000
+
+# Read SDRAM ./arm-wbregs 0x2001000
 
 # ICOZIP
 

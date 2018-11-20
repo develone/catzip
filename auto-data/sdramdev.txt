@@ -114,7 +114,7 @@
 		r_ram_data_ext_clk <= io_ram_data;
 	always @(posedge s_clk)
 		i_ram_data <= r_ram_data_ext_clk;	
-	assign o_ram_clk = clk_90_45mhz;
+	assign o_ram_clk = s_clk;
 @TOP.DEFNS=
 	wire	[15:0]		i_ram_data, o_ram_data;
 @MAIN.PORTLIST	

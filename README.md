@@ -1,3 +1,35 @@
+# CATZIP status as of 11/20/18
+Current testing is being done on ver 0.1 catboard 
+# This verison has issues with the spiflash.
+
+git clone https://github.com/develone/catzip.git
+cd catzip
+make datestamp
+make autodata
+cd ../rtl/catzip
+make
+cd ../../sw/host
+make
+
+# program to test the SDRAM
+gcc -g exe_wbregs.c -o exe_wbregs
+
+cd ../zib
+make
+cd ../board
+make
+cd ../../../sim/verilated
+make
+cd ../../sw/host
+
+# Load the bin file in the FPGA
+sudo config_cat rtl/catzip/catzip.bin 
+
+# in sw/host ./arm-netpport which provides the interface between the C programs and the FPGA
+# Displays the date the bin file was created.
+./arm-wbregs version
+01000010 ( VERSION) : [....] 20181120
+
 # ICOZIP
 
 ICO Zip is intended to be a demonstration repository, demonstrating how the

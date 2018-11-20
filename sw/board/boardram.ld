@@ -44,15 +44,15 @@ ENTRY(_start)
 
 MEMORY
 {
-	   bkram(wx) : ORIGIN = 0x00c00000, LENGTH = 0x00000100
-	    sram(wx) : ORIGIN = 0x00e00000, LENGTH = 0x00020000
-	   flash(rx) : ORIGIN = 0x01000000, LENGTH = 0x01000000
+	   bkram(wx) : ORIGIN = 0x01400000, LENGTH = 0x00000100
+	   sdram(wx) : ORIGIN = 0x02000000, LENGTH = 0x02000000
+	    
 }
 
 _bkram    = ORIGIN(bkram);
-_sram     = ORIGIN(sram);
-_flash    = ORIGIN(flash);
-_top_of_stack = ORIGIN(sram)+LENGTH(sram);
+_sdram     = ORIGIN(sdram);
+
+_top_of_stack = ORIGIN(sram)+LENGTH(sdram);
 SECTIONS
 {
 	.ramcode 0x00e00000 : ALIGN(4) {

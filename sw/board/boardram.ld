@@ -52,7 +52,7 @@ MEMORY
 _bkram    = ORIGIN(bkram);
 _sdram     = ORIGIN(sdram);
 
-_top_of_stack = ORIGIN(sram)+LENGTH(sdram);
+_top_of_stack = ORIGIN(sdram)+LENGTH(sdram);
 SECTIONS
 {
 	.ramcode 0x02000000 : ALIGN(4) {

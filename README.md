@@ -1,15 +1,24 @@
 ## The catboard was created by Dave Vandenbout [XESS](http://www.xess.com/)
-## This work would not be possible without the work of [ZIPCPU](https://github.com/ZipCPU)
 ## Dave is working on [ver 0.3](https://hackaday.io/project/7982-cat-board/log/145610-resurrection)
+## This work would not be possible without the work of [ZIPCPU](https://github.com/ZipCPU)
 # Dan Gisselquist and his [Blog](https://zipcpu.com/)
 # Clifford Wolfe [YOSYS Tools](https://github.com/cliffordwolf/icestorm)
 # Chris Felton & Many others 
-
+# Both the icozip on ICOBoard & catzip on CatBoard based HX8K ice40 FPGA 
+# provide a complete development system on the Raspberry Pi  
 # Both icozip & catzip provide a verilated simulation which allows one to 
 # test some of the features of the project.
-# The Goal currently is to get two C programs running on the catboard
-# This requires commpiling several catzip/sw/host programs
-# arm-zipload, arm-zipstate, and arm-zipdbg in addition to 
+
+# The Goal currently is to get two C programs running on the CatBoard running with the ZipCPU.
+# This requires compiling several catzip/sw/host programs
+# arm-zipload, arm-zipstate, and arm-zipdbg that will load the binary code into the Sdram and execute.  
+# This also requires the compiling & linking the of cputest.c & hello.c
+# [cputest.c](https://github.com/develone/catzip/blob/master/sw/board/cputest.c)
+# [hello.c](https://github.com/develone/catzip/blob/master/sw/board/hello.c)
+# [boardram.ld](https://github.com/develone/catzip/blob/master/sw/board/boardram.ld)
+# The cputest.c & hello.c also require creating libicozip.a or libcatzip.a
+# The libraries libicozip.a or libcatzip.a are made up of serveral C files.
+# crt0.c, syscalls.c, umod.c, and udiv.c
 # Need to modify sw/host/port.h 
 # -// #define     FPGAHOST        "localhost"
 # -#define        FPGAHOST        "rpi"
@@ -54,9 +63,6 @@
 # 
 # -----------------------------------
 # All tests passed.  Halting CPU.
-# [cputest.c](https://github.com/develone/catzip/blob/master/sw/board/cputest.c)
-# [hello.c](https://github.com/develone/catzip/blob/master/sw/board/hello.c)
-# [boardram.ld](https://github.com/develone/catzip/blob/master/sw/board/boardram.ld)
 # Differece between [Catboard & ICOBoar](https://github.com/develone/catzip/blob/master/doc/zipcpu.pdf) 
 # CATZIP status as of 11/20/18
 # [Hardware Eight 7-segment LEDs ](http://www.xess.com/shop/product/stickit-leddigits/)

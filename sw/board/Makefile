@@ -49,7 +49,7 @@ RDELF	:= zip-readelf
 OBJDUMP := zip-objdump
 SOURCES := cputest.c hello.c
 HEADERS := $(foreach hdr,$(subst .c,.o,$(SOURCES)),$(wildcard $(hdr))) board.h
-LDSCRIPT:= -Tboard.ld
+LDSCRIPT:= -Tboardram.ld
 LFLAGS  := $(LDSCRIPT) -L../zlib
 INCS    := -I../zlib -I../../rtl/catzip -I.
 CFLAGS  := -O3 $(INCS)
@@ -98,7 +98,7 @@ $(OBJDIR)/hello.o: hello.c
 $(OBJDIR)/gettysburg.o: gettysburg.c
 	$(CC) -O3 -c $< -o $@
 
-hello: $(OBJDIR)/hello.o board.ld
+hello: $(OBJDIR)/hello.o boardram.ld
 	$(CC) $(CFLAGS) $(LFLAGS) $< $(LIBS) -o $@
 
 

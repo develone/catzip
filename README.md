@@ -1,3 +1,10 @@
+## The catboard was created by Dave Vandenbout [XESS](http://www.xess.com/)
+## This work would not be possible without the work of [ZIPCPU](https://github.com/ZipCPU)
+## Dave is working on [ver 0.3](https://hackaday.io/project/7982-cat-board/log/145610-resurrection)
+# Dan Gisselquist and his [Blog](https://zipcpu.com/)
+# Clifford Wolfe [YOSYS Tools](https://github.com/cliffordwolf/icestorm)
+# Chris Felton & Many others 
+
 # Both icozip & catzip provide a verilated simulation which allows one to 
 # test some of the features of the project.
 # The Goal currently is to get two C programs running on the catboard
@@ -48,13 +55,8 @@
 # -----------------------------------
 # All tests passed.  Halting CPU.
 # [cputest.c](https://github.com/develone/catzip/blob/master/sw/board/cputest.c)
+# [hello.c](https://github.com/develone/catzip/blob/master/sw/board/hello.c)
 # [boardram.ld](https://github.com/develone/catzip/blob/master/sw/board/boardram.ld)
-## The catboard was created by Dave Vandenbout [XESS](http://www.xess.com/)
-## This work would not be possible without the work of [ZIPCPU](https://github.com/ZipCPU)
-## Dave is working on [ver 0.3](https://hackaday.io/project/7982-cat-board/log/145610-resurrection)
-# Dan Gisselquist and his [Blog](https://zipcpu.com/)
-# Clifford Wolfe [YOSYS Tools](https://github.com/cliffordwolf/icestorm)
-# Chris Felton & Many others 
 # Differece between [Catboard & ICOBoar](https://github.com/develone/catzip/blob/master/doc/zipcpu.pdf) 
 # CATZIP status as of 11/20/18
 # [Hardware Eight 7-segment LEDs ](http://www.xess.com/shop/product/stickit-leddigits/)
@@ -91,6 +93,8 @@
 # should have libcatzip.a
 # cd ../board
 # make
+# should have executeables cputest & hello that will run out sdram
+# Since the more bkram was in the icozip design hello.c was running out of bkram.
 # cd ../../../sim/verilated
 # make
 # cd ../../sw/host

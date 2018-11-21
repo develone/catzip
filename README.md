@@ -74,7 +74,12 @@
 # -----------------------------------
 # All tests passed.  Halting CPU.
 # Differece between [Catboard & ICOBoar](https://github.com/develone/catzip/blob/master/doc/zipcpu.pdf) 
-# CATZIP status as of 11/20/18
+# CATZIP status as of 11/21/18
+# The 2 C programs cputest.c & hello.c compile and link with libcatzip.a
+# The sw/zlib appears to be working 
+# The sw/board appears to be working
+# arm-zipdbg, arm-zipload, arm-zipstate are built using buildsdramscope.sh
+# since the Makefile has not been updated
 # [Hardware Eight 7-segment LEDs ](http://www.xess.com/shop/product/stickit-leddigits/)
 # [Pmod USB](https://www.digikey.com/products/en/development-boards-kits-programmers/evaluation-boards-expansion-boards-daughter-cards/797?k=Pmod%20USB#images)
 # [PMOD OLEDrgb 98x64 Display](https://store.digilentinc.com/pmod-oledrgb-96-x-64-rgb-oled-display-with-16-bit-color-resolution/)

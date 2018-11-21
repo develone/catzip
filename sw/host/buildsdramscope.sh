@@ -1,5 +1,6 @@
 #!/bin/bash
 rm -rf obj-arm/sdramscope.o obj-arm/zipload.o obj-arm/zipdbg.o obj-arm/zipstate.o obj-arm/zopcodes.o obj-arm/twoc.o obj-arm/zipelf.o
+rm -f arm-zipdbg arm-zipload arm-zipstate
 g++ -g -Wall -I. -I../../rtl -c scopecls.cpp -o obj-arm/scopecls.o
 g++ -g -Wall -I. -I../../rtl -c sdramscope.cpp -o obj-arm/sdramscope.o
 g++ -g -Wall -I. -I../../rtl -I../../rtl/catzip -c zipload.cpp -o obj-arm/zipload.o

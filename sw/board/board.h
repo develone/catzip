@@ -81,6 +81,9 @@
 #define	CLKFREQHZ	50000000
 
 
+#define BUSPIC(X) (1<<X)
+
+
 typedef struct  CONSOLE_S {
 	unsigned	u_setup;
 	unsigned	u_fifo;
@@ -106,7 +109,7 @@ static volatile unsigned *const _bustimer = ((unsigned *)0x00800000);
 #endif	// BUSTIMER_ACCESS
 #ifdef	BKRAM_ACCESS
 #define	_BOARD_HAS_BKRAM
-extern char	_bkram[0x00000100];
+extern char	_bkram[0x00000400];
 #endif	// BKRAM_ACCESS
 #ifdef	BUSPIC_ACCESS
 #define	_BOARD_HAS_BUSPIC

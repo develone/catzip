@@ -44,7 +44,7 @@ ENTRY(_start)
 
 MEMORY
 {
-	   bkram(wx) : ORIGIN = 0x01400000, LENGTH = 0x00000100
+	   bkram(wx) : ORIGIN = 0x01400000, LENGTH = 0x00000400
 	   sdram(wx) : ORIGIN = 0x02000000, LENGTH = 0x02000000
 }
 

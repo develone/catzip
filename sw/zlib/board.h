@@ -81,6 +81,9 @@
 #define	CLKFREQHZ	50000000
 
 
+#define BUSPIC(X) (1<<X)
+
+
 typedef struct  CONSOLE_S {
 	unsigned	u_setup;
 	unsigned	u_fifo;

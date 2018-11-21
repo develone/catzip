@@ -94,7 +94,7 @@
 #define	SDRAMBASE	0x02000000
 #define	SDRAMLEN	0x02000000
 #define	BKRAMBASE	0x01400000
-#define	BKRAMLEN	0x00000100
+#define	BKRAMLEN	0x00000400
 // @REGDEFS.H.DEFNS at the top level
 // End of definitions from REGDEFS.H.DEFNS
 //

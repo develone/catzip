@@ -266,7 +266,7 @@ public:
 		// Loading the bkram component
 		//
 		base  = 0x01400000;
-		naddr = 0x00000040;
+		naddr = 0x00000100;
 
 		if ((addr >= base)&&(addr < base + naddr)) {
 			// If the start access is in bkram

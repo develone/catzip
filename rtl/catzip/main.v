@@ -385,7 +385,7 @@ parameter	RDLY = 6;
 	assign	     console_sel = ((wb_addr[23:20] &  4'hf) ==  4'h3); // 0xc00000 - 0xc0000f
 	assign	      wb_sio_sel = ((wb_addr[23:20] &  4'hf) ==  4'h4); // 0x1000000 - 0x100001f
 //x2	Was a master bus as well
-	assign	       bkram_sel = ((wb_addr[23:20] &  4'hf) ==  4'h5); // 0x1400000 - 0x14000ff
+	assign	       bkram_sel = ((wb_addr[23:20] &  4'hf) ==  4'h5); // 0x1400000 - 0x14003ff
 	assign	       sdram_sel = ((wb_addr[23:20] &  4'h8) ==  4'h8); // 0x2000000 - 0x3ffffff
 	//
 
@@ -940,10 +940,10 @@ wbsdram sdrami(i_clk,
 `endif	// BUSTIMER_ACCESS
 
 `ifdef	BKRAM_ACCESS
-	memdev #(.LGMEMSZ(8), .EXTRACLOCK(1))
+	memdev #(.LGMEMSZ(10), .EXTRACLOCK(1))
 		bkrami(i_clk, 1'b0,
 			(wb_cyc), (wb_stb)&&(bkram_sel), wb_we,
-				wb_addr[(8-3):0], wb_data, wb_sel,
+				wb_addr[(10-3):0], wb_data, wb_sel,
 				bkram_ack, bkram_stall, bkram_data);
 `else	// BKRAM_ACCESS
 

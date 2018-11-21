@@ -55,7 +55,7 @@ _sdram     = ORIGIN(sdram);
 _top_of_stack = ORIGIN(sram)+LENGTH(sdram);
 SECTIONS
 {
-	.ramcode 0x00e00000 : ALIGN(4) {
+	.ramcode 0x02000000 : ALIGN(4) {
 		_boot_address = .;
 		*(.start) *(.boot)
 		*(.kernel)
@@ -64,6 +64,6 @@ SECTIONS
 		*(.rodata*) *(.strings)
 		*(.data) *(COMMON)
 		*(.bss)
-		} > sram
+		} > sdram
 	_top_of_heap = .;
 }

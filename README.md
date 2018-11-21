@@ -19,7 +19,7 @@
 # The cputest.c & hello.c also require creating libicozip.a or libcatzip.a
 # The libraries libicozip.a or libcatzip.a are made up of serveral C files.
 # crt0.c, syscalls.c, umod.c, and udiv.c
-# Need to modify sw/host/port.h 
+# For the icozip need to modify sw/host/port.h 
 # -// #define     FPGAHOST        "localhost"
 # -#define        FPGAHOST        "rpi"
 # +#define        FPGAHOST        "localhost"
@@ -87,7 +87,7 @@
 # make datestamp
 # make autodata
 # cd rtl/catzip
-# make
+# make  This create the catzip.bin that will be used to program the HX8K ice40 FPGA
 # cd ../../sw/host
 # make
 
@@ -102,9 +102,14 @@
 # should have executeables cputest & hello that will run out sdram
 # Since the more bkram was in the icozip design hello.c was running out of bkram.
 # cd ../../../sim/verilated
-# make
+# make which creates the program arm-main_tb
+# The program arm-main_tb provides the functions that FPGA using arm-netpport
+# 
 # cd ../../sw/host
-
+# make arm-netpport & arm-wbregs
+# The programs config_cat & reset_cat should be linked in /usr/local/bin
+# /usr/local/bin/reset_cat -> /home/pi/catboard_yosys/reset_cat
+# /usr/local/bin/config_cat -> /home/pi/catboard_yosys/config_cat
 # Load the bin file in the FPGA
 # sudo config_cat rtl/catzip/catzip.bin 
 

@@ -10,8 +10,10 @@
 # Both icozip & catzip provide a verilated simulation which allows one to 
 # test some of the features of the project.
 # Both the icozip & catzip are autofpga projects also designed by ZipCPU
-# autofpa take serveral txt files which have tags to create the toplevel.v & main.v needed to support the items
-# like sram or sdram, 
+# autofpga takes serveral txt files which have tags to create the toplevel.v & main.v needed to support the items
+# like sram in icozip or sdram in catzip
+# Below is the list of txt used in the catzip project
+# This is one of the steps make autofpga in the catzip folder. 
 # global.txt bkram.txt buserr.txt clock50.txt pic.txt pwrcount.txt version.txt hbconsole.txt gpio.txt dlyarbiter.txt zipbones.txt sdramdev.txt sdramscope.txt
 # [toplevel.v](https://github.com/develone/catzip/blob/master/rtl/catzip/toplevel.v)
 # [main.v](https://github.com/develone/catzip/blob/master/rtl/catzip/main.v)

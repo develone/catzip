@@ -13,7 +13,7 @@
 # autofpa take serveral txt files which have tags to create the toplevel.v & main.v needed to support the items
 # like sram or sdram, 
 # global.txt bkram.txt buserr.txt clock50.txt pic.txt pwrcount.txt version.txt hbconsole.txt gpio.txt dlyarbiter.txt zipbones.txt sdramdev.txt sdramscope.txt
-# [toplevel.v](https://github.com/develone/catzip/blob/master/rtl/catzip/toplevel.vhttps://github.com/develone/catzip/blob/master/rtl/catzip/main.v)
+# [toplevel.v](https://github.com/develone/catzip/blob/master/rtl/catzip/toplevel.v)
 # [main.v](https://github.com/develone/catzip/blob/master/rtl/catzip/main.v)
 # cpudef.h & design.h bkram & clock
 # 

@@ -88,6 +88,7 @@
 
 # cd ../zib
 # make
+# should have libcatzip.a
 # cd ../board
 # make
 # cd ../../../sim/verilated

@@ -37,7 +37,7 @@
 //	_bkram:
 //		The first address of the block RAM memory within the FPGA.
 //
-//	_sram:
+//	_sdram:
 //		The address of the beginning of physical SRAM.
 //
 //	_kernel_image_start:
@@ -132,7 +132,7 @@
 __attribute__ ((section (".boot")))
 void __define_the_top_of_the_stack__(void)  {
 #if	defined(_BOARD_HAS_SRAM)
-asm volatile(".equ\t_top_of_stack,%0\n":: "i"(_sram+sizeof(_sram)));
+asm volatile(".equ\t_top_of_stack,%0\n":: "i"(_sdram+sizeof(_sdram)));
 // extern	int	const	*_top_of_stack = _sdram + sizeof(_sdram);
 #elif	defined(_BOARD_HAS_BKRAM)
 // extern	int	const	*_top_of_stack = bkram + sizeof(_bkram);
@@ -234,7 +234,7 @@ void	_bootloader(void) {
 	}
 
 	// _zip->z_dma.d_rd // Keeps the same value
-	_zip->z_dma.d_wr  = _sram;
+	_zip->z_dma.d_wr  = _sdram;
 #else
 	_zip->z_dma.d_rd = _ram_image_start;
 	_zip->z_dma.d_wr = (int *)_ram;
@@ -278,8 +278,8 @@ void	_bootloader(void) {
 		do {
 			*wrp++ = *rdp++;
 		} while(wrp < _kernel_image_end);
-		if (_kernel_image_end < (int *)_sram)
-			wrp = (int *)_sram;
+		if (_kernel_image_end < (int *)_sdram)
+			wrp = (int *)_sdram;
 	}
 #else
 	rdp = _ram_image_start;

@@ -1,5 +1,6 @@
 ## The catboard was created by Dave Vandenbout [XESS](http://www.xess.com/)
 ## Dave is working on [ver 0.3](https://hackaday.io/project/7982-cat-board/log/145610-resurrection)
+# The ver0.3 will provide an hdmi.  
 ## This work would not be possible without the work of [ZIPCPU](https://github.com/ZipCPU)
 # Dan Gisselquist and his [Blog](https://zipcpu.com/)
 # Clifford Wolfe [YOSYS Tools](https://github.com/cliffordwolf/icestorm)
@@ -8,7 +9,14 @@
 # provide a complete development system on the Raspberry Pi  
 # Both icozip & catzip provide a verilated simulation which allows one to 
 # test some of the features of the project.
-
+# Both the icozip & catzip are autofpga projects also designed by ZipCPU
+# autofpa take serveral txt files which have tags to create the toplevel.v & main.v needed to support the items
+# like sram or sdram, 
+# global.txt bkram.txt buserr.txt clock50.txt pic.txt pwrcount.txt version.txt hbconsole.txt gpio.txt dlyarbiter.txt zipbones.txt sdramdev.txt sdramscope.txt
+# [toplevel.v](https://github.com/develone/catzip/blob/master/rtl/catzip/toplevel.vhttps://github.com/develone/catzip/blob/master/rtl/catzip/main.v)
+# [main.v](https://github.com/develone/catzip/blob/master/rtl/catzip/main.v)
+# cpudef.h & design.h bkram & clock
+# 
 # The Goal currently is to get two C programs running on the CatBoard running with the ZipCPU.
 # This requires compiling several catzip/sw/host programs
 # arm-zipload, arm-zipstate, and arm-zipdbg that will load the binary code into the Sdram and execute.  

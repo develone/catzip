@@ -54,7 +54,7 @@
 #include "llcomms.h"
 #include "hexbus.h"
 #include "regdefs.h"
-#include "flashdrvr.h"
+//#include "flashdrvr.h"
 #include "zipelf.h"
 #include "byteswap.h"
 #include <design.h>
@@ -80,7 +80,7 @@ int main(int argc, char **argv) {
 	int		skp=0, port = FPGAPORT;
 	bool		start_when_finished = false, verbose = false;
 	unsigned	entry = 0;
-	FLASHDRVR	*flash = NULL;
+	//FLASHDRVR	*flash = NULL;
 	const char	*bitfile = NULL, *altbitfile = NULL, *execfile = NULL,
 	      		*host = FPGAHOST;
 
@@ -179,10 +179,10 @@ int main(int argc, char **argv) {
 	}
 
 	const char *codef = (argc>0)?argv[0]:NULL;
-	char	*fbuf = new char[FLASHLEN];
+	//char	*fbuf = new char[FLASHLEN];
 
 	// Set the flash buffer to all ones
-	memset(fbuf, -1, FLASHLEN);
+	//memset(fbuf, -1, FLASHLEN);
 
 	m_fpga = new FPGA(new NETCOMMS(host, port));
 
@@ -208,7 +208,7 @@ int main(int argc, char **argv) {
 		exit(EXIT_FAILURE);
 	}
 
-	flash = new FLASHDRVR(m_fpga);
+	//flash = new FLASHDRVR(m_fpga);
 
 	if (verbose) {
 		printf("Memory regions:\n");
@@ -263,11 +263,11 @@ int main(int argc, char **argv) {
 				valid = true;
 #endif
 
-#ifdef	SRAM_ACCESS
+#ifdef	SDRAM_ACCESS
 			// Or SRAM
-			if ((secp->m_start >= SRAMBASE)
+			if ((secp->m_start >= SDRAMBASE)
 				&&(secp->m_start+secp->m_len
-						<= SRAMBASE+SRAMLEN))
+						<= SDRAMBASE+SDRAMLEN))
 				valid = true;
 #endif
 			if (!valid) {

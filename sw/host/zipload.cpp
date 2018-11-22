@@ -5,7 +5,7 @@
 // Project:	ICO Zip, iCE40 ZipCPU demonsrtation project
 //
 // Purpose:	To load a program for the ZipCPU into memory, whether flash,
-//		SRAM, or block RAM.  This requires a working/running
+//		SDRAM, or block RAM.  This requires a working/running
 //	configuration in order to successfully load.
 //
 //
@@ -220,9 +220,9 @@ int main(int argc, char **argv) {
 		printf("\tFlash (ROM): %08x - %08x\n",
 			FLASHBASE, FLASHBASE+FLASHLEN);
 #endif
-#ifdef	SRAM_ACCESS
-		printf("\tSRAM       : %08x - %08x\n",
-			SRAMBASE, SRAMBASE + SRAMLEN);
+#ifdef	SDRAM_ACCESS
+		printf("\tSDRAM       : %08x - %08x\n",
+			SDRAMBASE, SDRAMBASE + SDRAMLEN);
 #endif
 	}
 
@@ -264,7 +264,7 @@ int main(int argc, char **argv) {
 #endif
 
 #ifdef	SDRAM_ACCESS
-			// Or SRAM
+			// Or SDRAM
 			if ((secp->m_start >= SDRAMBASE)
 				&&(secp->m_start+secp->m_len
 						<= SDRAMBASE+SDRAMLEN))
@@ -281,10 +281,10 @@ int main(int argc, char **argv) {
 		for(int i=0; secpp[i]->m_len; i++) {
 			secp = secpp[i];
 
-#ifdef	SRAM_ACCESS
-			if ((secp->m_start >= SRAMBASE)
+#ifdef	SDRAM_ACCESS
+			if ((secp->m_start >= SDRAMBASE)
 				&&(secp->m_start+secp->m_len
-						<= SRAMBASE+SRAMLEN)) {
+						<= SDRAMBASE+SDRAMLEN)) {
 				if (verbose)
 					printf("Writing to MEM: %08x-%08x\n",
 						secp->m_start,

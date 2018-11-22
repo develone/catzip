@@ -94,12 +94,12 @@ cputestcis: $(OBJDIR)/cputestcis.o boardram.ld
 	$(CC) $(CFLAGS) -T boardram.ld -fno-builtin -Wl,-Map=$(OBJDIR)/cputestcis.map $(OBJDIR)/cputestcis.o -o $@
 
 $(OBJDIR)/hello.o: hello.c
-	$(CC) -O3 -c $< -o $@
+	$(CC) -O3 -c  $< -o $@
 $(OBJDIR)/gettysburg.o: gettysburg.c
 	$(CC) -O3 -c $< -o $@
 
 hello: $(OBJDIR)/hello.o boardram.ld
-	$(CC) $(CFLAGS) $(LFLAGS) $< $(LIBS) -o $@
+	$(CC) $(CFLAGS) $(LFLAGS) -Wl,-Map=$(OBJDIR)/hello.map $< $(LIBS) -o $@
 
 
 define	mk-objdir

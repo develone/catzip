@@ -1,0 +1,711 @@
+
+obj-zip/rd_bytes.o:     file format elf32-zip
+
+
+Disassembly of section .text:
+
+00000000 <twos_comp>:
+   0:	0c 00 01 01 	CMP        $257,R1
+   4:	78 90 00 08 	BLT        @0x00000010    // 10 <twos_comp+0x10>
+   8:	08 83 fe 00 	ADD        $-512,R1
+   c:	7b 40 00 00 	RTN
+  10:	7b 40 00 00 	RTN
+
+00000014 <dwt_process>:
+  14:	68 00 00 58 	SUB        $88,SP
+  18:	85 34 ad 38 	SW         R0,$52(SP)     | SW         R5,$56(SP)
+  1c:	34 c7 40 3c 	SW         R6,$60(SP)
+  20:	3c c7 40 40 	SW         R7,$64(SP)
+  24:	44 c7 40 44 	SW         R8,$68(SP)
+  28:	4c c7 40 48 	SW         R9,$72(SP)
+  2c:	54 c7 40 4c 	SW         R10,$76(SP)
+  30:	5c c7 40 50 	SW         R11,$80(SP)
+  34:	64 c7 40 54 	SW         R12,$84(SP)
+  38:	5b 40 40 00 	MOV        R1,R11
+  3c:	0c c7 40 04 	SW         R1,$4(SP)
+  40:	02 00 00 00 	LDI        0x00000000,R0
+  44:	02 40 00 00 
+  48:	04 c7 40 00 	SW         R0,(SP)
+  4c:	87 fa fc f8 	JSR        0x00000000
+  50:	00 00 00 00 
+  54:	4b 42 c0 00 	MOV        R11,R9
+  58:	48 80 00 04 	ADD        $4,R9
+  5c:	53 42 c0 00 	MOV        R11,R10
+  60:	50 80 00 08 	ADD        $8,R10
+  64:	13 42 c0 00 	MOV        R11,R2
+  68:	92 0c 95 2c 	ADD        $12,R2         | SW         R2,$44(SP)
+  6c:	54 c7 40 04 	SW         R10,$4(SP)
+  70:	22 00 00 00 	LDI        0x00000014,R4  // 14 <dwt_process>
+  74:	22 40 00 14 
+  78:	24 c7 40 00 	SW         R4,(SP)
+  7c:	87 fa fc f8 	JSR        0x00000000
+  80:	00 00 00 00 
+  84:	84 2c bf d0 	LW         44(SP),R0      | MOV        R10,R7
+  88:	43 40 00 00 	MOV        R0,R8
+  8c:	63 42 40 00 	MOV        R9,R12
+  90:	b6 02 d5 28 	LDI        $2,R6          | SW         R10,$40(SP)
+  94:	cd 30 d7 80 	SW         R9,$48(SP)     | MOV        R0,R10
+  98:	84 e0 8f 80 	LW         (R12),R0       | MOV        R0,R1
+  9c:	08 40 01 ff 	AND        $511,R1
+  a0:	8d 18 8f 80 	SW         R1,$24(SP)     | MOV        R0,R1
+  a4:	16 07 fc 00 	LDI        $523264,R2
+  a8:	89 90 8d 14 	AND        R2,R1          | SW         R1,$20(SP)
+  ac:	0b 40 00 00 	MOV        R0,R1
+  b0:	22 00 0f f8 	BREV       $4088,R4
+  b4:	89 a0 8d 10 	AND        R4,R1          | SW         R1,$16(SP)
+  b8:	85 0c e5 08 	SW         R0,$12(SP)     | SW         R12,$8(SP)
+  bc:	87 b0 82 7f 	MOV        R6,R0          | ADD        $-1,R0
+  c0:	04 c7 40 04 	SW         R0,$4(SP)
+  c4:	02 00 00 00 	LDI        0x00000034,R0  // 34 <dwt_process+0x20>
+  c8:	02 40 00 34 
+  cc:	04 c7 40 00 	SW         R0,(SP)
+  d0:	87 fa fc f8 	JSR        0x00000000
+  d4:	00 00 00 00 
+  d8:	84 b8 8f 80 	LW         (R7),R0        | MOV        R0,R1
+  dc:	08 40 01 ff 	AND        $511,R1
+  e0:	8d 18 8f 80 	SW         R1,$24(SP)     | MOV        R0,R1
+  e4:	16 07 fc 00 	LDI        $523264,R2
+  e8:	89 90 8d 14 	AND        R2,R1          | SW         R1,$20(SP)
+  ec:	0b 40 00 00 	MOV        R0,R1
+  f0:	22 00 0f f8 	BREV       $4088,R4
+  f4:	89 a0 8d 10 	AND        R4,R1          | SW         R1,$16(SP)
+  f8:	85 0c bd 08 	SW         R0,$12(SP)     | SW         R7,$8(SP)
+  fc:	34 c7 40 04 	SW         R6,$4(SP)
+ 100:	02 00 00 00 	LDI        0x00000034,R0  // 34 <dwt_process+0x20>
+ 104:	02 40 00 34 
+ 108:	04 c7 40 00 	SW         R0,(SP)
+ 10c:	87 fa fc f8 	JSR        0x00000000
+ 110:	00 00 00 00 
+ 114:	84 c0 8f 80 	LW         (R8),R0        | MOV        R0,R1
+ 118:	08 40 01 ff 	AND        $511,R1
+ 11c:	8d 18 8f 80 	SW         R1,$24(SP)     | MOV        R0,R1
+ 120:	16 07 fc 00 	LDI        $523264,R2
+ 124:	89 90 8d 14 	AND        R2,R1          | SW         R1,$20(SP)
+ 128:	0b 40 00 00 	MOV        R0,R1
+ 12c:	22 00 0f f8 	BREV       $4088,R4
+ 130:	89 a0 8d 10 	AND        R4,R1          | SW         R1,$16(SP)
+ 134:	85 0c c5 08 	SW         R0,$12(SP)     | SW         R8,$8(SP)
+ 138:	87 b0 82 01 	MOV        R6,R0          | ADD        $1,R0
+ 13c:	04 c7 40 04 	SW         R0,$4(SP)
+ 140:	02 00 00 00 	LDI        0x00000034,R0  // 34 <dwt_process+0x20>
+ 144:	02 40 00 34 
+ 148:	04 c7 40 00 	SW         R0,(SP)
+ 14c:	87 fa fc f8 	JSR        0x00000000
+ 150:	00 00 00 00 
+ 154:	04 87 00 00 	LW         (R12),R0
+ 158:	01 c0 00 14 	ASR        $20,R0
+ 15c:	0c 85 c0 00 	LW         (R7),R1
+ 160:	09 c0 00 14 	ASR        $20,R1
+ 164:	1c 86 00 00 	LW         (R8),R3
+ 168:	19 c0 00 14 	ASR        $20,R3
+ 16c:	04 00 01 01 	CMP        $257,R0
+ 170:	78 90 00 04 	BLT        @0x00000178    // 178 <dwt_process+0x164>
+ 174:	00 83 fe 00 	ADD        $-512,R0
+ 178:	0c 00 01 01 	CMP        $257,R1
+ 17c:	78 90 00 04 	BLT        @0x00000184    // 184 <dwt_process+0x170>
+ 180:	08 83 fe 00 	ADD        $-512,R1
+ 184:	1c 00 01 01 	CMP        $257,R3
+ 188:	78 90 00 04 	BLT        @0x00000190    // 190 <dwt_process+0x17c>
+ 18c:	18 83 fe 00 	ADD        $-512,R3
+ 190:	97 80 92 98 	MOV        R0,R2          | ADD        R3,R2
+ 194:	11 c0 00 01 	ASR        $1,R2
+ 198:	23 40 40 00 	MOV        R1,R4
+ 19c:	a0 90 cf a0 	SUB        R2,R4          | MOV        R4,R9
+ 1a0:	48 40 01 ff 	AND        $511,R9
+ 1a4:	2b 42 40 00 	MOV        R9,R5
+ 1a8:	29 80 00 14 	LSL        $20,R5
+ 1ac:	ad 1c cd 18 	SW         R5,$28(SP)     | SW         R9,$24(SP)
+ 1b0:	cd 14 9d 10 	SW         R9,$20(SP)     | SW         R3,$16(SP)
+ 1b4:	8d 0c 85 08 	SW         R1,$12(SP)     | SW         R0,$8(SP)
+ 1b8:	34 c7 40 04 	SW         R6,$4(SP)
+ 1bc:	02 00 00 00 	LDI        0x0000004c,R0  // 4c <dwt_process+0x38>
+ 1c0:	02 40 00 4c 
+ 1c4:	04 c7 40 00 	SW         R0,(SP)
+ 1c8:	87 fa fc f8 	JSR        0x00000000
+ 1cc:	00 00 00 00 
+ 1d0:	4c 00 01 01 	CMP        $257,R9
+ 1d4:	78 90 00 04 	BLT        @0x000001dc    // 1dc <dwt_process+0x1c8>
+ 1d8:	48 83 fe 00 	ADD        $-512,R9
+ 1dc:	cd 08 cd 04 	SW         R9,$8(SP)      | SW         R9,$4(SP)
+ 1e0:	0a 00 00 00 	LDI        0x00000070,R1  // 70 <dwt_process+0x5c>
+ 1e4:	0a 40 00 70 
+ 1e8:	0c c7 40 00 	SW         R1,(SP)
+ 1ec:	87 fa fc f8 	JSR        0x00000000
+ 1f0:	00 00 00 00 
+ 1f4:	04 87 00 00 	LW         (R12),R0
+ 1f8:	01 c0 00 0a 	ASR        $10,R0
+ 1fc:	00 40 01 ff 	AND        $511,R0
+ 200:	0c 85 c0 00 	LW         (R7),R1
+ 204:	09 c0 00 0a 	ASR        $10,R1
+ 208:	08 40 01 ff 	AND        $511,R1
+ 20c:	1c 86 00 00 	LW         (R8),R3
+ 210:	19 c0 00 0a 	ASR        $10,R3
+ 214:	18 40 01 ff 	AND        $511,R3
+ 218:	04 00 01 01 	CMP        $257,R0
+ 21c:	78 90 00 04 	BLT        @0x00000224    // 224 <dwt_process+0x210>
+ 220:	00 83 fe 00 	ADD        $-512,R0
+ 224:	0c 00 01 01 	CMP        $257,R1
+ 228:	78 90 00 04 	BLT        @0x00000230    // 230 <dwt_process+0x21c>
+ 22c:	08 83 fe 00 	ADD        $-512,R1
+ 230:	1c 00 01 01 	CMP        $257,R3
+ 234:	78 90 00 04 	BLT        @0x0000023c    // 23c <dwt_process+0x228>
+ 238:	18 83 fe 00 	ADD        $-512,R3
+ 23c:	97 80 92 98 	MOV        R0,R2          | ADD        R3,R2
+ 240:	11 c0 00 01 	ASR        $1,R2
+ 244:	23 40 40 00 	MOV        R1,R4
+ 248:	a0 90 cf a0 	SUB        R2,R4          | MOV        R4,R9
+ 24c:	48 40 01 ff 	AND        $511,R9
+ 250:	23 42 40 00 	MOV        R9,R4
+ 254:	21 80 00 0a 	LSL        $10,R4
+ 258:	20 c5 40 00 	OR         R5,R4
+ 25c:	af a0 a5 1c 	MOV        R4,R5          | SW         R4,$28(SP)
+ 260:	cd 18 cd 14 	SW         R9,$24(SP)     | SW         R9,$20(SP)
+ 264:	9d 10 8d 0c 	SW         R3,$16(SP)     | SW         R1,$12(SP)
+ 268:	85 08 b5 04 	SW         R0,$8(SP)      | SW         R6,$4(SP)
+ 26c:	02 00 00 00 	LDI        0x00000078,R0  // 78 <dwt_process+0x64>
+ 270:	02 40 00 78 
+ 274:	04 c7 40 00 	SW         R0,(SP)
+ 278:	87 fa fc f8 	JSR        0x00000000
+ 27c:	00 00 00 00 
+ 280:	4c 00 01 01 	CMP        $257,R9
+ 284:	78 90 00 04 	BLT        @0x0000028c    // 28c <dwt_process+0x278>
+ 288:	48 83 fe 00 	ADD        $-512,R9
+ 28c:	cd 08 cd 04 	SW         R9,$8(SP)      | SW         R9,$4(SP)
+ 290:	0a 00 00 00 	LDI        0x00000070,R1  // 70 <dwt_process+0x5c>
+ 294:	0a 40 00 70 
+ 298:	0c c7 40 00 	SW         R1,(SP)
+ 29c:	87 fa fc f8 	JSR        0x00000000
+ 2a0:	00 00 00 00 
+ 2a4:	04 87 00 00 	LW         (R12),R0
+ 2a8:	00 40 01 ff 	AND        $511,R0
+ 2ac:	0c 85 c0 00 	LW         (R7),R1
+ 2b0:	08 40 01 ff 	AND        $511,R1
+ 2b4:	1c 86 00 00 	LW         (R8),R3
+ 2b8:	18 40 01 ff 	AND        $511,R3
+ 2bc:	04 00 01 01 	CMP        $257,R0
+ 2c0:	78 90 00 04 	BLT        @0x000002c8    // 2c8 <dwt_process+0x2b4>
+ 2c4:	00 83 fe 00 	ADD        $-512,R0
+ 2c8:	0c 00 01 01 	CMP        $257,R1
+ 2cc:	78 90 00 04 	BLT        @0x000002d4    // 2d4 <dwt_process+0x2c0>
+ 2d0:	08 83 fe 00 	ADD        $-512,R1
+ 2d4:	1c 00 01 01 	CMP        $257,R3
+ 2d8:	78 90 00 04 	BLT        @0x000002e0    // 2e0 <dwt_process+0x2cc>
+ 2dc:	18 83 fe 00 	ADD        $-512,R3
+ 2e0:	97 80 92 98 	MOV        R0,R2          | ADD        R3,R2
+ 2e4:	11 c0 00 01 	ASR        $1,R2
+ 2e8:	23 40 40 00 	MOV        R1,R4
+ 2ec:	a0 90 cf a0 	SUB        R2,R4          | MOV        R4,R9
+ 2f0:	48 40 01 ff 	AND        $511,R9
+ 2f4:	28 c6 40 00 	OR         R9,R5
+ 2f8:	ad 1c cd 18 	SW         R5,$28(SP)     | SW         R9,$24(SP)
+ 2fc:	cd 14 9d 10 	SW         R9,$20(SP)     | SW         R3,$16(SP)
+ 300:	8d 0c 85 08 	SW         R1,$12(SP)     | SW         R0,$8(SP)
+ 304:	34 c7 40 04 	SW         R6,$4(SP)
+ 308:	02 00 00 00 	LDI        0x00000078,R0  // 78 <dwt_process+0x64>
+ 30c:	02 40 00 78 
+ 310:	04 c7 40 00 	SW         R0,(SP)
+ 314:	87 fa fc f8 	JSR        0x00000000
+ 318:	00 00 00 00 
+ 31c:	4c 00 01 01 	CMP        $257,R9
+ 320:	78 90 00 04 	BLT        @0x00000328    // 328 <dwt_process+0x314>
+ 324:	48 83 fe 00 	ADD        $-512,R9
+ 328:	cd 08 cd 04 	SW         R9,$8(SP)      | SW         R9,$4(SP)
+ 32c:	0a 00 00 00 	LDI        0x00000070,R1  // 70 <dwt_process+0x5c>
+ 330:	0a 40 00 70 
+ 334:	0c c7 40 00 	SW         R1,(SP)
+ 338:	87 fa fc f8 	JSR        0x00000000
+ 33c:	00 00 00 00 
+ 340:	ad b8 ad 1c 	SW         R5,(R7)        | SW         R5,$28(SP)
+ 344:	03 41 40 00 	MOV        R5,R0
+ 348:	00 40 01 ff 	AND        $511,R0
+ 34c:	04 c7 40 18 	SW         R0,$24(SP)
+ 350:	03 41 40 00 	MOV        R5,R0
+ 354:	16 07 fc 00 	LDI        $523264,R2
+ 358:	81 90 85 14 	AND        R2,R0          | SW         R0,$20(SP)
+ 35c:	03 41 40 00 	MOV        R5,R0
+ 360:	22 00 0f f8 	BREV       $4088,R4
+ 364:	81 a0 85 10 	AND        R4,R0          | SW         R0,$16(SP)
+ 368:	ad 0c bd 08 	SW         R5,$12(SP)     | SW         R7,$8(SP)
+ 36c:	34 c7 40 04 	SW         R6,$4(SP)
+ 370:	02 00 00 00 	LDI        0x00000098,R0  // 98 <dwt_process+0x84>
+ 374:	02 40 00 98 
+ 378:	04 c7 40 00 	SW         R0,(SP)
+ 37c:	87 fa fc f8 	JSR        0x00000000
+ 380:	00 00 00 00 
+ 384:	0e 00 00 0a 	LDI        $10,R1
+ 388:	87 fa fc f8 	JSR        0x00000000
+ 38c:	00 00 00 00 
+ 390:	ba 08 c2 08 	ADD        $8,R7          | ADD        $8,R8
+ 394:	30 80 00 02 	ADD        $2,R6
+ 398:	34 01 00 00 	CMP        $65536,R6
+ 39c:	78 88 00 0c 	BZ         @0x000003ac    // 3ac <dwt_process+0x398>
+ 3a0:	87 e0 82 10 	MOV        R12,R0         | ADD        $16,R0
+ 3a4:	e7 d0 d7 80 	MOV        R10,R12        | MOV        R0,R10
+ 3a8:	78 83 fc ec 	BRA        @0x00000098    // 98 <dwt_process+0x84>
+ 3ac:	d4 28 cc 30 	LW         40(SP),R10     | LW         48(SP),R9
+ 3b0:	54 c7 40 04 	SW         R10,$4(SP)
+ 3b4:	0a 00 00 00 	LDI        0x00000000,R1
+ 3b8:	0a 40 00 00 
+ 3bc:	0c c7 40 00 	SW         R1,(SP)
+ 3c0:	87 fa fc f8 	JSR        0x00000000
+ 3c4:	00 00 00 00 
+ 3c8:	4c c7 40 04 	SW         R9,$4(SP)
+ 3cc:	12 00 00 00 	LDI        0x000000b4,R2  // b4 <dwt_process+0xa0>
+ 3d0:	12 40 00 b4 
+ 3d4:	14 c7 40 00 	SW         R2,(SP)
+ 3d8:	87 fa fc f8 	JSR        0x00000000
+ 3dc:	00 00 00 00 
+ 3e0:	d5 30 a6 00 	SW         R10,$48(SP)    | CLR        R4
+ 3e4:	a5 28 c6 01 	SW         R4,$40(SP)     | LDI        $1,R8
+ 3e8:	66 07 fc 00 	LDI        $523264,R12
+ 3ec:	84 d8 8f 80 	LW         (R11),R0       | MOV        R0,R1
+ 3f0:	08 40 01 ff 	AND        $511,R1
+ 3f4:	8d 18 8f 80 	SW         R1,$24(SP)     | MOV        R0,R1
+ 3f8:	89 e0 8d 14 	AND        R12,R1         | SW         R1,$20(SP)
+ 3fc:	0b 40 00 00 	MOV        R0,R1
+ 400:	12 00 0f f8 	BREV       $4088,R2
+ 404:	89 90 8d 10 	AND        R2,R1          | SW         R1,$16(SP)
+ 408:	85 0c dd 08 	SW         R0,$12(SP)     | SW         R11,$8(SP)
+ 40c:	87 c0 82 7f 	MOV        R8,R0          | ADD        $-1,R0
+ 410:	04 c7 40 04 	SW         R0,$4(SP)
+ 414:	22 00 00 00 	LDI        0x00000034,R4  // 34 <dwt_process+0x20>
+ 418:	22 40 00 34 
+ 41c:	24 c7 40 00 	SW         R4,(SP)
+ 420:	87 fa fc f8 	JSR        0x00000000
+ 424:	00 00 00 00 
+ 428:	84 c8 8f 80 	LW         (R9),R0        | MOV        R0,R1
+ 42c:	08 40 01 ff 	AND        $511,R1
+ 430:	8d 18 8f 80 	SW         R1,$24(SP)     | MOV        R0,R1
+ 434:	89 e0 8d 14 	AND        R12,R1         | SW         R1,$20(SP)
+ 438:	0b 40 00 00 	MOV        R0,R1
+ 43c:	12 00 0f f8 	BREV       $4088,R2
+ 440:	89 90 8d 10 	AND        R2,R1          | SW         R1,$16(SP)
+ 444:	85 0c cd 08 	SW         R0,$12(SP)     | SW         R9,$8(SP)
+ 448:	44 c7 40 04 	SW         R8,$4(SP)
+ 44c:	22 00 00 00 	LDI        0x00000034,R4  // 34 <dwt_process+0x20>
+ 450:	22 40 00 34 
+ 454:	24 c7 40 00 	SW         R4,(SP)
+ 458:	87 fa fc f8 	JSR        0x00000000
+ 45c:	00 00 00 00 
+ 460:	84 d0 8f 80 	LW         (R10),R0       | MOV        R0,R1
+ 464:	08 40 01 ff 	AND        $511,R1
+ 468:	8d 18 8f 80 	SW         R1,$24(SP)     | MOV        R0,R1
+ 46c:	89 e0 8d 14 	AND        R12,R1         | SW         R1,$20(SP)
+ 470:	0b 40 00 00 	MOV        R0,R1
+ 474:	12 00 0f f8 	BREV       $4088,R2
+ 478:	89 90 8d 10 	AND        R2,R1          | SW         R1,$16(SP)
+ 47c:	85 0c d5 08 	SW         R0,$12(SP)     | SW         R10,$8(SP)
+ 480:	87 c0 82 01 	MOV        R8,R0          | ADD        $1,R0
+ 484:	04 c7 40 04 	SW         R0,$4(SP)
+ 488:	22 00 00 00 	LDI        0x00000034,R4  // 34 <dwt_process+0x20>
+ 48c:	22 40 00 34 
+ 490:	24 c7 40 00 	SW         R4,(SP)
+ 494:	87 fa fc f8 	JSR        0x00000000
+ 498:	00 00 00 00 
+ 49c:	3c 86 c0 00 	LW         (R11),R7
+ 4a0:	39 c0 00 14 	ASR        $20,R7
+ 4a4:	14 86 40 00 	LW         (R9),R2
+ 4a8:	11 c0 00 14 	ASR        $20,R2
+ 4ac:	1c 86 80 00 	LW         (R10),R3
+ 4b0:	19 c0 00 14 	ASR        $20,R3
+ 4b4:	3c 00 01 01 	CMP        $257,R7
+ 4b8:	78 90 00 04 	BLT        @0x000004c0    // 4c0 <dwt_process+0x4ac>
+ 4bc:	38 83 fe 00 	ADD        $-512,R7
+ 4c0:	14 00 01 01 	CMP        $257,R2
+ 4c4:	78 90 00 04 	BLT        @0x000004cc    // 4cc <dwt_process+0x4b8>
+ 4c8:	10 83 fe 00 	ADD        $-512,R2
+ 4cc:	1c 00 01 01 	CMP        $257,R3
+ 4d0:	78 90 00 04 	BLT        @0x000004d8    // 4d8 <dwt_process+0x4c4>
+ 4d4:	18 83 fe 00 	ADD        $-512,R3
+ 4d8:	2b 40 c0 00 	MOV        R3,R5
+ 4dc:	aa b8 aa 02 	ADD        R7,R5          | ADD        $2,R5
+ 4e0:	29 c0 00 02 	ASR        $2,R5
+ 4e4:	28 84 80 00 	ADD        R2,R5
+ 4e8:	2c 00 01 00 	CMP        $256,R5
+ 4ec:	78 90 00 5c 	BLT        @0x0000054c    // 54c <dwt_process+0x538>
+ 4f0:	a4 28 a2 01 	LW         40(SP),R4      | ADD        $1,R4
+ 4f4:	a5 28 a5 04 	SW         R4,$40(SP)     | SW         R4,$4(SP)
+ 4f8:	02 00 00 00 	LDI        0x000000d4,R0  // d4 <dwt_process+0xc0>
+ 4fc:	02 40 00 d4 
+ 500:	85 00 95 24 	SW         R0,(SP)        | SW         R2,$36(SP)
+ 504:	1c c7 40 20 	SW         R3,$32(SP)
+ 508:	87 fa fc f8 	JSR        0x00000000
+ 50c:	00 00 00 00 
+ 510:	0a 00 0f f0 	BREV       $4080,R1
+ 514:	0c c7 40 1c 	SW         R1,$28(SP)
+ 518:	26 00 00 ff 	LDI        $255,R4
+ 51c:	a5 18 a5 14 	SW         R4,$24(SP)     | SW         R4,$20(SP)
+ 520:	9c 20 9d 10 	LW         32(SP),R3      | SW         R3,$16(SP)
+ 524:	94 24 95 0c 	LW         36(SP),R2      | SW         R2,$12(SP)
+ 528:	bd 08 c5 04 	SW         R7,$8(SP)      | SW         R8,$4(SP)
+ 52c:	02 00 00 00 	LDI        0x00000078,R0  // 78 <dwt_process+0x64>
+ 530:	02 40 00 78 
+ 534:	04 c7 40 00 	SW         R0,(SP)
+ 538:	87 fa fc f8 	JSR        0x00000000
+ 53c:	00 00 00 00 
+ 540:	32 00 0f f0 	BREV       $4080,R6
+ 544:	2e 00 00 ff 	LDI        $255,R5
+ 548:	78 80 00 3c 	BRA        @0x00000588    // 588 <dwt_process+0x574>
+ 54c:	28 40 01 ff 	AND        $511,R5
+ 550:	33 41 40 00 	MOV        R5,R6
+ 554:	31 80 00 14 	LSL        $20,R6
+ 558:	b5 1c ad 18 	SW         R6,$28(SP)     | SW         R5,$24(SP)
+ 55c:	ad 14 9d 10 	SW         R5,$20(SP)     | SW         R3,$16(SP)
+ 560:	95 0c bd 08 	SW         R2,$12(SP)     | SW         R7,$8(SP)
+ 564:	44 c7 40 04 	SW         R8,$4(SP)
+ 568:	0a 00 00 00 	LDI        0x00000078,R1  // 78 <dwt_process+0x64>
+ 56c:	0a 40 00 78 
+ 570:	0c c7 40 00 	SW         R1,(SP)
+ 574:	87 fa fc f8 	JSR        0x00000000
+ 578:	00 00 00 00 
+ 57c:	2c 00 01 01 	CMP        $257,R5
+ 580:	78 90 00 04 	BLT        @0x00000588    // 588 <dwt_process+0x574>
+ 584:	28 83 fe 00 	ADD        $-512,R5
+ 588:	ad 08 ad 04 	SW         R5,$8(SP)      | SW         R5,$4(SP)
+ 58c:	12 00 00 00 	LDI        0x00000070,R2  // 70 <dwt_process+0x5c>
+ 590:	12 40 00 70 
+ 594:	14 c7 40 00 	SW         R2,(SP)
+ 598:	87 fa fc f8 	JSR        0x00000000
+ 59c:	00 00 00 00 
+ 5a0:	3c 86 c0 00 	LW         (R11),R7
+ 5a4:	39 c0 00 0a 	ASR        $10,R7
+ 5a8:	38 40 01 ff 	AND        $511,R7
+ 5ac:	14 86 40 00 	LW         (R9),R2
+ 5b0:	11 c0 00 0a 	ASR        $10,R2
+ 5b4:	10 40 01 ff 	AND        $511,R2
+ 5b8:	1c 86 80 00 	LW         (R10),R3
+ 5bc:	19 c0 00 0a 	ASR        $10,R3
+ 5c0:	18 40 01 ff 	AND        $511,R3
+ 5c4:	3c 00 01 01 	CMP        $257,R7
+ 5c8:	78 90 00 04 	BLT        @0x000005d0    // 5d0 <dwt_process+0x5bc>
+ 5cc:	38 83 fe 00 	ADD        $-512,R7
+ 5d0:	14 00 01 01 	CMP        $257,R2
+ 5d4:	78 90 00 04 	BLT        @0x000005dc    // 5dc <dwt_process+0x5c8>
+ 5d8:	10 83 fe 00 	ADD        $-512,R2
+ 5dc:	1c 00 01 01 	CMP        $257,R3
+ 5e0:	78 90 00 04 	BLT        @0x000005e8    // 5e8 <dwt_process+0x5d4>
+ 5e4:	18 83 fe 00 	ADD        $-512,R3
+ 5e8:	2b 40 c0 00 	MOV        R3,R5
+ 5ec:	aa b8 aa 02 	ADD        R7,R5          | ADD        $2,R5
+ 5f0:	29 c0 00 02 	ASR        $2,R5
+ 5f4:	28 84 80 00 	ADD        R2,R5
+ 5f8:	2c 00 01 00 	CMP        $256,R5
+ 5fc:	78 90 00 5c 	BLT        @0x0000065c    // 65c <dwt_process+0x648>
+ 600:	a4 28 a2 01 	LW         40(SP),R4      | ADD        $1,R4
+ 604:	a5 28 a5 04 	SW         R4,$40(SP)     | SW         R4,$4(SP)
+ 608:	02 00 00 00 	LDI        0x000000d4,R0  // d4 <dwt_process+0xc0>
+ 60c:	02 40 00 d4 
+ 610:	85 00 95 24 	SW         R0,(SP)        | SW         R2,$36(SP)
+ 614:	1c c7 40 20 	SW         R3,$32(SP)
+ 618:	87 fa fc f8 	JSR        0x00000000
+ 61c:	00 00 00 00 
+ 620:	06 03 fc 00 	LDI        $261120,R0
+ 624:	30 c4 00 00 	OR         R0,R6
+ 628:	34 c7 40 1c 	SW         R6,$28(SP)
+ 62c:	0e 00 00 ff 	LDI        $255,R1
+ 630:	8d 18 8d 14 	SW         R1,$24(SP)     | SW         R1,$20(SP)
+ 634:	9c 20 9d 10 	LW         32(SP),R3      | SW         R3,$16(SP)
+ 638:	94 24 95 0c 	LW         36(SP),R2      | SW         R2,$12(SP)
+ 63c:	bd 08 c5 04 	SW         R7,$8(SP)      | SW         R8,$4(SP)
+ 640:	12 00 00 00 	LDI        0x00000078,R2  // 78 <dwt_process+0x64>
+ 644:	12 40 00 78 
+ 648:	14 c7 40 00 	SW         R2,(SP)
+ 64c:	87 fa fc f8 	JSR        0x00000000
+ 650:	00 00 00 00 
+ 654:	2e 00 00 ff 	LDI        $255,R5
+ 658:	78 80 00 40 	BRA        @0x0000069c    // 69c <dwt_process+0x688>
+ 65c:	28 40 01 ff 	AND        $511,R5
+ 660:	03 41 40 00 	MOV        R5,R0
+ 664:	01 80 00 0a 	LSL        $10,R0
+ 668:	00 c5 80 00 	OR         R6,R0
+ 66c:	b7 80 85 1c 	MOV        R0,R6          | SW         R0,$28(SP)
+ 670:	ad 18 ad 14 	SW         R5,$24(SP)     | SW         R5,$20(SP)
+ 674:	9d 10 95 0c 	SW         R3,$16(SP)     | SW         R2,$12(SP)
+ 678:	bd 08 c5 04 	SW         R7,$8(SP)      | SW         R8,$4(SP)
+ 67c:	22 00 00 00 	LDI        0x00000078,R4  // 78 <dwt_process+0x64>
+ 680:	22 40 00 78 
+ 684:	24 c7 40 00 	SW         R4,(SP)
+ 688:	87 fa fc f8 	JSR        0x00000000
+ 68c:	00 00 00 00 
+ 690:	2c 00 01 01 	CMP        $257,R5
+ 694:	78 90 00 04 	BLT        @0x0000069c    // 69c <dwt_process+0x688>
+ 698:	28 83 fe 00 	ADD        $-512,R5
+ 69c:	ad 08 ad 04 	SW         R5,$8(SP)      | SW         R5,$4(SP)
+ 6a0:	02 00 00 00 	LDI        0x00000070,R0  // 70 <dwt_process+0x5c>
+ 6a4:	02 40 00 70 
+ 6a8:	04 c7 40 00 	SW         R0,(SP)
+ 6ac:	87 fa fc f8 	JSR        0x00000000
+ 6b0:	00 00 00 00 
+ 6b4:	3c 86 c0 00 	LW         (R11),R7
+ 6b8:	38 40 01 ff 	AND        $511,R7
+ 6bc:	14 86 40 00 	LW         (R9),R2
+ 6c0:	10 40 01 ff 	AND        $511,R2
+ 6c4:	1c 86 80 00 	LW         (R10),R3
+ 6c8:	18 40 01 ff 	AND        $511,R3
+ 6cc:	3c 00 01 01 	CMP        $257,R7
+ 6d0:	78 90 00 04 	BLT        @0x000006d8    // 6d8 <dwt_process+0x6c4>
+ 6d4:	38 83 fe 00 	ADD        $-512,R7
+ 6d8:	14 00 01 01 	CMP        $257,R2
+ 6dc:	78 90 00 04 	BLT        @0x000006e4    // 6e4 <dwt_process+0x6d0>
+ 6e0:	10 83 fe 00 	ADD        $-512,R2
+ 6e4:	1c 00 01 01 	CMP        $257,R3
+ 6e8:	78 90 00 04 	BLT        @0x000006f0    // 6f0 <dwt_process+0x6dc>
+ 6ec:	18 83 fe 00 	ADD        $-512,R3
+ 6f0:	2b 40 c0 00 	MOV        R3,R5
+ 6f4:	aa b8 aa 02 	ADD        R7,R5          | ADD        $2,R5
+ 6f8:	29 c0 00 02 	ASR        $2,R5
+ 6fc:	28 84 80 00 	ADD        R2,R5
+ 700:	2c 00 01 00 	CMP        $256,R5
+ 704:	78 90 00 58 	BLT        @0x00000760    // 760 <dwt_process+0x74c>
+ 708:	a4 28 a2 01 	LW         40(SP),R4      | ADD        $1,R4
+ 70c:	a5 28 a5 04 	SW         R4,$40(SP)     | SW         R4,$4(SP)
+ 710:	02 00 00 00 	LDI        0x000000d4,R0  // d4 <dwt_process+0xc0>
+ 714:	02 40 00 d4 
+ 718:	85 00 95 24 	SW         R0,(SP)        | SW         R2,$36(SP)
+ 71c:	1c c7 40 20 	SW         R3,$32(SP)
+ 720:	87 fa fc f8 	JSR        0x00000000
+ 724:	00 00 00 00 
+ 728:	30 c0 00 ff 	OR         $255,R6
+ 72c:	34 c7 40 1c 	SW         R6,$28(SP)
+ 730:	0e 00 00 ff 	LDI        $255,R1
+ 734:	8d 18 8d 14 	SW         R1,$24(SP)     | SW         R1,$20(SP)
+ 738:	9c 20 9d 10 	LW         32(SP),R3      | SW         R3,$16(SP)
+ 73c:	94 24 95 0c 	LW         36(SP),R2      | SW         R2,$12(SP)
+ 740:	bd 08 c5 04 	SW         R7,$8(SP)      | SW         R8,$4(SP)
+ 744:	12 00 00 00 	LDI        0x00000078,R2  // 78 <dwt_process+0x64>
+ 748:	12 40 00 78 
+ 74c:	14 c7 40 00 	SW         R2,(SP)
+ 750:	87 fa fc f8 	JSR        0x00000000
+ 754:	00 00 00 00 
+ 758:	2e 00 00 ff 	LDI        $255,R5
+ 75c:	78 80 00 3c 	BRA        @0x0000079c    // 79c <dwt_process+0x788>
+ 760:	28 40 01 ff 	AND        $511,R5
+ 764:	23 41 40 00 	MOV        R5,R4
+ 768:	20 c5 80 00 	OR         R6,R4
+ 76c:	b7 a0 a5 1c 	MOV        R4,R6          | SW         R4,$28(SP)
+ 770:	ad 18 ad 14 	SW         R5,$24(SP)     | SW         R5,$20(SP)
+ 774:	9d 10 95 0c 	SW         R3,$16(SP)     | SW         R2,$12(SP)
+ 778:	bd 08 c5 04 	SW         R7,$8(SP)      | SW         R8,$4(SP)
+ 77c:	02 00 00 00 	LDI        0x00000078,R0  // 78 <dwt_process+0x64>
+ 780:	02 40 00 78 
+ 784:	04 c7 40 00 	SW         R0,(SP)
+ 788:	87 fa fc f8 	JSR        0x00000000
+ 78c:	00 00 00 00 
+ 790:	2c 00 01 01 	CMP        $257,R5
+ 794:	78 90 00 04 	BLT        @0x0000079c    // 79c <dwt_process+0x788>
+ 798:	28 83 fe 00 	ADD        $-512,R5
+ 79c:	ad 08 ad 04 	SW         R5,$8(SP)      | SW         R5,$4(SP)
+ 7a0:	0a 00 00 00 	LDI        0x00000070,R1  // 70 <dwt_process+0x5c>
+ 7a4:	0a 40 00 70 
+ 7a8:	0c c7 40 00 	SW         R1,(SP)
+ 7ac:	87 fa fc f8 	JSR        0x00000000
+ 7b0:	00 00 00 00 
+ 7b4:	b5 c8 b5 1c 	SW         R6,(R9)        | SW         R6,$28(SP)
+ 7b8:	03 41 80 00 	MOV        R6,R0
+ 7bc:	00 40 01 ff 	AND        $511,R0
+ 7c0:	85 18 87 b0 	SW         R0,$24(SP)     | MOV        R6,R0
+ 7c4:	81 e0 85 14 	AND        R12,R0         | SW         R0,$20(SP)
+ 7c8:	03 41 80 00 	MOV        R6,R0
+ 7cc:	12 00 0f f8 	BREV       $4088,R2
+ 7d0:	81 90 85 10 	AND        R2,R0          | SW         R0,$16(SP)
+ 7d4:	b5 0c cd 08 	SW         R6,$12(SP)     | SW         R9,$8(SP)
+ 7d8:	44 c7 40 04 	SW         R8,$4(SP)
+ 7dc:	22 00 00 00 	LDI        0x00000098,R4  // 98 <dwt_process+0x84>
+ 7e0:	22 40 00 98 
+ 7e4:	24 c7 40 00 	SW         R4,(SP)
+ 7e8:	87 fa fc f8 	JSR        0x00000000
+ 7ec:	00 00 00 00 
+ 7f0:	0e 00 00 0a 	LDI        $10,R1
+ 7f4:	87 fa fc f8 	JSR        0x00000000
+ 7f8:	00 00 00 00 
+ 7fc:	d2 08 c2 02 	ADD        $8,R10         | ADD        $2,R8
+ 800:	44 00 ff ff 	CMP        $65535,R8
+ 804:	78 88 00 1c 	BZ         @0x00000824    // 824 <dwt_process+0x810>
+ 808:	03 42 c0 00 	MOV        R11,R0
+ 80c:	00 80 00 10 	ADD        $16,R0
+ 810:	0b 42 40 00 	MOV        R9,R1
+ 814:	8a 10 dc 30 	ADD        $16,R1         | LW         48(SP),R11
+ 818:	cc 2c 8d 2c 	LW         44(SP),R9      | SW         R1,$44(SP)
+ 81c:	04 c7 40 30 	SW         R0,$48(SP)
+ 820:	78 83 fb c8 	BRA        @0x000003ec    // 3ec <dwt_process+0x3d8>
+ 824:	84 34 ac 38 	LW         52(SP),R0      | LW         56(SP),R5
+ 828:	34 87 40 3c 	LW         60(SP),R6
+ 82c:	3c 87 40 40 	LW         64(SP),R7
+ 830:	44 87 40 44 	LW         68(SP),R8
+ 834:	4c 87 40 48 	LW         72(SP),R9
+ 838:	54 87 40 4c 	LW         76(SP),R10
+ 83c:	5c 87 40 50 	LW         80(SP),R11
+ 840:	64 87 40 54 	LW         84(SP),R12
+ 844:	68 80 00 58 	ADD        $88,SP
+ 848:	7b 40 00 00 	RTN
+
+Disassembly of section .text.startup:
+
+00000000 <main>:
+   0:	e8 20 85 00 	SUB        $32,SP         | SW         R0,(SP)
+   4:	ad 04 b5 08 	SW         R5,$4(SP)      | SW         R6,$8(SP)
+   8:	bd 0c c5 10 	SW         R7,$12(SP)     | SW         R8,$16(SP)
+   c:	cd 14 d5 18 	SW         R9,$20(SP)     | SW         R10,$24(SP)
+  10:	64 c7 40 1c 	SW         R12,$28(SP)
+  14:	66 04 00 24 	LDI        $262180,R12
+  18:	e8 e0 e2 e8 	SUB        R12,SP         | ADD        SP,R12
+  1c:	06 7c 00 00 	LDI        $-262144,R0
+  20:	b7 e0 b2 80 	MOV        R12,R6         | ADD        R0,R6
+  24:	34 c7 40 04 	SW         R6,$4(SP)
+  28:	02 00 00 00 	LDI        0x000000e0,R0  // e0 <main+0xe0>
+  2c:	02 40 00 e0 
+  30:	04 c7 40 00 	SW         R0,(SP)
+  34:	87 fa fc f8 	JSR        0x00000000
+  38:	00 00 00 00 
+  3c:	12 00 00 00 	LDI        0x000000f4,R2  // f4 <main+0xf4>
+  40:	12 40 00 f4 
+  44:	0a 00 00 00 	LDI        0x000000f8,R1  // f8 <main+0xf8>
+  48:	0a 40 00 f8 
+  4c:	87 fa fc f8 	JSR        0x00000000
+  50:	00 00 00 00 
+  54:	0c 00 00 00 	CMP        $0,R1
+  58:	78 a8 00 1c 	BNZ        @0x00000078    // 78 <main+0x78>
+  5c:	02 00 00 00 	LDI        0x00000100,R0  // 100 <main+0x100>
+  60:	02 40 01 00 
+  64:	04 c7 40 00 	SW         R0,(SP)
+  68:	87 fa fc f8 	JSR        0x00000000
+  6c:	00 00 00 00 
+  70:	0e 00 00 01 	LDI        $1,R1
+  74:	78 80 02 0c 	BRA        @0x00000284    // 284 <main+0x284>
+  78:	3b 40 40 00 	MOV        R1,R7
+  7c:	06 01 00 00 	LDI        $65536,R0
+  80:	04 c7 40 08 	SW         R0,$8(SP)
+  84:	06 04 00 00 	LDI        $262144,R0
+  88:	04 c7 40 04 	SW         R0,$4(SP)
+  8c:	02 00 00 00 	LDI        0x00000114,R0  // 114 <main+0x114>
+  90:	02 40 01 14 
+  94:	04 c7 40 00 	SW         R0,(SP)
+  98:	87 fa fc f8 	JSR        0x00000000
+  9c:	00 00 00 00 
+  a0:	b5 08 b5 04 	SW         R6,$8(SP)      | SW         R6,$4(SP)
+  a4:	02 00 00 00 	LDI        0x00000124,R0  // 124 <main+0x124>
+  a8:	02 40 01 24 
+  ac:	04 c7 40 00 	SW         R0,(SP)
+  b0:	87 fa fc f8 	JSR        0x00000000
+  b4:	00 00 00 00 
+  b8:	ae 00 d6 01 	CLR        R5             | LDI        $1,R10
+  bc:	4e 00 00 04 	LDI        $4,R9
+  c0:	42 00 00 00 	LDI        0x00000134,R8  // 134 <main+0x134>
+  c4:	42 40 01 34 
+  c8:	23 41 c0 00 	MOV        R7,R4
+  cc:	1b 42 80 00 	MOV        R10,R3
+  d0:	13 42 40 00 	MOV        R9,R2
+  d4:	0e 7b ff fc 	LDI        $-262148,R1
+  d8:	08 87 00 00 	ADD        R12,R1
+  dc:	87 fa fc f8 	JSR        0x00000000
+  e0:	00 00 00 00 
+  e4:	06 7b ff fc 	LDI        $-262148,R0
+  e8:	00 87 00 00 	ADD        R12,R0
+  ec:	15 84 00 00 	LB         (R0),R2
+  f0:	06 7b ff fd 	LDI        $-262147,R0
+  f4:	00 87 00 00 	ADD        R12,R0
+  f8:	1d 84 00 00 	LB         (R0),R3
+  fc:	06 7b ff fe 	LDI        $-262146,R0
+ 100:	00 87 00 00 	ADD        R12,R0
+ 104:	25 84 00 00 	LB         (R0),R4
+ 108:	0b 40 80 00 	MOV        R2,R1
+ 10c:	09 80 00 14 	LSL        $20,R1
+ 110:	03 40 c0 00 	MOV        R3,R0
+ 114:	01 80 00 0a 	LSL        $10,R0
+ 118:	08 c4 00 00 	OR         R0,R1
+ 11c:	08 c5 00 00 	OR         R4,R1
+ 120:	8d b0 b2 04 	SW         R1,(R6)        | ADD        $4,R6
+ 124:	8d 14 a5 10 	SW         R1,$20(SP)     | SW         R4,$16(SP)
+ 128:	9d 0c 95 08 	SW         R3,$12(SP)     | SW         R2,$8(SP)
+ 12c:	ad 04 c5 00 	SW         R5,$4(SP)      | SW         R8,(SP)
+ 130:	87 fa fc f8 	JSR        0x00000000
+ 134:	00 00 00 00 
+ 138:	28 80 00 01 	ADD        $1,R5
+ 13c:	2c 01 00 00 	CMP        $65536,R5
+ 140:	78 ab ff 84 	BNZ        @0x000000c8    // c8 <main+0xc8>
+ 144:	0b 41 c0 00 	MOV        R7,R1
+ 148:	87 fa fc f8 	JSR        0x00000000
+ 14c:	00 00 00 00 
+ 150:	06 7c 00 00 	LDI        $-262144,R0
+ 154:	b7 e0 b2 80 	MOV        R12,R6         | ADD        R0,R6
+ 158:	bf b0 ae 00 	MOV        R6,R7          | CLR        R5
+ 15c:	4a 00 01 00 	BREV       $256,R9
+ 160:	42 00 00 00 	LDI        0x00000148,R8  // 148 <main+0x148>
+ 164:	42 40 01 48 
+ 168:	0c 85 c0 00 	LW         (R7),R1
+ 16c:	13 40 40 00 	MOV        R1,R2
+ 170:	11 c0 00 09 	ASR        $9,R2
+ 174:	10 40 02 ff 	AND        $767,R2
+ 178:	1b 40 80 00 	MOV        R2,R3
+ 17c:	19 80 00 09 	LSL        $9,R3
+ 180:	1c c7 40 1c 	SW         R3,$28(SP)
+ 184:	1b 40 40 00 	MOV        R1,R3
+ 188:	18 40 02 ff 	AND        $767,R3
+ 18c:	9d 18 95 14 	SW         R3,$24(SP)     | SW         R2,$20(SP)
+ 190:	13 40 40 00 	MOV        R1,R2
+ 194:	11 c0 00 14 	ASR        $20,R2
+ 198:	95 10 8d 0c 	SW         R2,$16(SP)     | SW         R1,$12(SP)
+ 19c:	0b 41 40 00 	MOV        R5,R1
+ 1a0:	8a c8 8d 08 	ADD        R9,R1          | SW         R1,$8(SP)
+ 1a4:	ad 04 c5 00 	SW         R5,$4(SP)      | SW         R8,(SP)
+ 1a8:	87 fa fc f8 	JSR        0x00000000
+ 1ac:	00 00 00 00 
+ 1b0:	aa 01 ba 04 	ADD        $1,R5          | ADD        $4,R7
+ 1b4:	2c 01 00 00 	CMP        $65536,R5
+ 1b8:	78 ab ff ac 	BNZ        @0x00000168    // 168 <main+0x168>
+ 1bc:	06 7c 00 00 	LDI        $-262144,R0
+ 1c0:	8f e0 8a 80 	MOV        R12,R1         | ADD        R0,R1
+ 1c4:	87 fa fc f8 	JSR        0x00000014     // 14 <main+0x14>
+ 1c8:	00 00 00 14 
+ 1cc:	12 00 00 00 	LDI        0x0000016c,R2  // 16c <main+0x16c>
+ 1d0:	12 40 01 6c 
+ 1d4:	0a 00 00 00 	LDI        0x00000170,R1  // 170 <main+0x170>
+ 1d8:	0a 40 01 70 
+ 1dc:	87 fa fc f8 	JSR        0x00000000
+ 1e0:	00 00 00 00 
+ 1e4:	3b 40 40 00 	MOV        R1,R7
+ 1e8:	2e 00 00 00 	CLR        R5
+ 1ec:	52 00 00 00 	LDI        0x0000017c,R10 // 17c <main+0x17c>
+ 1f0:	52 40 01 7c 
+ 1f4:	ce 01 c6 04 	LDI        $1,R9          | LDI        $4,R8
+ 1f8:	0c 85 80 00 	LW         (R6),R1
+ 1fc:	13 40 40 00 	MOV        R1,R2
+ 200:	11 c0 00 14 	ASR        $20,R2
+ 204:	06 7b ff fc 	LDI        $-262148,R0
+ 208:	00 87 00 00 	ADD        R12,R0
+ 20c:	15 c4 00 00 	SB         R2,(R0)
+ 210:	06 7b ff fd 	LDI        $-262147,R0
+ 214:	00 87 00 00 	ADD        R12,R0
+ 218:	0d c4 00 00 	SB         R1,(R0)
+ 21c:	0c c7 40 14 	SW         R1,$20(SP)
+ 220:	06 7b ff fe 	LDI        $-262146,R0
+ 224:	00 87 00 00 	ADD        R12,R0
+ 228:	1d 84 00 00 	LB         (R0),R3
+ 22c:	1c c7 40 10 	SW         R3,$16(SP)
+ 230:	08 40 00 ff 	AND        $255,R1
+ 234:	0c c7 40 0c 	SW         R1,$12(SP)
+ 238:	10 40 00 ff 	AND        $255,R2
+ 23c:	95 08 ad 04 	SW         R2,$8(SP)      | SW         R5,$4(SP)
+ 240:	54 c7 40 00 	SW         R10,(SP)
+ 244:	87 fa fc f8 	JSR        0x00000000
+ 248:	00 00 00 00 
+ 24c:	23 41 c0 00 	MOV        R7,R4
+ 250:	1b 42 40 00 	MOV        R9,R3
+ 254:	13 42 00 00 	MOV        R8,R2
+ 258:	0e 7b ff fc 	LDI        $-262148,R1
+ 25c:	08 87 00 00 	ADD        R12,R1
+ 260:	87 fa fc f8 	JSR        0x00000000
+ 264:	00 00 00 00 
+ 268:	aa 01 b2 04 	ADD        $1,R5          | ADD        $4,R6
+ 26c:	2c 01 00 00 	CMP        $65536,R5
+ 270:	78 ab ff 84 	BNZ        @0x000001f8    // 1f8 <main+0x1f8>
+ 274:	0b 41 c0 00 	MOV        R7,R1
+ 278:	87 fa fc f8 	JSR        0x00000000
+ 27c:	00 00 00 00 
+ 280:	0e 00 00 00 	CLR        R1
+ 284:	ef e0 84 00 	MOV        R12,SP         | LW         (SP),R0
+ 288:	ac 04 b4 08 	LW         4(SP),R5       | LW         8(SP),R6
+ 28c:	bc 0c c4 10 	LW         12(SP),R7      | LW         16(SP),R8
+ 290:	cc 14 d4 18 	LW         20(SP),R9      | LW         24(SP),R10
+ 294:	e4 1c ea 20 	LW         28(SP),R12     | ADD        $32,SP
+ 298:	7b 40 00 00 	RTN

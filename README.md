@@ -36,7 +36,13 @@
 # -#define        FPGAHOST        "rpi"
 # +#define        FPGAHOST        "localhost"
 # +//#define      FPGAHOST        "rpi"
-
+# The Goal currently is to get jpeg.c C program running on the CatBoard running with the ZipCPU.
+# This program was running on xulalx25soc 
+# [main program jpeg.c]()
+# [lifting step lifting.c]()
+# [disassmble of lifting.txt]()
+# [rd_bytes.c]()
+# [disassmble of rd_bytes.txt]()
 # pi@mypi3-1:~/testbuilds/icozip/sim/verilated $ ./arm-main_tb start the simulator 
 # Only if running on icoboard pi@mypi3-1:~/testbuilds/icozip/sw/host $ ./arm-netpport listen for C commands
 # pi@mypi3-1:~/testbuilds/icozip/sw/host $ ./arm-zipload ../board/hello

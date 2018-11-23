@@ -36,7 +36,7 @@
 ##
 ##
 .PHONY: all
-PROGRAMS := cputest hello jpeg
+PROGRAMS := cputest hello jpeg 
 all:	$(PROGRAMS)
 #
 #
@@ -47,7 +47,7 @@ NM	:=zip-nm
 OBJDIR	:= obj-zip
 RDELF	:= zip-readelf
 OBJDUMP := zip-objdump
-SOURCES := cputest.c hello.c jpeg.c
+SOURCES := cputest.c hello.c jpeg.c lifting.c rd_bytes.c
 HEADERS := $(foreach hdr,$(subst .c,.o,$(SOURCES)),$(wildcard $(hdr))) board.h
 LDSCRIPT:= -Tboardram.ld
 LFLAGS  := $(LDSCRIPT) -L../zlib
@@ -92,7 +92,10 @@ cputest: $(OBJDIR)/cputest.o boardram.ld
 	$(CC) $(CFLAGS) -T boardram.ld -fno-builtin -Wl,-Map=$(OBJDIR)/cputest.map $(OBJDIR)/cputest.o -o $@
 cputestcis: $(OBJDIR)/cputestcis.o boardram.ld
 	$(CC) $(CFLAGS) -T boardram.ld -fno-builtin -Wl,-Map=$(OBJDIR)/cputestcis.map $(OBJDIR)/cputestcis.o -o $@
-
+$(OBJDIR)/lifting.o: lifting.c
+	$(CC) -O3 -c  $< -o $@
+$(OBJDIR)/rd_bytes.o: rd_bytes.c
+	$(CC) -O3 -c  $< -o $@
 $(OBJDIR)/hello.o: hello.c
 	$(CC) -O3 -c  $< -o $@
 $(OBJDIR)/jpeg.o: jpeg.c
@@ -103,7 +106,8 @@ $(OBJDIR)/gettysburg.o: gettysburg.c
 
 hello: $(OBJDIR)/hello.o boardram.ld
 	$(CC) $(CFLAGS) $(LFLAGS) -Wl,-Map=$(OBJDIR)/hello.map $< $(LIBS) -o $@
-jpeg: $(OBJDIR)/jpeg.o boardram.ld
+
+jpeg: $(OBJDIR)/jpeg.o $(OBJDIR)/lifting.o $(OBJDIR)/rd_bytes.o boardram.ld
 	$(CC) $(CFLAGS) $(LFLAGS) -Wl,-Map=$(OBJDIR)/jpeg.map $< $(LIBS) -o $@
 
 

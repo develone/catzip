@@ -41,8 +41,8 @@
 # [main program jpeg.c]()
 # [lifting.c](https://github.com/develone/catzip/blob/master/sw/board/lifting.c)
 # Disassemble of [lifting.txt](https://github.com/develone/catzip/blob/master/sw/board/lifting.txt)
-# [rd_bytes.c](https://github.com/develone/catzip/blob/master/sw/board/rd_bytes.c)
-# [disassmble of rd_bytes.txt](https://github.com/develone/catzip/blob/master/sw/board/rd_bytes.txt)
+# Disassemble of [rd_bytes.c](https://github.com/develone/catzip/blob/master/sw/board/rd_bytes.c)
+# [rd_bytes.txt](https://github.com/develone/catzip/blob/master/sw/board/rd_bytes.txt)
 # pi@mypi3-1:~/testbuilds/icozip/sim/verilated $ ./arm-main_tb start the simulator 
 # Only if running on icoboard pi@mypi3-1:~/testbuilds/icozip/sw/host $ ./arm-netpport listen for C commands
 # pi@mypi3-1:~/testbuilds/icozip/sw/host $ ./arm-zipload ../board/hello

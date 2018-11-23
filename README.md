@@ -39,8 +39,8 @@
 # The Goal currently is to get jpeg.c C program running on the CatBoard running with the ZipCPU.
 # This program was running on xulalx25soc 
 # [main program jpeg.c]()
-# [lifting step lifting.c](https://github.com/develone/catzip/blob/master/sw/board/lifting.c)
-# [disassmble of lifting.txt](https://github.com/develone/catzip/blob/master/sw/board/lifting.txt)
+# [lifting.c](https://github.com/develone/catzip/blob/master/sw/board/lifting.c)
+# Disassemble of [lifting.txt](https://github.com/develone/catzip/blob/master/sw/board/lifting.txt)
 # [rd_bytes.c](https://github.com/develone/catzip/blob/master/sw/board/rd_bytes.c)
 # [disassmble of rd_bytes.txt](https://github.com/develone/catzip/blob/master/sw/board/rd_bytes.txt)
 # pi@mypi3-1:~/testbuilds/icozip/sim/verilated $ ./arm-main_tb start the simulator 

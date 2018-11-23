@@ -5,6 +5,8 @@
 # Dan Gisselquist and his [Blog](https://zipcpu.com/)
 # Clifford Wolfe [YOSYS Tools](https://github.com/cliffordwolf/icestorm)
 # Chris Felton & Many others 
+# [Catled](https://github.com/develone/catzip/blob/master/doc/Catleds.png)
+# [ZipCPU](https://github.com/develone/catzip/blob/master/doc/zipcpu.png)
 # Both the icozip on ICOBoard & catzip on CatBoard based HX8K ice40 FPGA 
 # provide a complete development system on the Raspberry Pi  
 # Both icozip & catzip provide a verilated simulation which allows one to 

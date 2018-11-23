@@ -36,13 +36,20 @@
 # -#define        FPGAHOST        "rpi"
 # +#define        FPGAHOST        "localhost"
 # +//#define      FPGAHOST        "rpi"
-# The Goal currently is to get jpeg.c C program running on the CatBoard running with the ZipCPU.
+# The new Goal currently is to get jpeg.c C program running on the CatBoard running with the ZipCPU.
 # This program was running on xulalx25soc 
 # [main program jpeg.c]()
 # [lifting.c](https://github.com/develone/catzip/blob/master/sw/board/lifting.c)
+# Once the file has been compile with zip-gcc
+# The command to compile "zip-gcc -O3 -c  lifting.c -o obj-zip/lifting.o"
+# The disassembly can be done with 
+# The command "zip-objdump -d obj-zip/lifting.o > lifting.txt"
 # Disassemble of [lifting.txt](https://github.com/develone/catzip/blob/master/sw/board/lifting.txt)
-# Disassemble of [rd_bytes.c](https://github.com/develone/catzip/blob/master/sw/board/rd_bytes.c)
-# [rd_bytes.txt](https://github.com/develone/catzip/blob/master/sw/board/rd_bytes.txt)
+
+# [rd_bytes.c](https://github.com/develone/catzip/blob/master/sw/board/rd_bytes.c)
+# The command to compile "zip-gcc -O3 -c  rd_bytes.c -o obj-zip/rd_bytes.o"
+# The command "zip-objdump -d obj-zip/rd_bytes.o > rd_bytes.txt"  
+# Disassemble of [rd_bytes.txt](https://github.com/develone/catzip/blob/master/sw/board/rd_bytes.txt)
 # pi@mypi3-1:~/testbuilds/icozip/sim/verilated $ ./arm-main_tb start the simulator 
 # Only if running on icoboard pi@mypi3-1:~/testbuilds/icozip/sw/host $ ./arm-netpport listen for C commands
 # pi@mypi3-1:~/testbuilds/icozip/sw/host $ ./arm-zipload ../board/hello

@@ -74,10 +74,11 @@
 # -----------------------------------
 # All tests passed.  Halting CPU.
 # Differece between [Catboard & ICOBoar](https://github.com/develone/catzip/blob/master/doc/zipcpu.pdf) 
-# CATZIP status as of 11/21/18
+# CATZIP status as of 11/23/18
 # The 2 C programs cputest.c & hello.c compile and link with libcatzip.a
-# The sw/zlib appears to be working 
-# The sw/board appears to be working
+# Now both of the C prorgrams work in the FPGA but not in simulation.
+# Getting the 2 working required reducing the clk to 40 mhz and increasing 
+# size of bkram to 0x2000. 
 # arm-zipdbg, arm-zipload, arm-zipstate are built using buildsdramscope.sh
 # since the Makefile has not been updated
 # [Hardware Eight 7-segment LEDs ](http://www.xess.com/shop/product/stickit-leddigits/)

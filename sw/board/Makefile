@@ -36,7 +36,7 @@
 ##
 ##
 .PHONY: all
-PROGRAMS := cputest hello
+PROGRAMS := cputest hello jpeg
 all:	$(PROGRAMS)
 #
 #
@@ -47,7 +47,7 @@ NM	:=zip-nm
 OBJDIR	:= obj-zip
 RDELF	:= zip-readelf
 OBJDUMP := zip-objdump
-SOURCES := cputest.c hello.c
+SOURCES := cputest.c hello.c jpeg.c
 HEADERS := $(foreach hdr,$(subst .c,.o,$(SOURCES)),$(wildcard $(hdr))) board.h
 LDSCRIPT:= -Tboardram.ld
 LFLAGS  := $(LDSCRIPT) -L../zlib
@@ -95,11 +95,16 @@ cputestcis: $(OBJDIR)/cputestcis.o boardram.ld
 
 $(OBJDIR)/hello.o: hello.c
 	$(CC) -O3 -c  $< -o $@
+$(OBJDIR)/jpeg.o: jpeg.c
+	$(CC) -O3 -c  $< -o $@
+
 $(OBJDIR)/gettysburg.o: gettysburg.c
 	$(CC) -O3 -c $< -o $@
 
 hello: $(OBJDIR)/hello.o boardram.ld
 	$(CC) $(CFLAGS) $(LFLAGS) -Wl,-Map=$(OBJDIR)/hello.map $< $(LIBS) -o $@
+jpeg: $(OBJDIR)/jpeg.o boardram.ld
+	$(CC) $(CFLAGS) $(LFLAGS) -Wl,-Map=$(OBJDIR)/jpeg.map $< $(LIBS) -o $@
 
 
 define	mk-objdir

@@ -10,8 +10,10 @@ g++ -g -Wall -I. -I../../rtl -I../../rtl/catzip -c zopcodes.cpp -o obj-arm/zopco
 g++ -g -Wall -I. -I../../rtl -I../../rtl/catzip -c twoc.cpp -o obj-arm/twoc.o
 g++ -g -Wall -I. -I../../rtl -I../../rtl/catzip -c zipelf.cpp -o obj-arm/zipelf.o
 g++ -g -Wall -I. -I../../rtl -I../../rtl/catzip -c rdsdram.cpp -o obj-arm/rdsdram.o
+g++ -g -Wall -I. -I../../rtl -I../../rtl/catzip -c wrsdram.cpp -o obj-arm/wrsdram.o
 g++ -g obj-arm/sdramscope.o obj-arm/scopecls.o obj-arm/hexbus.o obj-arm/llcomms.o obj-arm/regdefs.o obj-arm/byteswap.o -o arm-sdramscope
 g++ -g obj-arm/zipdbg.o obj-arm/hexbus.o obj-arm/llcomms.o obj-arm/regdefs.o obj-arm/byteswap.o obj-arm/zopcodes.o obj-arm/twoc.o -lcurses -o arm-zipdbg
 g++ -g obj-arm/zipstate.o obj-arm/hexbus.o obj-arm/llcomms.o obj-arm/regdefs.o obj-arm/byteswap.o -o arm-zipstate
 g++ -g obj-arm/hexbus.o obj-arm/llcomms.o obj-arm/regdefs.o obj-arm/byteswap.o obj-arm/zipelf.o obj-arm/zipload.o -lelf -o arm-zipload
 g++ -g obj-arm/hexbus.o obj-arm/llcomms.o obj-arm/regdefs.o obj-arm/byteswap.o obj-arm/zipelf.o obj-arm/rdsdram.o -lelf -o arm-rdsdram
+g++ -g obj-arm/hexbus.o obj-arm/llcomms.o obj-arm/regdefs.o obj-arm/byteswap.o obj-arm/zipelf.o obj-arm/wrsdram.o -lelf -o arm-wrsdram

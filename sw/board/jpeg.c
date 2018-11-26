@@ -20,9 +20,10 @@ for(i=0; i<256*256*12; i++) {
 
 int main(int argc, char **argv) {
 	int *buf_ptr = (int *)0x800000;
-	int *img_ptr = (int *)(SDRAM + 45000);
-	int *m_ptr;
-	 
+	//int *img_ptr = (int *)(SDRAM + 45000);
+	int *m_ptr,*img_ptr;
+	m_ptr = malloc(196608);
+	img_ptr = malloc(196608); 
 	int val,i;
 	//*_gpio = GPIO_LEDR_SET;
 	printf("gpio 0x%x\n",_gpio);
@@ -44,8 +45,10 @@ int main(int argc, char **argv) {
 	printf("free m_ptr !\n");	
 	free(m_ptr);
 	*img_ptr = 0x01020304;
+	printf("img_ptr = 0x%x *img_ptr = 0x%x\n",img_ptr,*img_ptr);
 	img_ptr ++;
 	*img_ptr = 0x05060708;
-	printf("img_ptr = 0x%x\n",img_ptr);
+	printf("img_ptr = 0x%x *img_ptr = 0x%x\n",img_ptr,*img_ptr);
+	free(img_ptr);
 	//*_gpio = 0x010000;
 }

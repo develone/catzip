@@ -1,12 +1,11 @@
 ////////////////////////////////////////////////////////////////////////////////
 //
-// Filename: 	zipload.cpp
+// Filename:	dumpflash.cpp
 //
 // Project:	ICO Zip, iCE40 ZipCPU demonsrtation project
 //
-// Purpose:	To load a program for the ZipCPU into memory, whether flash,
-//		SDRAM, or block RAM.  This requires a working/running
-//	configuration in order to successfully load.
+// Purpose:	Read the entire contents of the flash memory into a file.
+//		The flash is unchanged by this process.
 //
 //
 // Creator:	Dan Gisselquist, Ph.D.
@@ -40,9 +39,6 @@
 //
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
 #include <unistd.h>
 #include <strings.h>
 #include <ctype.h>
@@ -51,343 +47,122 @@
 #include <assert.h>
 
 #include "port.h"
-#include "llcomms.h"
-#include "hexbus.h"
 #include "regdefs.h"
-//#include "flashdrvr.h"
-#include "zipelf.h"
-#include "byteswap.h"
-#include <design.h>
+#include "hexbus.h"
 
 FPGA	*m_fpga;
 
+//#define	DUMPMEM		SDRAMBASE
+#define	DUMPMEM 	0x2008d20
+//#define	DUMPWORDS	(FLASHLEN>>2)	// 16MB Flash
+//#define	DUMPWORDS (4000>>2)
+#define	DUMPWORDS 	100
 void	usage(void) {
-#ifdef	INCLUDE_ZIPCPU
-	printf("USAGE: zipload [-hr] <zip-program-file>\n");
-	printf("\n"
-"\t-h\tDisplay this usage statement\n"
-"\t-r\tStart the ZipCPU running from the address in the program file\n");
-#else
-	printf(
-"This program is designed to load the ZipCPU into a design.  It depends upon\n"
-"the ZipCPU having been built into the design, as well as the registers\n"
-"within the design having known locations.  When this program was built,\n"
-"however, there was no ZiPCPU within the design.\n");
-#endif
+	printf("USAGE:\tdumpflash [-n host] [-p port] filename.bin\n"
+"\n"
+"\tReads the values from the flash on board, and dumps them directly into\n"
+"\tthe file filename.bin.\n");
 }
 
+
 int main(int argc, char **argv) {
-	int		skp=0, port = FPGAPORT;
-	bool		start_when_finished = false, verbose = false;
-	unsigned	entry = 0;
-	//FLASHDRVR	*flash = NULL;
-	const char	*bitfile = NULL, *altbitfile = NULL, *execfile = NULL,
-	      		*host = FPGAHOST;
+	FILE		*fp = NULL;
+	const int	BUFLN = DUMPWORDS; // 1MB Flash
+	FPGA::BUSW	*buf = new FPGA::BUSW[BUFLN];
+	const	char	*fname = NULL;
 
-	if (argc < 2) {
-		usage();
-		exit(EXIT_SUCCESS);
-	}
+	const char *host = FPGAHOST;
+	int	port=FPGAPORT;
 
-	skp=1;
-	for(int argn=0; argn<argc-skp; argn++) {
-		if (argv[argn+skp][0] == '-') {
-			switch(argv[argn+skp][1]) {
-			case 'h':
+	for(int argn=1; argn<argc; argn++) {
+		if (argv[argn][0] == '-') {
+			if (argv[argn][1] == 'h') {
 				usage();
 				exit(EXIT_SUCCESS);
-				break;
-			case 'n':
-				if (argn+skp+1 >= argc) {
+			} else if (argv[argn][1] == 'n') {
+				if (argn+1 >= argc) {
 					fprintf(stderr, "ERR: No network host given\n");
 					exit(EXIT_SUCCESS);
 				}
-				host = argv[argn+skp+1];
-				skp++; argn--;
-				break;
-			case 'p':
-				if (argn+skp+1 >= argc) {
+				host = argv[argn+1];
+				printf("HOST = %s\n", host);
+				argn++;
+			} else if (argv[argn][1] == 'p') {
+				if (argn+1 >= argc) {
 					fprintf(stderr, "ERR: No network port # given\n");
 					exit(EXIT_SUCCESS);
 				}
-				port = strtoul(argv[argn+skp+1], NULL, 0);
-				skp++; argn--;
-				break;
-			case 'r':
-				start_when_finished = true;
-				break;
-			case 'v':
-				verbose = true;
-				break;
-			default:
-				fprintf(stderr, "Unknown option, -%c\n\n",
-					argv[argn+skp][0]);
+				port = strtoul(argv[argn+1], NULL, 0);
+				printf("PORT = %d\n", port);
+				argn++;
+			} else {
 				usage();
-				exit(EXIT_FAILURE);
-				break;
-			} skp++; argn--;
-		} else {
-			// Anything here must be either the program to load,
-			// or a bit file to load
-			argv[argn] = argv[argn+skp];
-		}
-	} argc -= skp;
-
-
-	for(int argn=0; argn<argc; argn++) {
-		if (iself(argv[argn])) {
-			if (execfile) {
-				printf("Too many executable files given, %s and %s\n", execfile, argv[argn]);
-				usage();
-				exit(EXIT_FAILURE);
-			} execfile = argv[argn];
-		} else { // if (isbitfile(argv[argn]))
-			if (!bitfile)
-				bitfile = argv[argn];
-			else if (!altbitfile)
-				altbitfile = argv[argn];
-			else {
-				printf("Unknown file name or too many files, %s\n", argv[argn]);
-				usage();
-				exit(EXIT_FAILURE);
+				exit(EXIT_SUCCESS);
 			}
+		} else if (fname == NULL) {
+			fname = argv[argn];
+		} else {
+			usage();
+			exit(EXIT_FAILURE);
 		}
 	}
 
-	if ((execfile == NULL)&&(bitfile == NULL)) {
-		printf("No executable or bit file(s) given!\n\n");
+	if (fname == NULL) {
+		fprintf(stderr, "No filename given\n\n");
 		usage();
 		exit(EXIT_FAILURE);
+	//} else if (0 != access(fname, W_OK)) {
+		//fprintf(stderr, "ERR: No permission to write %s\n\n", fname);
+		//exit(EXIT_FAILURE);
 	}
-
-	if ((bitfile)&&(access(bitfile,R_OK)!=0)) {
-		// If there's no code file, or the code file cannot be opened
-		fprintf(stderr, "Cannot open bitfile, %s\n", bitfile);
-		exit(EXIT_FAILURE);
-	}
-
-	if ((altbitfile)&&(access(altbitfile,R_OK)!=0)) {
-		// If there's no code file, or the code file cannot be opened
-		fprintf(stderr, "Cannot open alternate bitfile, %s\n", altbitfile);
-		exit(EXIT_FAILURE);
-	}
-
-	if ((execfile)&&(access(execfile,R_OK)!=0)) {
-		// If there's no code file, or the code file cannot be opened
-		fprintf(stderr, "Cannot open executable, %s\n", execfile);
-		exit(EXIT_FAILURE);
-	}
-
-	const char *codef = (argc>0)?argv[0]:NULL;
-	//char	*fbuf = new char[FLASHLEN];
-
-	// Set the flash buffer to all ones
-	//memset(fbuf, -1, FLASHLEN);
-
+		
 	m_fpga = new FPGA(new NETCOMMS(host, port));
 
 
-	// Make certain we can talk to the FPGA
+	// SPI flash testing
+	// Enable the faster (vector) reads
+	bool	vector_read = true;
+	unsigned	sz;
+
 	try {
-		unsigned v  = m_fpga->readio(R_VERSION);
-		if (v < 0x20170000) {
-			fprintf(stderr, "Could not communicate with board (invalid version)\n");
-			exit(EXIT_FAILURE);
+		if (vector_read) {
+			m_fpga->readi(DUMPMEM, BUFLN, buf);
+		} else {
+			for(int i=0; i<BUFLN; i++) {
+				buf[i] = m_fpga->readio(DUMPMEM+i);
+				// if (0 == (i&0x0ff))
+					printf("i = %02x / %04x, addr = i + %04x = %08x\n", i, BUFLN, DUMPMEM, i+DUMPMEM);
+			}
 		}
-	} catch(BUSERR b) {
-		fprintf(stderr, "Could not communicate with board (BUSERR when reading VERSION)\n");
+	} catch(BUSERR err) {
+		fprintf(stderr, "Caught a bus ERROR at address 0x%08x\n", err.addr);
+		exit(EXIT_FAILURE);
+			
+	} catch(char *err) {
+		fprintf(stderr, "EXCEPTION: %s\n", err);
+		exit(EXIT_FAILURE);
+	} catch(...) {
+		fprintf(stderr, "Caught an unexpected exception\n");
+		fprintf(stderr, "Exiting on an unknown error\n");
 		exit(EXIT_FAILURE);
 	}
 
-	// Halt the CPU
-	try {
-		printf("Halting the CPU\n");
-		m_fpga->writeio(R_ZIPCTRL, CPU_HALT|CPU_RESET);
-	} catch(BUSERR b) {
-		fprintf(stderr, "Could not halt the CPU (BUSERR)\n");
+	printf("\nREAD-COMPLETE\n");
+
+	// Now, let's find the end
+	sz = BUFLN-1;
+	while((sz>0)&&(buf[sz] == 0xffffffff))
+		sz--;
+	sz+=1;
+	printf("The size of the buffer is 0x%06x or %d words\n", sz, sz);
+
+	fp = fopen(fname,"w");
+	if (fp == NULL) {
+		fprintf(stderr, "ERR: Could not write %s\n", fname);
 		exit(EXIT_FAILURE);
 	}
+	fwrite(buf, sizeof(buf[0]), sz, fp);
+	fclose(fp);
 
-	//flash = new FLASHDRVR(m_fpga);
-
-	if (verbose) {
-		printf("Memory regions:\n");
-#ifdef	BKRAM_ACCESS
-		printf("\tBlock RAM: %08x - %08x\n",
-			BKRAMBASE, BKRAMBASE+BKRAMLEN);
-#endif
-#ifdef	FLASH_ACCESS
-		printf("\tFlash (ROM): %08x - %08x\n",
-			FLASHBASE, FLASHBASE+FLASHLEN);
-#endif
-#ifdef	SDRAM_ACCESS
-		printf("\tSDRAM       : %08x - %08x\n",
-			SDRAMBASE, SDRAMBASE + SDRAMLEN);
-#endif
-	}
-
-	if (codef) try {
-		ELFSECTION	**secpp = NULL, *secp;
-
-		if(iself(codef)) {
-			// zip-readelf will help with both of these ...
-			elfread(codef, entry, secpp);
-		} else {
-			fprintf(stderr, "ERR: %s is not in ELF format\n", codef);
-			exit(EXIT_FAILURE);
-		}
-
-		printf("Loading: %s\n", codef);
-		for(int i=0; secpp[i]->m_len; i++) {
-			bool	valid = false;
-			secp=  secpp[i];
-
-			if (verbose) {
-				printf("Section %d: %08x - %08x\n", i,
-					secp->m_start,
-					secp->m_start+secp->m_len);
-			}
-			// Make sure our section is either within block RAM
-#ifdef	BKRAM_ACCESS
-			if ((secp->m_start >= BKRAMBASE)
-				&&(secp->m_start+secp->m_len
-						<= BKRAMBASE+BKRAMLEN))
-				valid = true;
-#endif
-
-#ifdef	FLASH_ACCESS
-			// Flash
-			if ((secp->m_start >= RESET_ADDRESS)
-				&&(secp->m_start+secp->m_len
-						<= FLASHBASE+FLASHLEN))
-				valid = true;
-#endif
-
-#ifdef	SDRAM_ACCESS
-			// Or SDRAM
-			if ((secp->m_start >= SDRAMBASE)
-				&&(secp->m_start+secp->m_len
-						<= SDRAMBASE+SDRAMLEN))
-				valid = true;
-#endif
-			if (!valid) {
-				fprintf(stderr, "No such memory on board: 0x%08x - %08x\n",
-					secp->m_start, secp->m_start+secp->m_len);
-				exit(EXIT_FAILURE);
-			}
-		}
-
-		unsigned	startaddr = RESET_ADDRESS, codelen = 0;
-		for(int i=0; secpp[i]->m_len; i++) {
-			secp = secpp[i];
-
-#ifdef	SDRAM_ACCESS
-			if ((secp->m_start >= SDRAMBASE)
-				&&(secp->m_start+secp->m_len
-						<= SDRAMBASE+SDRAMLEN)) {
-				if (verbose)
-					printf("Writing to MEM: %08x-%08x\n",
-						secp->m_start,
-						secp->m_start+secp->m_len);
-				unsigned ln = (secp->m_len+3)&-4;
-				uint32_t	*bswapd = new uint32_t[ln>>2];
-				if (ln != (secp->m_len&-4))
-					memset(bswapd, 0, ln);
-				memcpy(bswapd, secp->m_data,  ln);
-				byteswapbuf(ln>>2, bswapd);
-				m_fpga->writei(secp->m_start, ln>>2, bswapd);
-
-				continue;
-			}
-#endif
-
-#ifdef	BKRAM_ACCESS
-			if ((secp->m_start >= BKRAMBASE)
-				  &&(secp->m_start+secp->m_len
-						<= BKRAMBASE+BKRAMLEN)) {
-				if (verbose)
-					printf("Writing to MEM: %08x-%08x\n",
-						secp->m_start,
-						secp->m_start+secp->m_len);
-				unsigned ln = (secp->m_len+3)&-4;
-				uint32_t	*bswapd = new uint32_t[ln>>2];
-				if (ln != (secp->m_len&-4))
-					memset(bswapd, 0, ln);
-				memcpy(bswapd, secp->m_data,  ln);
-				byteswapbuf(ln>>2, bswapd);
-				m_fpga->writei(secp->m_start, ln>>2, bswapd);
-				continue;
-			}
-#endif
-
-#ifdef	FLASH_ACCESS
-			if ((secp->m_start >= FLASHBASE)
-				  &&(secp->m_start+secp->m_len
-						<= FLASHBASE+FLASHLEN)) {
-				// Otherwise writing to flash
-				if (secp->m_start < startaddr) {
-					// Keep track of the first address in
-					// flash, as well as the last address
-					// that we will write
-					codelen += (startaddr-secp->m_start);
-					startaddr = secp->m_start;
-				} if (secp->m_start+secp->m_len > startaddr+codelen) {
-					codelen = secp->m_start+secp->m_len-startaddr;
-				} if (verbose)
-					printf("Sending to flash: %08x-%08x\n",
-						secp->m_start,
-						secp->m_start+secp->m_len);
-
-				// Copy this data into our copy of what we want
-				// the flash to look like.
-				memcpy(&fbuf[secp->m_start-FLASHBASE],
-					secp->m_data, secp->m_len);
-			}
-#endif
-		}
-
-#ifdef	FLASH_ACCESS
-		if ((flash)&&(codelen>0)&&(!flash->write(startaddr, codelen, &fbuf[startaddr-FLASHBASE], true))) {
-			fprintf(stderr, "ERR: Could not write program to flash\n");
-			exit(EXIT_FAILURE);
-		} else if ((!flash)&&(codelen > 0)) {
-			fprintf(stderr, "ERR: Cannot write to flash: Driver didn\'t load\n");
-			// fprintf(stderr, "flash->write(%08x, %d, ... );\n", startaddr,
-			//	codelen);
-		}
-#endif
-
-		if (m_fpga) m_fpga->readio(R_VERSION); // Check for bus errors
-
-		// Now ... how shall we start this CPU?
-		printf("Clearing the CPUs registers\n");
-		for(int i=0; i<32; i++) {
-			m_fpga->writeio(R_ZIPCTRL, CPU_HALT|i);
-			m_fpga->writeio(R_ZIPDATA, 0);
-		}
-
-		m_fpga->writeio(R_ZIPCTRL, CPU_HALT|CPU_CLRCACHE);
-		printf("Setting PC to %08x\n", entry);
-		m_fpga->writeio(R_ZIPCTRL, CPU_HALT|CPU_sPC);
-		m_fpga->writeio(R_ZIPDATA, entry);
-
-		if (start_when_finished) {
-			printf("Starting the CPU\n");
-			m_fpga->writeio(R_ZIPCTRL, CPU_GO|CPU_sPC);
-		} else {
-			printf("The CPU should be fully loaded, you may now\n");
-			printf("start it (from reset/reboot) with:\n");
-			printf("> wbregs cpu 0x0f\n");
-			printf("\n");
-		}
-	} catch(BUSERR a) {
-		fprintf(stderr, "ZBASIC-BUS error: %08x\n", a.addr);
-		exit(-2);
-	}
-
-	printf("CPU Status is: %08x\n", m_fpga->readio(R_ZIPCTRL));
-	if (m_fpga) delete	m_fpga;
-
-	return EXIT_SUCCESS;
+	delete	m_fpga;
 }
-

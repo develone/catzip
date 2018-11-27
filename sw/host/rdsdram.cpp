@@ -53,7 +53,7 @@
 FPGA	*m_fpga;
 
 //#define	DUMPMEM		SDRAMBASE
-#define	DUMPMEM 	0x2009318
+#define	DUMPMEM 	0x20091e8
 //#define	DUMPWORDS	(FLASHLEN>>2)	// 16MB Flash
 //#define	DUMPWORDS (4000>>2)
 #define	DUMPWORDS 	100
@@ -147,7 +147,7 @@ int main(int argc, char **argv) {
 		exit(EXIT_FAILURE);
 	}
 
-	printf("\nREAD-COMPLETE\n");
+	printf("\nWrite-COMPLETE\n");
 
 	// Now, let's find the end
 	sz = BUFLN-1;

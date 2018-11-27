@@ -53,7 +53,7 @@
 FPGA	*m_fpga;
 
 //#define	DUMPMEM		SDRAMBASE
-#define	DUMPMEM 	0x2008d20
+#define	DUMPMEM 	0x20091e8
 //#define	DUMPWORDS	(FLASHLEN>>2)	// 16MB Flash
 //#define	DUMPWORDS (4000>>2)
 #define	DUMPWORDS 	100
@@ -121,15 +121,29 @@ int main(int argc, char **argv) {
 
 	// SPI flash testing
 	// Enable the faster (vector) reads
-	bool	vector_read = true;
+	bool	vector_write = true;
 	unsigned	sz;
+	// Now, let's find the end
+	sz = BUFLN-1;
+	while((sz>0)&&(buf[sz] == 0xffffffff))
+		sz--;
+	sz+=1;
+	printf("The size of the buffer is 0x%06x or %d words\n", sz, sz);
+
+	fp = fopen(fname,"r");
+	if (fp == NULL) {
+		fprintf(stderr, "ERR: Could not write %s\n", fname);
+		exit(EXIT_FAILURE);
+	}
+	fread(buf, sizeof(buf[0]), sz, fp);
+	fclose(fp);
 
 	try {
-		if (vector_read) {
-			m_fpga->readi(DUMPMEM, BUFLN, buf);
+		if (vector_write) {
+			m_fpga->writei(DUMPMEM, BUFLN, buf);
 		} else {
 			for(int i=0; i<BUFLN; i++) {
-				buf[i] = m_fpga->readio(DUMPMEM+i);
+				m_fpga->writeio(DUMPMEM+i,buf[i]);
 				// if (0 == (i&0x0ff))
 					printf("i = %02x / %04x, addr = i + %04x = %08x\n", i, BUFLN, DUMPMEM, i+DUMPMEM);
 			}
@@ -149,20 +163,6 @@ int main(int argc, char **argv) {
 
 	printf("\nREAD-COMPLETE\n");
 
-	// Now, let's find the end
-	sz = BUFLN-1;
-	while((sz>0)&&(buf[sz] == 0xffffffff))
-		sz--;
-	sz+=1;
-	printf("The size of the buffer is 0x%06x or %d words\n", sz, sz);
-
-	fp = fopen(fname,"w");
-	if (fp == NULL) {
-		fprintf(stderr, "ERR: Could not write %s\n", fname);
-		exit(EXIT_FAILURE);
-	}
-	fwrite(buf, sizeof(buf[0]), sz, fp);
-	fclose(fp);
 
 	delete	m_fpga;
 }

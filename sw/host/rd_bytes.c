@@ -214,9 +214,15 @@ buf = (int *)&data.xx;
 printf("mn ptr to xx %x\n",buf);
 struct rec my_record;
 //struct results my_results;
-FILE *ptr_myfile;
+FILE *ptr_myfile,*pck_data;
+pck_data=fopen("rgb_pack.bin","wb");
 ptr_myfile=fopen("rgb.bin","rb");
 if (!ptr_myfile)
+{
+ 	printf("Unle to open file!");
+	return 1;
+}
+if (!pck_data)
 {
  	printf("Unle to open file!");
 	return 1;
@@ -231,10 +237,11 @@ ii2 = (int)my_record.raw_buf[2];
 val = ii0<<20|ii1<<10|ii2;
 *buf++=val;
 printf("%d %x %x %x %x \n",i,ii0,ii1,ii2,val);
-
+fwrite(&val,sizeof(int),1,pck_data);
 }
 fclose(ptr_myfile);
-
+fclose(pck_data);
+return 0;
 for (i= 0;i<65536;i++) {
 	val = data.xx[i];
 	red = data.xx[i]>>20;

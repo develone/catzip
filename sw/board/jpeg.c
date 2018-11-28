@@ -23,10 +23,13 @@ int main(int argc, char **argv) {
 	 
 	int *im_s_ptr;
 	int *red_s_ptr, *gr_s_ptr, *bl_s_ptr;
+	int *wptr,*wptr1,*wptr2;
+	int *alt,*alt1,*alt2;
+	
 	int *img_ptr;
 	int *buf_red, *buf_gr, *buf_bl;
 	int ur,ug,ub,x,y,z;
-		
+	int *fwd_inv;	
 
 	int val,i;
 	int w,h;
@@ -37,6 +40,8 @@ int main(int argc, char **argv) {
 	buf_red = (int *)malloc(w*h*2);
 	buf_gr = (int *)malloc(w*h*2);
 	buf_bl = (int *)malloc(w*h*2);
+	fwd_inv = (int *)malloc(w*h);
+	
 	red_s_ptr = buf_red;
 	gr_s_ptr = buf_gr;
 	bl_s_ptr = buf_bl;
@@ -48,6 +53,8 @@ int main(int argc, char **argv) {
     printf("buf_red = 0x%x\n",buf_red);
     printf("buf_gr = 0x%x\n",buf_gr);
     printf("buf_bl = 0x%x\n",buf_bl);
+    printf("fwd_inv = 0x%x\n",fwd_inv);
+    
     //printf("top_of_data = 0x%x\n",top_of_data);
 	printf("Start of JPEG DWT!\n");
 	 
@@ -161,7 +168,24 @@ int main(int argc, char **argv) {
 
 	buf_bl = bl_s_ptr;
 	
-	//lifting(w,wptr,alt,fwd_inv);
+	printf("starting red dwt\n");
+	
+	wptr = buf_red;
+	wptr1 = buf_gr;
+	wptr2 = buf_bl;	
+
+	alt = &buf_red[256*256];
+	lifting(w,wptr,alt,fwd_inv);
+	printf("finished ted dwt\n");
+	/*	
+	alt1 = &buf_gr[256*256];
+	lifting(w,wptr1,alt1,fwd_inv);
+	
+	alt2 = &buf_bl[256*256];
+	lifting(w,wptr2,alt2,fwd_inv);
+	*/
+	
+	
 	free(img_ptr);
 	free(buf_red);
 	free(buf_gr);

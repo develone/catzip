@@ -21,10 +21,11 @@ for(i=0; i<256*256*12; i++) {
 int main(int argc, char **argv) {
 	
 	 
-	int *m_ptr;
+	int *im_s_ptr;
+	int *red_s_ptr, *gr_s_ptr, *bl_s_ptr;
 	int *img_ptr;
 	int *buf_red, *buf_gr, *buf_bl;
-	int u,x,y,z;
+	int ur,ug,ub,x,y,z;
 		
 
 	int val,i;
@@ -36,9 +37,11 @@ int main(int argc, char **argv) {
 	buf_red = (int *)malloc(w*h*2);
 	buf_gr = (int *)malloc(w*h*2);
 	buf_bl = (int *)malloc(w*h*2);
-	
+	red_s_ptr = buf_red;
+	gr_s_ptr = buf_gr;
+	bl_s_ptr = buf_bl;
 	//saving the img_ptr
-	m_ptr = img_ptr;
+	im_s_ptr = img_ptr;
 	//*_gpio = GPIO_LEDR_SET;
 	//printf("gpio 0x%x\n",_gpio);
 	printf("img_ptr = 0x%x\n",img_ptr);
@@ -64,48 +67,100 @@ int main(int argc, char **argv) {
     //const int rr = 0x1ff00000; 	shift right 20
 	printf("w = 0x%x h = 0x%x\n",w,h); 
 	
-	for(i=0;i<10;i++) {
-		printf("img_ptr = 0x%x *img_ptr = 0x%x\n",img_ptr,*img_ptr);
-		img_ptr ++;
-	}
-	img_ptr = img_ptr + 30000;
-	for(i=0;i<10;i++) {
-		printf("img_ptr = 0x%x *img_ptr = 0x%x\n",img_ptr,*img_ptr);
-		img_ptr ++;
-	}
-	img_ptr = img_ptr + 35000;
-	for(i=0;i<10;i++) {
-		printf("img_ptr = 0x%x *img_ptr = 0x%x\n",img_ptr,*img_ptr);
-		img_ptr ++;
-	}
-	printf("m_ptr = 0x%x\n",m_ptr);
-	img_ptr = m_ptr;	
 	for(i=0;i<5;i++) {
+		printf("img_ptr = 0x%x *img_ptr = 0x%x\n",img_ptr,*img_ptr);
+		img_ptr ++;
+	}
+	printf("\n");
+	
+	img_ptr = img_ptr + 30000;
+	for(i=0;i<5;i++) {
+		printf("img_ptr = 0x%x *img_ptr = 0x%x\n",img_ptr,*img_ptr);
+		img_ptr ++;
+	}
+	printf("\n");
+	
+	img_ptr = img_ptr + 35000;
+	for(i=0;i<5;i++) {
+		printf("img_ptr = 0x%x *img_ptr = 0x%x\n",img_ptr,*img_ptr);
+		img_ptr ++;
+	}
+	printf("\n");
+	
+	printf("im_s_ptr = 0x%x\n",im_s_ptr);
+	//split red
+	img_ptr = im_s_ptr;	
+	for(i=0;i<65535;i++) {
 		x = *img_ptr;
 		y = 0x1ff00000;
 		z = x & y;
-		u = z>>20;
+		ur = z>>20;
 		img_ptr++;
-		printf("%d 0x%x\n",i,u);
+		*buf_red = ur;
+		buf_red++;
+		//printf("%d 0x%x\n",i,ur);
 	}
-	img_ptr = m_ptr;
-	for(i=0;i<5;i++) {
+	//restore img_ptr & buf_red
+	img_ptr = im_s_ptr;
+	buf_red = red_s_ptr;
+	
+	//split gr
+	for(i=0;i<65535;i++) {
 		x = *img_ptr;
 		y = 0x7fc00;
 		z = x & y;
-		u = z>>8;
+		ug = z>>10;
 		img_ptr++;
-		printf("%d 0x%x\n",i,u);
+		*buf_gr = ug;
+		buf_gr++;
+		//printf("%d 0x%x\n",i,ug);
 	}
-	img_ptr = m_ptr;	
-	for(i=0;i<5;i++) {
-		
+	
+	//restore img_ptr & buf_gr
+	img_ptr = im_s_ptr;
+	buf_gr = gr_s_ptr;
+	
+	//split bl	
+	for(i=0;i<65535;i++) {		
 		x = *img_ptr;
-		y = 0x1ff;
+		y = 0x3ff;
 		z = x & y;
-		
-		printf("%d 0x%x\n",i,u);
-	}	
+		ub = z;
+		img_ptr++;
+		*buf_bl = ub;
+		buf_bl++;
+		//printf("%d 0x%x\n",i,ub);
+	}
+	
+	//restore img_ptr & buf_bl
+	img_ptr = im_s_ptr;
+	buf_bl = bl_s_ptr;
+
+	//debug for r g b
+	for(i=0;i<5;i++) {
+		printf("buf_red = 0x%x *buf_red = 0x%x\n",buf_red,*buf_red);
+		buf_red++;
+	}
+	printf("\n");
+	
+	buf_red = red_s_ptr;
+	
+	for(i=0;i<5;i++) {
+		printf("buf_gr = 0x%x *buf_gr = 0x%x\n",buf_gr,*buf_gr);
+		buf_gr++;
+	}
+	printf("\n");
+	
+	buf_gr = gr_s_ptr;
+	
+	for(i=0;i<5;i++) {
+		printf("buf_bl = 0x%x *buf_bl = 0x%x\n",buf_bl,*buf_bl);
+		buf_bl++;
+	}
+	printf("\n");
+
+	buf_bl = bl_s_ptr;
+	
 	//lifting(w,wptr,alt,fwd_inv);
 	free(img_ptr);
 	free(buf_red);

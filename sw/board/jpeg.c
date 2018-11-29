@@ -41,7 +41,11 @@ int main(int argc, char **argv) {
 	buf_gr = (int *)malloc(w*h*2);
 	buf_bl = (int *)malloc(w*h*2);
 	fwd_inv = (int *)malloc(w*h);
-	
+	if(img_ptr == NULL) return 1;
+	if(buf_red == NULL) return 2;
+	if(buf_gr == NULL) return 3;
+	if(buf_bl == NULL) return 4;
+	if(fwd_inv == NULL) return 5;
 	red_s_ptr = buf_red;
 	gr_s_ptr = buf_gr;
 	bl_s_ptr = buf_bl;
@@ -168,20 +172,31 @@ int main(int argc, char **argv) {
 
 	buf_bl = bl_s_ptr;
 	
-	printf("starting red dwt\n");
-	
+	alt = buf_red + (w*h);
+	alt1 = buf_gr+ (w*h);
+	alt2 = buf_bl+ (w*h);
 	wptr = buf_red;
 	wptr1 = buf_gr;
-	wptr2 = buf_bl;	
+	wptr2 = buf_bl;
+	printf("w = 0x%x buf_red wptr = 0x%x alt =  0x%x fwd_inverse =  0x%x \n",w, wptr,alt,fwd_inv);
+	printf("w = 0x%x buf_gr wptr1 = 0x%x alt1 =  0x%x fwd_inverse =  0x%x \n",w, wptr1,alt1,fwd_inv); 
+	printf("w = 0x%x buf_bl wptr2 = 0x%x alt2 =  0x%x fwd_inverse =  0x%x \n",w, wptr2,alt2,fwd_inv);
+	printf("all pointers for r g b dwt should be setup correctly\n");
+	
+	
+	printf("starting red dwt\n");
+	
+	
 
-	alt = &buf_red[256*256];
+	
+	
 	lifting(w,wptr,alt,fwd_inv);
 	printf("finished ted dwt\n");
 	/*	
-	alt1 = &buf_gr[256*256];
+	 
 	lifting(w,wptr1,alt1,fwd_inv);
 	
-	alt2 = &buf_bl[256*256];
+	alt2 = &buf_bl[w*h];
 	lifting(w,wptr2,alt2,fwd_inv);
 	*/
 	
@@ -190,5 +205,6 @@ int main(int argc, char **argv) {
 	free(buf_red);
 	free(buf_gr);
 	free(buf_bl);
+	return 0;
 	//*_gpio = 0x010000;
 }

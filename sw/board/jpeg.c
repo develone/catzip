@@ -35,14 +35,15 @@ int main(int argc, char **argv) {
 	int w,h;
 	w = 256;
 	h = 256;
-
-	img_ptr = (int *)malloc(w*h);
-	buf_red = (int *)malloc(w*h*2);
-	buf_gr = (int *)malloc(w*h*2);
-	buf_bl = (int *)malloc(w*h*2);
-	fwd_inv = (int *)malloc(w*h);
+	
+	img_ptr = (int *)malloc(sizeof(int)*w*h);
+	buf_red = (int *)malloc(sizeof(int)*w*h*2);
+	buf_gr = (int *)malloc(sizeof(int)*w*h*2);
+	buf_bl = (int *)malloc(sizeof(int)*w*h*2);
+	fwd_inv = (int *)malloc(1);
 	if(img_ptr == NULL) return 1;
 	if(buf_red == NULL) return 2;
+	
 	if(buf_gr == NULL) return 3;
 	if(buf_bl == NULL) return 4;
 	if(fwd_inv == NULL) return 5;
@@ -171,16 +172,18 @@ int main(int argc, char **argv) {
 	printf("\n");
 
 	buf_bl = bl_s_ptr;
+	*fwd_inv = 1;
+	 
 	
-	alt = buf_red + (w*h);
-	alt1 = buf_gr+ (w*h);
-	alt2 = buf_bl+ (w*h);
+	alt = &buf_red[w*h];
+	alt1 = &buf_gr[w*h];
+	alt2 = &buf_bl[w*h];
 	wptr = buf_red;
 	wptr1 = buf_gr;
 	wptr2 = buf_bl;
-	printf("w = 0x%x buf_red wptr = 0x%x alt =  0x%x fwd_inverse =  0x%x \n",w, wptr,alt,fwd_inv);
-	printf("w = 0x%x buf_gr wptr1 = 0x%x alt1 =  0x%x fwd_inverse =  0x%x \n",w, wptr1,alt1,fwd_inv); 
-	printf("w = 0x%x buf_bl wptr2 = 0x%x alt2 =  0x%x fwd_inverse =  0x%x \n",w, wptr2,alt2,fwd_inv);
+	printf("w = 0x%x buf_red wptr = 0x%x alt =  0x%x fwd_inverse =  0x%x fwd_inverse =  0x%x \n",w, wptr,alt,fwd_inv,*fwd_inv);
+	printf("w = 0x%x buf_gr wptr1 = 0x%x alt1 =  0x%x fwd_inverse =  0x%x fwd_inverse =  0x%x \n",w, wptr1,alt1,fwd_inv,*fwd_inv); 
+	printf("w = 0x%x buf_bl wptr2 = 0x%x alt2 =  0x%x fwd_inverse =  0x%x fwd_inverse =  0x%x \n",w, wptr2,alt2,fwd_inv,*fwd_inv);
 	printf("all pointers for r g b dwt should be setup correctly\n");
 	
 	

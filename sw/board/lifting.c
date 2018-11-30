@@ -42,10 +42,10 @@
 //
 //
 #include "lifting.h"
-
+#include <stdio.h>
 void	singlelift(int rb, int w, int * const ibuf, int * const obuf) {
 	int	col, row;
-
+	printf("in singlelift \n");
 	for(row=0; row<w; row++) {
 		register int	*ip, *op, *opb;
 		register int	ap,b,cp,d;
@@ -198,12 +198,14 @@ void	lifting(int w, int *ibuf, int *tmpbuf, int *fwd) {
 
 	for(lvl=0; lvl<LVLS; lvl++) {
 		// Process columns -- leave result in tmpbuf
+		printf("in lifting \n");
 		singlelift(rb, w, ip, tp);
 		// Process columns, what used to be the rows from the last
 		// round, pulling the data from tmpbuf and moving it back
 		// to ibuf.
+		//printf("w = 0x%x ip = 0x%x tp = 0x%x \n",w,ip,tp);
 		singlelift(rb, w, tp, ip);
-
+		printf("back from singlelift\n");
 		// lower_upper
 		//
 		// For this, we just adjust our pointer(s) so that the "image"
@@ -227,6 +229,7 @@ void	lifting(int w, int *ibuf, int *tmpbuf, int *fwd) {
 		// Move to the corner, and repeat
 		w>>=1;
 	}
+	printf("testing test_fwd \n");
 	if (test_fwd[0]==0) {
 	for(lvl=(LVLS-1); lvl>=0; lvl--) {
 		int	offset;

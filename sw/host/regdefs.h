@@ -55,31 +55,31 @@
 //
 // Register address definitions, from @REGS.#d
 //
-#define	R_RAMSCOPE      	0x00400000	// 00400000, wbregs names: RAMSCOPE
+#define	R_RAMSCOPE      	0x00100000	// 00100000, wbregs names: RAMSCOPE
 // The bus timer
-#define	R_BUSTIMER      	0x00800000	// 00800000, wbregs names: BUSTIMER
+#define	R_BUSTIMER      	0x00200000	// 00200000, wbregs names: BUSTIMER
 // The bus timer
-#define	R_BUSTIMER      	0x00800000	// 00800000, wbregs names: BUSTIMER
+#define	R_BUSTIMER      	0x00200000	// 00200000, wbregs names: BUSTIMER
 // The watchdog timer
-#define	R_WATCHDOG      	0x00800004	// 00800004, wbregs names: WATCHDOG
+#define	R_WATCHDOG      	0x00200004	// 00200004, wbregs names: WATCHDOG
 // The watchdog timer
-#define	R_WATCHDOG      	0x00800004	// 00800004, wbregs names: WATCHDOG
+#define	R_WATCHDOG      	0x00200004	// 00200004, wbregs names: WATCHDOG
 // CONSOLE registers
-#define	R_CONSOLE_FIFO  	0x00c00004	// 00c00000, wbregs names: UFIFO
-#define	R_CONSOLE_UARTRX	0x00c00008	// 00c00000, wbregs names: RX
-#define	R_CONSOLE_UARTTX	0x00c0000c	// 00c00000, wbregs names: TX
-#define	R_BUSERR        	0x01000000	// 01000000, wbregs names: BUSERR
-#define	R_BUSERR        	0x01000000	// 01000000, wbregs names: BUSERR
-#define	R_PIC           	0x01000004	// 01000004, wbregs names: PIC
-#define	R_PIC           	0x01000004	// 01000004, wbregs names: PIC
-#define	R_GPIO          	0x01000008	// 01000008, wbregs names: GPIO, GPI, GPO
-#define	R_GPIO          	0x01000008	// 01000008, wbregs names: GPIO, GPI, GPO
-#define	R_PWRCOUNT      	0x0100000c	// 0100000c, wbregs names: PWRCOUNT
-#define	R_PWRCOUNT      	0x0100000c	// 0100000c, wbregs names: PWRCOUNT
-#define	R_VERSION       	0x01000010	// 01000010, wbregs names: VERSION
-#define	R_VERSION       	0x01000010	// 01000010, wbregs names: VERSION
-#define	R_BKRAM         	0x01400000	// 01400000, wbregs names: RAM
-#define	R_SDRAM         	0x02000000	// 02000000, wbregs names: SDRAM
+#define	R_CONSOLE_FIFO  	0x00300004	// 00300000, wbregs names: UFIFO
+#define	R_CONSOLE_UARTRX	0x00300008	// 00300000, wbregs names: RX
+#define	R_CONSOLE_UARTTX	0x0030000c	// 00300000, wbregs names: TX
+#define	R_BUSERR        	0x00400000	// 00400000, wbregs names: BUSERR
+#define	R_BUSERR        	0x00400000	// 00400000, wbregs names: BUSERR
+#define	R_PIC           	0x00400004	// 00400004, wbregs names: PIC
+#define	R_PIC           	0x00400004	// 00400004, wbregs names: PIC
+#define	R_GPIO          	0x00400008	// 00400008, wbregs names: GPIO, GPI, GPO
+#define	R_GPIO          	0x00400008	// 00400008, wbregs names: GPIO, GPI, GPO
+#define	R_PWRCOUNT      	0x0040000c	// 0040000c, wbregs names: PWRCOUNT
+#define	R_PWRCOUNT      	0x0040000c	// 0040000c, wbregs names: PWRCOUNT
+#define	R_VERSION       	0x00400010	// 00400010, wbregs names: VERSION
+#define	R_VERSION       	0x00400010	// 00400010, wbregs names: VERSION
+#define	R_BKRAM         	0x00500000	// 00500000, wbregs names: RAM
+#define	R_SDRAM         	0x00800000	// 00800000, wbregs names: SDRAM
 
 
 //
@@ -87,13 +87,13 @@
 //
 // @REGDEFS.H.DEFNS for masters
 #define	CLKFREQHZ	40000000
-#define	R_ZIPCTRL	0x04000000
-#define	R_ZIPDATA	0x04000004
-#define	RESET_ADDRESS	0x01400000
+#define	R_ZIPCTRL	0x01000000
+#define	R_ZIPDATA	0x01000004
+#define	RESET_ADDRESS	0x00500000
 // @REGDEFS.H.DEFNS for peripherals
-#define	SDRAMBASE	0x02000000
-#define	SDRAMLEN	0x02000000
-#define	BKRAMBASE	0x01400000
+#define	SDRAMBASE	0x00800000
+#define	SDRAMLEN	0x00800000
+#define	BKRAMBASE	0x00500000
 #define	BKRAMLEN	0x00002000
 // @REGDEFS.H.DEFNS at the top level
 // End of definitions from REGDEFS.H.DEFNS

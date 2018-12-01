@@ -44,15 +44,15 @@ ENTRY(_start)
 
 MEMORY
 {
-	   bkram(wx) : ORIGIN = 0x01400000, LENGTH = 0x00002000
-	   sdram(wx) : ORIGIN = 0x02000000, LENGTH = 0x02000000
+	   bkram(wx) : ORIGIN = 0x00500000, LENGTH = 0x00002000
+	   sdram(wx) : ORIGIN = 0x00800000, LENGTH = 0x00800000
 }
 
 _bkram    = ORIGIN(bkram);
 _sdram    = ORIGIN(sdram);
 SECTIONS
 {
-	.rocode 0x01400000 : ALIGN(4) {
+	.rocode 0x00500000 : ALIGN(4) {
 		_boot_address = .;
 		*(.start) *(.boot)
 	} > bkram

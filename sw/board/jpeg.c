@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include "board.h"
 #include "lifting.h"
-#define SDRAM 0x2000000
+#define SDRAM 0x800000
 #define imgsize 256
 
 void zip_clear_sdram(int *imbuf) {
@@ -36,10 +36,10 @@ int main(int argc, char **argv) {
 	w = 256;
 	h = 256;
 	
-	img_ptr = (int *)malloc(sizeof(int)*w*h);
-	buf_red = (int *)malloc(sizeof(int)*w*h*2);
-	buf_gr = (int *)malloc(sizeof(int)*w*h*2);
-	buf_bl = (int *)malloc(sizeof(int)*w*h*2);
+	img_ptr = (int *)malloc( w*h);
+	buf_red = (int *)malloc( w*h*2);
+	buf_gr = (int *)malloc( w*h*2);
+	buf_bl = (int *)malloc( w*h*2);
 	fwd_inv = (int *)malloc(1);
 	if(img_ptr == NULL) return 1;
 	if(buf_red == NULL) return 2;

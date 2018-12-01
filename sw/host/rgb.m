@@ -6,7 +6,7 @@ fid = fopen('blu.bin','r'); im3 = fread(fid, [256,inf], 'int32'); fclose(fid);
 figure;
 imagesc(im1);
 colorbar;
-title "red_bin catboard 0x20498b0 11/29/18"
+title "red_bin catboard 0x20498b0 12/1/18"
 
 figure;
 imagesc(im2);

@@ -124,10 +124,10 @@ module	main(i_clk, i_reset,
 	//
 	// A 32-bit address indicating where teh ZipCPU should start running
 	// from
-	localparam	RESET_ADDRESS = 32'h01400000;
+	localparam	RESET_ADDRESS = 32'h00500000;
 	//
 	// The number of valid bits on the bus
-	localparam	ZIP_ADDRESS_WIDTH = 24; // Zip-CPU address width
+	localparam	ZIP_ADDRESS_WIDTH = 22; // Zip-CPU address width
 	//
 	// Number of ZipCPU interrupts
 	localparam	ZIP_INTS = 16;
@@ -219,14 +219,14 @@ parameter	RDLY = 6;
 	// Bus arbiter's internal lines
 	wire		hb_dwbi_cyc, hb_dwbi_stb, hb_dwbi_we,
 			hb_dwbi_ack, hb_dwbi_stall, hb_dwbi_err;
-	wire	[(24-1):0]	hb_dwbi_addr;
+	wire	[(22-1):0]	hb_dwbi_addr;
 	wire	[31:0]	hb_dwbi_odata, hb_dwbi_idata;
 	wire	[3:0]	hb_dwbi_sel;
 	localparam	NGPI = 2, NGPO=11;
 	// GPIO ports
 	input		[(NGPI-1):0]	i_gpio;
 	output	wire	[(NGPO-1):0]	o_gpio;
-	reg	[24-1:0]	r_buserr_addr;
+	reg	[22-1:0]	r_buserr_addr;
 	reg	[31:0]	r_pwrcount_data;
 `include "builddate.v"
 	// Console definitions
@@ -259,7 +259,7 @@ parameter	RDLY = 6;
 	wire		wb_cyc, wb_stb, wb_we, wb_stall, wb_err,
 			wb_none_sel;
 	reg		wb_many_ack;
-	wire	[23:0]	wb_addr;
+	wire	[21:0]	wb_addr;
 	wire	[31:0]	wb_data;
 	reg	[31:0]	wb_idata;
 	wire	[3:0]	wb_sel;
@@ -322,7 +322,7 @@ parameter	RDLY = 6;
 	wire		zip_cyc, zip_stb, zip_we, zip_stall, zip_err,
 			zip_none_sel;
 	reg		zip_many_ack;
-	wire	[23:0]	zip_addr;
+	wire	[21:0]	zip_addr;
 	wire	[31:0]	zip_data;
 	reg	[31:0]	zip_idata;
 	wire	[3:0]	zip_sel;
@@ -337,7 +337,7 @@ parameter	RDLY = 6;
 	wire		hb_cyc, hb_stb, hb_we, hb_stall, hb_err,
 			hb_none_sel;
 	reg		hb_many_ack;
-	wire	[24:0]	hb_addr;
+	wire	[22:0]	hb_addr;
 	wire	[31:0]	hb_data;
 	reg	[31:0]	hb_idata;
 	wire	[3:0]	hb_sel;
@@ -360,7 +360,7 @@ parameter	RDLY = 6;
 	//
 	// Select lines for bus: wb
 	//
-	// Address width: 24
+	// Address width: 22
 	// Data width:    32
 	//
 	//
@@ -379,14 +379,14 @@ parameter	RDLY = 6;
  // 0x000000
 	assign	    watchdog_sel = ((wb_dio_sel)&&((wb_addr[ 0: 0] &  1'h1) ==  1'h1));
  // 0x000004
-	assign	  sdramscope_sel = ((wb_addr[23:20] &  4'hf) ==  4'h1); // 0x400000 - 0x400007
-	assign	      wb_dio_sel = ((wb_addr[23:20] &  4'hf) ==  4'h2); // 0x800000 - 0x800007
+	assign	  sdramscope_sel = ((wb_addr[21:18] &  4'hf) ==  4'h1); // 0x100000 - 0x100007
+	assign	      wb_dio_sel = ((wb_addr[21:18] &  4'hf) ==  4'h2); // 0x200000 - 0x200007
 //x2	Was a master bus as well
-	assign	     console_sel = ((wb_addr[23:20] &  4'hf) ==  4'h3); // 0xc00000 - 0xc0000f
-	assign	      wb_sio_sel = ((wb_addr[23:20] &  4'hf) ==  4'h4); // 0x1000000 - 0x100001f
+	assign	     console_sel = ((wb_addr[21:18] &  4'hf) ==  4'h3); // 0x300000 - 0x30000f
+	assign	      wb_sio_sel = ((wb_addr[21:18] &  4'hf) ==  4'h4); // 0x400000 - 0x40001f
 //x2	Was a master bus as well
-	assign	       bkram_sel = ((wb_addr[23:20] &  4'hf) ==  4'h5); // 0x1400000 - 0x1401fff
-	assign	       sdram_sel = ((wb_addr[23:20] &  4'h8) ==  4'h8); // 0x2000000 - 0x3ffffff
+	assign	       bkram_sel = ((wb_addr[21:18] &  4'hf) ==  4'h5); // 0x500000 - 0x501fff
+	assign	       sdram_sel = ((wb_addr[21:18] &  4'h8) ==  4'h8); // 0x800000 - 0xffffff
 	//
 
 	//
@@ -394,7 +394,7 @@ parameter	RDLY = 6;
 	//
 	// Select lines for bus: zip
 	//
-	// Address width: 24
+	// Address width: 22
 	// Data width:    32
 	//
 	//
@@ -407,14 +407,14 @@ parameter	RDLY = 6;
 	//
 	// Select lines for bus: hb
 	//
-	// Address width: 25
+	// Address width: 23
 	// Data width:    32
 	//
 	//
 	
-	assign	      hb_dwb_sel = ((hb_addr[24:24] &  1'h1) ==  1'h0); // 0x0000000 - 0x3ffffff
+	assign	      hb_dwb_sel = ((hb_addr[22:22] &  1'h1) ==  1'h0); // 0x000000 - 0xffffff
 //x2	Was a master bus as well
-	assign	     zip_dbg_sel = ((hb_addr[24:24] &  1'h1) ==  1'h1); // 0x4000000 - 0x4000007
+	assign	     zip_dbg_sel = ((hb_addr[22:22] &  1'h1) ==  1'h1); // 0x1000000 - 0x1000007
 	//
 
 	//
@@ -702,7 +702,7 @@ parameter	RDLY = 6;
 wbsdram sdrami(i_clk,
 		wb_cyc, (wb_stb)&&(sdram_sel),
 		/* verilator lint_off WIDTH */
-		wb_we, wb_addr[(25-3):0], wb_data, wb_sel,
+		wb_we, wb_addr[(23-3):0], wb_data, wb_sel,
 		/* verilator lint_off WIDTH */
 		sdram_ack, sdram_stall, sdram_data,
 		o_ram_cs_n, o_ram_cke, o_ram_ras_n, o_ram_cas_n, o_ram_we_n,
@@ -787,7 +787,7 @@ wbsdram sdrami(i_clk,
 	//
 	//
 	// Clock speed = 40000000 Hz
-	wbpriarbiter #(32,24)	bus_arbiter(i_clk,
+	wbpriarbiter #(32,22)	bus_arbiter(i_clk,
 		// The Zip CPU bus master --- gets the priority slot
 		zip_cyc, zip_stb, zip_we, zip_addr, zip_data, zip_sel,
 			zip_ack, zip_stall, zip_err,
@@ -795,7 +795,7 @@ wbsdram sdrami(i_clk,
 		(hb_cyc)&&(hb_dwb_sel),
 			(hb_stb)&&(hb_dwb_sel),
 			hb_we,
-			hb_addr[(24-1):0],
+			hb_addr[(22-1):0],
 			hb_data, hb_sel,
 			hb_dwb_ack, hb_dwb_stall, hb_dwb_err,
 		// Common bus returns
@@ -809,7 +809,7 @@ wbsdram sdrami(i_clk,
 	assign	hb_dwbi_cyc   = hb_cyc;
 	assign	hb_dwbi_stb   = hb_stb;
 	assign	hb_dwbi_we    = hb_we;
-	assign	hb_dwbi_addr  = hb_addr[(24-1):0];
+	assign	hb_dwbi_addr  = hb_addr[(22-1):0];
 	assign	hb_dwbi_odata = hb_data;
 	assign	hb_dwbi_sel   = hb_sel;
 	assign	hb_dwb_ack    = hb_dwbi_ack;
@@ -824,7 +824,7 @@ wbsdram sdrami(i_clk,
 `endif
 `endif
 `ifdef	BUS_DELAY_NEEDED
-	busdelay #(24)	hb_dwbi_delay(i_clk, i_reset,
+	busdelay #(22)	hb_dwbi_delay(i_clk, i_reset,
 		hb_dwbi_cyc, hb_dwbi_stb, hb_dwbi_we, hb_dwbi_addr, hb_dwbi_odata, hb_dwbi_sel,
 			hb_dwbi_ack, hb_dwbi_stall, hb_dwbi_idata, hb_dwbi_err,
 		wb_cyc, wb_stb, wb_we, wb_addr, wb_data, wb_sel,
@@ -878,7 +878,7 @@ wbsdram sdrami(i_clk,
 	always @(posedge i_clk)
 		if (wb_err)
 			r_buserr_addr <= wb_addr;
-	assign	buserr_data = { {(32-2-24){1'b0}},
+	assign	buserr_data = { {(32-2-22){1'b0}},
 			r_buserr_addr, 2'b00 };
 	initial	r_pwrcount_data = 32'h0;
 	always @(posedge i_clk)
@@ -1023,7 +1023,7 @@ wbsdram sdrami(i_clk,
 			w_console_tx_stb, w_console_tx_data, w_console_busy,
 			w_console_rx_stb, w_console_rx_data);
 	assign	hb_sel = 4'hf;
-	assign	hb_addr= hb_tmp_addr[(25-1):0];
+	assign	hb_addr= hb_tmp_addr[(23-1):0];
 `else	// WBUBUS_MASTER
 
 	// In the case that nothing drives the hb bus ...

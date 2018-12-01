@@ -94,18 +94,18 @@ typedef struct  CONSOLE_S {
 
 #ifdef	SDRAM_ACCESS
 #define	_BOARD_HAS_SDRAM
-extern char	_sdram[0x02000000];
+extern char	_sdram[0x00800000];
 #endif	// SDRAM_ACCESS
 #ifdef	GPIO_ACCESS
 #define	_BOARD_HAS_GPIO
 static volatile unsigned *const _gpio = ((unsigned *)8);
 #endif	// GPIO_ACCESS
 #define	_BOARD_HAS_BUSERR
-static volatile unsigned *const _buserr = ((unsigned *)16777216);
+static volatile unsigned *const _buserr = ((unsigned *)4194304);
 #define	_BOARD_HAS_VERSION
 #ifdef	BUSTIMER_ACCESS
 #define	_BOARD_HAS_BUSTIMER
-static volatile unsigned *const _bustimer = ((unsigned *)0x00800000);
+static volatile unsigned *const _bustimer = ((unsigned *)0x00200000);
 #endif	// BUSTIMER_ACCESS
 #ifdef	BKRAM_ACCESS
 #define	_BOARD_HAS_BKRAM
@@ -113,11 +113,11 @@ extern char	_bkram[0x00002000];
 #endif	// BKRAM_ACCESS
 #ifdef	BUSPIC_ACCESS
 #define	_BOARD_HAS_BUSPIC
-static volatile unsigned *const _buspic = ((unsigned *)16777220);
+static volatile unsigned *const _buspic = ((unsigned *)4194308);
 #endif	// BUSPIC_ACCESS
 #ifdef	BUSCONSOLE_ACCESS
 #define	_BOARD_HAS_BUSCONSOLE
-static volatile CONSOLE *const _uart = ((CONSOLE *)12582912);
+static volatile CONSOLE *const _uart = ((CONSOLE *)3145728);
 #endif	// BUSCONSOLE_ACCESS
 //
 // Interrupt assignments (2 PICs)

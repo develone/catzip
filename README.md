@@ -46,11 +46,14 @@
 # The command to compile "zip-gcc -O3 -c  lifting.c -o obj-zip/lifting.o"
 # The disassembly can be done with 
 # The command "zip-objdump -d obj-zip/lifting.o > lifting.txt"
-# Disassemble of [lifting.txt](https://github.com/develone/catzip/blob/master/sw/board/lifting.txt)
+# Disassembly of [lifting.txt](https://github.com/develone/catzip/blob/master/sw/board/lifting.txt)
+# Steps to test running jpeg 
+# Need to read packed image into the SDRAM
 # pi@mypi3-1:~/testbuilds/catzip/sw/host $ ./arm-wrsdram rgb_pack.bin 
 # The size of the buffer is 0x00ffff or 65535 words
 # 
 # READ-COMPLETE
+# Need to load the jpeg program into the SDRAM
 # pi@mypi3-1:~/testbuilds/catzip/sw/host $ ./arm-zipload -v ../board/jpeg
 # Halting the CPU
 # Memory regions:
@@ -66,6 +69,9 @@
 # > wbregs cpu 0x0f
 # 
 # CPU Status is: 0000060f
+# Below is the debug when running
+# 12/2/18 Currently since the HX8K does not have implement the mul & div instructions
+# the lifting step halts and does not complete the lifting step.
 # pi@mypi3-1:~/testbuilds/catzip/sw/host $ ./arm-wbregs cpu 0x0f
 # 02000000 (        )-> 0000000f
 # . img_ptr = 0x10098a8

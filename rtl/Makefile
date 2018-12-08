@@ -59,8 +59,8 @@ pptest:
 	$(SUBMAKE) pptest
 
 .PHONY: catzip
-icozip:
-	$(SUBMAKE) icozip
+catzip:
+	$(SUBMAKE) catzip
 
 
 .PHONY: clean

@@ -167,7 +167,7 @@
 # -----------------------------------
 # All tests passed.  Halting CPU.
 # Differece between [Catboard & ICOBoar](https://github.com/develone/catzip/blob/master/doc/zipcpu.pdf) 
-# CATZIP status as of 11/23/18
+# CATZIP status as of 12/08/18
 # The 2 C programs cputest.c & hello.c compile and link with libcatzip.a
 # Now both of the C prorgrams work in the FPGA but not in simulation.
 # Getting the 2 working required reducing the clk to 40 mhz and increasing 
@@ -188,18 +188,31 @@
 
 # git clone https://github.com/develone/catzip.git
 # cd catzip
-# need to have verilator & zipcpu built
-# set the PATH to where verilator & zipcpu with 
+# need to have autofpga, verilator and zipcpu built
+# set the PATH to where verilator & zipcpu with the script myenv.sh
 # . myenv.sh
 # /home/pi/verilator
 /home/pi/verilator/bin:/home/pi/zipcpu/sw/install/cross-tools/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/games:/usr/games
-# make datestamp
-# make autodata
-# cd rtl/catzip
-# make  This create the catzip.bin that will be used to program the HX8K ice40 FPGA
-# cd ../../sw/host
-# make
+# Toplevel Makefile now supports most of the build
+# Now toplevel make creates several bin files for the catboard
+# ./rtl/switch_leds/switch_leds.bin
+# ./rtl/basic/clktest.bin
+# ./rtl/basic/blinky.bin
+# ./rtl/basic/pmodtest.bin
+# ./rtl/basic/dimmer.bin
+# ./rtl/catzip/catzip.bin
+# ./rtl/uart/helloworld.bin
+# ./rtl/uart/speechfifo.bin
+# ./rtl/leddigits/leddigits.bin
+# ./rtl/pptest/hellopp.bin
+# ./rtl/pptest/speechpp.bin
+# ./rtl/pptest/linepp.bin
+# ./sw/host/arm-netpport
+# ./sw/host/arm-wbregs
+# ./sim/verilated/arm-main_tb
 
+# cd sw/host
+# ./buildsdramscope.sh this will be fixed when the Makefile is modified
 # program to test the SDRAM
 # gcc -g exe_wbregs.c -o exe_wbregs
 

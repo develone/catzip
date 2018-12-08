@@ -124,7 +124,7 @@ datestamp: check-perl
 ARCHIVEFILES := $(BENCH) $(SW) $(RTL) $(NOTES) $(PROJ) $(BIN) $(CONSTRAINTS) $(AUTODATA) README.md
 .PHONY: archive
 archive:
-	tar --transform s,^,$(YYMMDD)-ico/, -chjf $(YYMMDD)-ico.tjz $(ARCHIVEFILES)
+	tar --transform s,^,$(YYMMDD)-cat/, -chjf $(YYMMDD)-cat.tjz $(ARCHIVEFILES)
 
 #
 #
@@ -182,7 +182,7 @@ sw-zlib: autodata check-zip-gcc
 # Build the board software.  This may (or may not) use the software library
 #
 .PHONY: sw-board
-sw-board: check-zip-gcc # sw-zlib
+sw-board: check-zip-gcc sw-zlib
 	$(SUBMAKE) sw/board
 
 #
@@ -221,5 +221,9 @@ clean:
 	$(SUBMAKE) auto-data     clean
 	$(SUBMAKE) rtl           clean
 	$(SUBMAKE) doc           clean
+	$(SUBMAKE) sim/verilated clean
 	$(SUBMAKE) sw/host       clean
+	$(SUBMAKE) sw/zlib       clean
+	$(SUBMAKE) sw/board      clean
+	$(SUBMAKE) sw/pptest     clean
 

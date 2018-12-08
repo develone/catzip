@@ -2,7 +2,7 @@
 ##
 ## Filename:	Makefile
 ##
-## Project:	ICO Zip, iCE40 ZipCPU demonsrtation project
+## Project:	CAT Zip, iCE40 ZipCPU demonsrtation project
 ##
 ## Purpose:	Simply coordinates builds in the various subdirectories of
 ##		rtl.
@@ -64,7 +64,7 @@ catzip:
 
 
 .PHONY: clean
-clean:	clean-basic clean-uart clean-pptest clean-pmodleds clean-icozip
+clean:	clean-basic clean-uart clean-pptest clean-pmodleds clean-catzip clean-leddigits clean-switch_leds
 
 .PHONY: clean-basic
 clean-basic:
@@ -83,5 +83,13 @@ clean-pmodleds:
 	$(SUBMAKE) leddigits clean
 
 .PHONY: clean-catzip
-clean-icozip:
+clean-catzip:
 	$(SUBMAKE) catzip clean
+
+.PHONY: clean-leddigits
+clean-leddigits:
+	$(SUBMAKE) leddigits clean
+	
+.PHONY: clean-switch_leds
+clean-switch_leds:
+	$(SUBMAKE) switch_leds clean

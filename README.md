@@ -12,7 +12,7 @@
 # . myenv.sh
 # /home/pi/verilator
 # /home/pi/verilator/bin:/home/pi/zipcpu/sw/install/cross-tools/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/games:/usr/games
-# make Toplevel Makefile now supports most of the build
+# make Toplevel Makefile now supports all of the build
 # Now toplevel make creates several bin files for the catboard
 # ./rtl/switch_leds/leddigits.bin
 # Counts up using the the Xess 8 led digit display
@@ -72,11 +72,11 @@
 # ./sw/host/arm-zipload
 # ./sw/host/arm-zipstate
 # ./sim/verilated/arm-main_tb
-# cd ../zib
-# make
-# should have libcatzip.a
-# cd ../board
-# make
+# ./sw/zlib/libcatzip.a
+# ./sw/board/cputest
+# ./sw/board/hello
+# ./sw/board/jpeg
+
 # should have executeables cputest & hello that will run out sdram
 # Since the more bkram was in the icozip design hello.c was running out of bkram.
 

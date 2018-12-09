@@ -5,7 +5,7 @@
 # Dan Gisselquist and his [Blog](https://zipcpu.com/)
 # Clifford Wolfe [YOSYS Tools](https://github.com/cliffordwolf/icestorm)
 # Chris Felton & Many others 
-# [Catled](https://github.com/develone/catzip/blob/master/doc/Catleds.png)
+
 # [ZipCPU](https://github.com/develone/catzip/blob/master/doc/zipcpu.png)
 # Both the icozip on ICOBoard & catzip on CatBoard based HX8K ice40 FPGA 
 # provide a complete development system on the Raspberry Pi  
@@ -196,21 +196,35 @@
 # make Toplevel Makefile now supports most of the build
 # Now toplevel make creates several bin files for the catboard
 # ./rtl/switch_leds/switch_leds.bin
+# Count using the the Xess 8 led digit display
+# [Catled](https://github.com/develone/catzip/blob/master/doc/Catleds.png)
 # ./rtl/basic/clktest.bin
 # ./rtl/basic/blinky.bin
 # ./rtl/basic/pmodtest.bin
 # ./rtl/basic/dimmer.bin
 # ./rtl/catzip/catzip.bin
 # ./rtl/uart/helloworld.bin
+# sudo minicom -s
+# A -    Serial Device      : /dev/ttyUSB0 
+# E -    Bps/Par/Bits       : 115200 8N1
+# F - Hardware Flow Control : Yes
+# Hello, World! written from FPGA UART PMODUSB to RPi3B minicom
 # ./rtl/uart/speechfifo.bin
 # ./rtl/leddigits/leddigits.bin
 # ./rtl/pptest/hellopp.bin
-# ./rtl/pptest/speechpp.bin
+# Test the parallel interface writing . Hello, World!
+# ./rtl/pptest/speechpp.bin 
+# Test the parallel interface writing the Gettysburg address on the RPi3B
 # ./rtl/pptest/linepp.bin
-# ./sw/host/arm-netpport which provides the interface between the C programs and the FPGA
-# ./sw/host/arm-wbregs provides peek & poke 
-# ./sw/host/arm-wrsdram
-# ./sw/host/arm-rdsdram
+# ./sw/host/arm-netpport 
+# Program which provides the interface between the C programs and the FPGA
+# In addition this program provides remote access to fpga
+# ./sw/host/arm-wbregs 
+# provides peek & poke 
+# ./sw/host/arm-wrsdram 
+# provides a method to pass data from RPi3B to SDRAM using the FPGA
+# ./sw/host/arm-rdsdram 
+# provides a method to pass data from SDRAM to RPi3B using the FPGA
 # ./sw/host/arm-sdramscope
 # ./sw/host/arm-zipdbg
 # ./sw/host/arm-zipload

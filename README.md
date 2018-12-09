@@ -46,6 +46,29 @@
 # provides a method to pass data from SDRAM to RPi3B using the FPGA
 # ./sw/host/arm-sdramscope
 # ./sw/host/arm-zipdbg
+# Peripherals                   CPU State: 0x00000613 Supervisor mode
+# >PIC > 0x00000000<   WDT : 0x00000000    WBUS: 0x00000000    PIC2: 0x00000000
+#  TMRA: 0x00000000    TMRB: 0x00000000    TMRC: 0x00000000    JIF : 0x00000000
+#  MTSK: 0x00000000    MOST: 0x00000000    MPST: 0x00000000    MICT: 0x00000000
+# 
+# Supervisor Registers
+#  sR0 : 0x00000000    sR1 : 0x00000000    sR2 : 0x00000000    sR3 : 0x00000000 
+#  sR4 : 0x00000000    sR5 : 0x00000000    sR6 : 0x00000000    sR7 : 0x00000000 
+#  sR8 : 0x00000000    sR9 : 0x00000000    sR10: 0x00000000    sR11: 0x00000000 
+#  sR12: 0x00000000    sSP : 0x00000000    sCC :               sPC : 0x00800000 
+# User Registers
+#  uR0 : 0x00000000    uR1 : 0x00000000    uR2 : 0x00000000    uR3 : 0x00000000
+#  uR4 : 0x00000000    uR5 : 0x00000000    uR6 : 0x00000000    uR7 : 0x00000000
+#  uR8 : 0x00000000    uR9 : 0x00000000    uR10: 0x00000000    uR11: 0x00000000
+#  uR12: 0x00000000    uSP : 0x00000000    uCC :               uPC : 0x00000000
+# 
+# 
+#                                                      >00000000 (Bus Err)
+#  0x00800008 0x7b47c009  MOV        $36+PC,uPC         00000004 (Bus Err)
+#  0x00800004 0x6a402000  LDILO      $8192,SP           00000008 (Bus Err)
+# >0x00800000 0x6a000a00  BREV       $2560,SP           0000000c (Bus Err)
+#  0x007ffffc 0x--------  (Bus Error)                   00000010 (Bus Err)
+# 
 # ./sw/host/arm-zipload
 # ./sw/host/arm-zipstate
 # ./sim/verilated/arm-main_tb

@@ -192,8 +192,8 @@
 # set the PATH to where verilator & zipcpu with the script myenv.sh
 # . myenv.sh
 # /home/pi/verilator
-/home/pi/verilator/bin:/home/pi/zipcpu/sw/install/cross-tools/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/games:/usr/games
-# Toplevel Makefile now supports most of the build
+# /home/pi/verilator/bin:/home/pi/zipcpu/sw/install/cross-tools/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/games:/usr/games
+# make Toplevel Makefile now supports most of the build
 # Now toplevel make creates several bin files for the catboard
 # ./rtl/switch_leds/switch_leds.bin
 # ./rtl/basic/clktest.bin
@@ -207,15 +207,15 @@
 # ./rtl/pptest/hellopp.bin
 # ./rtl/pptest/speechpp.bin
 # ./rtl/pptest/linepp.bin
-# ./sw/host/arm-netpport
-# ./sw/host/arm-wbregs
+# ./sw/host/arm-netpport which provides the interface between the C programs and the FPGA
+# ./sw/host/arm-wbregs provides peek & poke 
+# ./sw/host/arm-wrsdram
+# ./sw/host/arm-rdsdram
+# ./sw/host/arm-sdramscope
+# ./sw/host/arm-zipdbg
+# ./sw/host/arm-zipload
+# ./sw/host/arm-zipstate
 # ./sim/verilated/arm-main_tb
-
-# cd sw/host
-# ./buildsdramscope.sh this will be fixed when the Makefile is modified
-# program to test the SDRAM
-# gcc -g exe_wbregs.c -o exe_wbregs
-
 # cd ../zib
 # make
 # should have libcatzip.a
@@ -223,19 +223,17 @@
 # make
 # should have executeables cputest & hello that will run out sdram
 # Since the more bkram was in the icozip design hello.c was running out of bkram.
-# cd ../../../sim/verilated
-# make which creates the program arm-main_tb
+
 # The program arm-main_tb provides the functions that FPGA using arm-netpport
 # 
-# cd ../../sw/host
-# make arm-netpport & arm-wbregs
+
 # The programs config_cat & reset_cat should be linked in /usr/local/bin
 # /usr/local/bin/reset_cat -> /home/pi/catboard_yosys/reset_cat
 # /usr/local/bin/config_cat -> /home/pi/catboard_yosys/config_cat
 # Load the bin file in the FPGA
 # sudo config_cat rtl/catzip/catzip.bin 
 
-# in sw/host ./arm-netpport which provides the interface between the C programs and the FPGA
+ 
 # Displays the date the bin file was created.
 # ./arm-wbregs version
 01000010 ( VERSION) : [....] 20181120

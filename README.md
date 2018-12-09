@@ -5,6 +5,74 @@
 # Dan Gisselquist and his [Blog](https://zipcpu.com/)
 # Clifford Wolfe [YOSYS Tools](https://github.com/cliffordwolf/icestorm)
 # Chris Felton & Many others 
+# git clone https://github.com/develone/catzip.git
+# cd catzip
+# need to have autofpga, verilator and zipcpu built
+# set the PATH to where verilator & zipcpu with the script myenv.sh
+# . myenv.sh
+# /home/pi/verilator
+# /home/pi/verilator/bin:/home/pi/zipcpu/sw/install/cross-tools/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/games:/usr/games
+# make Toplevel Makefile now supports most of the build
+# Now toplevel make creates several bin files for the catboard
+# ./rtl/switch_leds/leddigits.bin
+# Counts up using the the Xess 8 led digit display
+# [Catled](https://github.com/develone/catzip/blob/master/doc/Catleds.png)
+# ./rtl/basic/clktest.bin
+# ./rtl/basic/blinky.bin
+# ./rtl/basic/pmodtest.bin
+# ./rtl/basic/dimmer.bin
+# ./rtl/catzip/catzip.bin
+# ./rtl/uart/helloworld.bin
+# sudo minicom -s
+# A -    Serial Device      : /dev/ttyUSB0 
+# E -    Bps/Par/Bits       : 115200 8N1
+# F - Hardware Flow Control : Yes
+# Hello, World! written from FPGA UART PMODUSB to RPi3B minicom
+# ./rtl/uart/speechfifo.bin
+# ./rtl/leddigits/switch_leds.bin
+# ./rtl/pptest/hellopp.bin
+# Test the parallel interface writing . Hello, World!
+# ./rtl/pptest/speechpp.bin 
+# Test the parallel interface writing the Gettysburg address on the RPi3B
+# ./rtl/pptest/linepp.bin
+# ./sw/host/arm-netpport 
+# Program which provides the interface between the C programs and the FPGA
+# In addition this program provides remote access to fpga
+# ./sw/host/arm-wbregs 
+# provides peek & poke 
+# ./sw/host/arm-wrsdram 
+# provides a method to pass data from RPi3B to SDRAM using the FPGA
+# ./sw/host/arm-rdsdram 
+# provides a method to pass data from SDRAM to RPi3B using the FPGA
+# ./sw/host/arm-sdramscope
+# ./sw/host/arm-zipdbg
+# ./sw/host/arm-zipload
+# ./sw/host/arm-zipstate
+# ./sim/verilated/arm-main_tb
+# cd ../zib
+# make
+# should have libcatzip.a
+# cd ../board
+# make
+# should have executeables cputest & hello that will run out sdram
+# Since the more bkram was in the icozip design hello.c was running out of bkram.
+
+# The program arm-main_tb provides the functions that FPGA using arm-netpport
+# 
+
+# The programs config_cat & reset_cat should be linked in /usr/local/bin
+# /usr/local/bin/reset_cat -> /home/pi/catboard_yosys/reset_cat
+# /usr/local/bin/config_cat -> /home/pi/catboard_yosys/config_cat
+# Load the bin file in the FPGA
+# sudo config_cat rtl/catzip/catzip.bin 
+
+ 
+# Displays the date the bin file was created.
+# ./arm-wbregs version
+01000010 ( VERSION) : [....] 20181120
+# Write SDRAM ./arm-wbregs 0x2001000  0x1000
+
+# Read SDRAM ./arm-wbregs 0x2001000
 
 # [ZipCPU](https://github.com/develone/catzip/blob/master/doc/zipcpu.png)
 # Both the icozip on ICOBoard & catzip on CatBoard based HX8K ice40 FPGA 
@@ -186,74 +254,6 @@
 # Current testing is being done on ver 0.1 catboard 
 # This verison has issues with the spiflash.
 
-# git clone https://github.com/develone/catzip.git
-# cd catzip
-# need to have autofpga, verilator and zipcpu built
-# set the PATH to where verilator & zipcpu with the script myenv.sh
-# . myenv.sh
-# /home/pi/verilator
-# /home/pi/verilator/bin:/home/pi/zipcpu/sw/install/cross-tools/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/games:/usr/games
-# make Toplevel Makefile now supports most of the build
-# Now toplevel make creates several bin files for the catboard
-# ./rtl/switch_leds/switch_leds.bin
-# Count using the the Xess 8 led digit display
-# [Catled](https://github.com/develone/catzip/blob/master/doc/Catleds.png)
-# ./rtl/basic/clktest.bin
-# ./rtl/basic/blinky.bin
-# ./rtl/basic/pmodtest.bin
-# ./rtl/basic/dimmer.bin
-# ./rtl/catzip/catzip.bin
-# ./rtl/uart/helloworld.bin
-# sudo minicom -s
-# A -    Serial Device      : /dev/ttyUSB0 
-# E -    Bps/Par/Bits       : 115200 8N1
-# F - Hardware Flow Control : Yes
-# Hello, World! written from FPGA UART PMODUSB to RPi3B minicom
-# ./rtl/uart/speechfifo.bin
-# ./rtl/leddigits/leddigits.bin
-# ./rtl/pptest/hellopp.bin
-# Test the parallel interface writing . Hello, World!
-# ./rtl/pptest/speechpp.bin 
-# Test the parallel interface writing the Gettysburg address on the RPi3B
-# ./rtl/pptest/linepp.bin
-# ./sw/host/arm-netpport 
-# Program which provides the interface between the C programs and the FPGA
-# In addition this program provides remote access to fpga
-# ./sw/host/arm-wbregs 
-# provides peek & poke 
-# ./sw/host/arm-wrsdram 
-# provides a method to pass data from RPi3B to SDRAM using the FPGA
-# ./sw/host/arm-rdsdram 
-# provides a method to pass data from SDRAM to RPi3B using the FPGA
-# ./sw/host/arm-sdramscope
-# ./sw/host/arm-zipdbg
-# ./sw/host/arm-zipload
-# ./sw/host/arm-zipstate
-# ./sim/verilated/arm-main_tb
-# cd ../zib
-# make
-# should have libcatzip.a
-# cd ../board
-# make
-# should have executeables cputest & hello that will run out sdram
-# Since the more bkram was in the icozip design hello.c was running out of bkram.
-
-# The program arm-main_tb provides the functions that FPGA using arm-netpport
-# 
-
-# The programs config_cat & reset_cat should be linked in /usr/local/bin
-# /usr/local/bin/reset_cat -> /home/pi/catboard_yosys/reset_cat
-# /usr/local/bin/config_cat -> /home/pi/catboard_yosys/config_cat
-# Load the bin file in the FPGA
-# sudo config_cat rtl/catzip/catzip.bin 
-
- 
-# Displays the date the bin file was created.
-# ./arm-wbregs version
-01000010 ( VERSION) : [....] 20181120
-# Write SDRAM ./arm-wbregs 0x2001000  0x1000
-
-# Read SDRAM ./arm-wbregs 0x2001000
 
 # ICOZIP
 

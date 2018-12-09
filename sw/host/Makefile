@@ -2,7 +2,7 @@
 ##
 ## Filename:	sw/host/Makefile
 ##
-## Project:	ICO Zip, iCE40 ZipCPU demonsrtation project
+## Project:	CAT Zip, iCE40 ZipCPU demonsrtation project
 ##
 ## Purpose:	
 ## Targets:	
@@ -12,7 +12,7 @@
 ##
 ################################################################################
 ##
-## Copyright (C) 2015-2017, Gisselquist Technology, LLC
+## Copyright (C) 2015-2018, Gisselquist Technology, LLC
 ##
 ## This program is free software (firmware): you can redistribute it and/or
 ## modify it under the terms of  the GNU General Public License as published
@@ -40,11 +40,12 @@
 all:
 CROSS ?=
 ARCH  ?= $(shell bash ./arch.sh)
+SHARED := wbregs sdramscope zipload zipstate zipdbg wrsdram rdsdram
 #
-ifeq ($(ARCH), arm)
-PROGRAMS   := wbregs netpport
+ifeq ($(ARCH),arm)
+PROGRAMS   := $(SHARED) netpport
 else
-PROGRAMS   := wbregs # netpport
+PROGRAMS   := $(SHARED)
 endif
 
 PREFXPPGMS := $(addprefix $(ARCH)-,$(PROGRAMS))
@@ -58,7 +59,8 @@ hostcheck:
 CXX := $(CROSS)g++
 OBJDIR := obj-$(ARCH)
 BUSSRCS := hexbus.cpp llcomms.cpp regdefs.cpp byteswap.cpp
-SOURCES := wbregs.cpp netpport.cpp $(BUSSRCS)
+SCOPESRC:=  sdramscope.cpp dbgscope.cpp
+SOURCES := wbregs.cpp netpport.cpp  $(BUSSRCS) $(SCOPESRC)
 # rdclocks.cpp flashdrvr.cpp		\
 #	 mkedid.cpp $(BUSSRCS)	edidrxscope.cpp	edidtxscope.cpp		\
 #	zipload.cpp zipstate.cpp zipdbg.cpp cpedid.cpp readhist.cpp	\
@@ -67,7 +69,7 @@ SOURCES := wbregs.cpp netpport.cpp $(BUSSRCS)
 HEADERS := llcomms.h port.h hexbus.h devbus.h
 OBJECTS := $(addprefix $(OBJDIR)/,$(subst .cpp,.o,$(SOURCES)))
 BUSOBJS := $(addprefix $(OBJDIR)/,$(subst .cpp,.o,$(BUSSRCS)))
-CFLAGS := -g -Wall -I. -I../../rtl
+CFLAGS := -g -Wall -I. -I../../rtl/catzip
 LIBS :=
 SUBMAKE := $(MAKE) --no-print-directory
 
@@ -104,29 +106,56 @@ wbregs: $(ARCH)-wbregs
 $(ARCH)-wbregs: $(OBJDIR)/wbregs.o $(BUSOBJS)
 	$(CXX) $(CFLAGS) $^ $(LIBS) -o $@
 
+ 
+
 #
 # Programs that depend upon not just the bus objects, but the flash driver
 # as well.
-wbprogram: $(OBJDIR)/wbprogram.o $(OBJDIR)/flashdrvr.o $(BUSOBJS)
+#wbprogram: $(OBJDIR)/wbprogram.o   $(BUSOBJS)
+
+#	$(CXX) -g $^ -o $@
+.PHONY: sdramscope zipstate zipload dbgscope zipdbg wrsdram rdsdram
+zipstate: $(ARCH)-zipstate
+$(ARCH)-zipstate: $(OBJDIR)/zipstate.o $(BUSOBJS)
 	$(CXX) -g $^ -o $@
-zipload: $(OBJDIR)/zipload.o $(OBJDIR)/flashdrvr.o $(BUSOBJS) $(OBJDIR)/zipelf.o
+
+zipload: $(ARCH)-zipload
+$(ARCH)-zipload: $(OBJDIR)/zipload.o  
+$(ARCH)-zipload: $(BUSOBJS) $(OBJDIR)/zipelf.o
 	$(CXX) -g $^ -lelf -o $@
 
+wrsdram: $(ARCH)-wrsdram
+$(ARCH)-wrsdram: $(OBJDIR)/wrsdram.o  
+$(ARCH)-wrsdram: $(BUSOBJS) $(OBJDIR)/zipelf.o
+	$(CXX) -g $^ -lelf -o $@
+
+rdsdram: $(ARCH)-rdsdram
+$(ARCH)-rdsdram: $(OBJDIR)/rdsdram.o  
+$(ARCH)-rdsdram: $(BUSOBJS) $(OBJDIR)/zipelf.o
+	$(CXX) -g $^ -lelf -o $@	 
 
 ## SCOPES
 # These depend upon the scopecls.o, the bus objects, as well as their
 # main file(s).
 #
-# No scopes defined
+
+sdramscope: $(ARCH)-sdramscope
+$(ARCH)-sdramscope: $(OBJDIR)/sdramscope.o $(OBJDIR)/scopecls.o $(BUSOBJS)
+	$(CXX) -g $^ -o $@
 #
 #
+	 
 
 
 #
-DBGSRCS  := zopcodes.cpp twoc.cpp
+.PHONY: zipdbg
+DBGSRCS := zopcodes.cpp twoc.cpp
 DBGOBJS := $(addprefix $(OBJDIR)/,$(subst .cpp,.o,$(DBGSRCS)))
+zipdbg: $(ARCH)-zipdbg
 $(ARCH)-zipdbg: $(OBJDIR)/zipdbg.o $(BUSOBJS) $(DBGOBJS)
 	$(CXX) -g $^ -lcurses -o $@
+#
+#
 
 define	mk-objdir
 	@bash -c "if [ ! -e $(OBJDIR) ]; then mkdir -p $(OBJDIR); fi"

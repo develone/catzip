@@ -167,7 +167,7 @@ sim: rtl
 # A master target to build all of the support software
 #
 .PHONY: sw
-sw: sw-host # sw-zlib sw-board
+sw: sw-host sw-zlib sw-board
 
 #
 #

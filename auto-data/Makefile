@@ -48,8 +48,8 @@ all:	data install
 #
 DATA := global.txt bkram.txt buserr.txt clockpll40.txt		\
 	pic.txt pwrcount.txt version.txt			\
-	hbconsole.txt gpio.txt dlyarbiter.txt zipbones.txt sdramdev.txt \
-        sdramscope.txt 
+	hbconsole.txt gpio.txt dlyarbiter.txt zipbones.txt sdramdev.txt 
+         
 
 	# nodelay.txt
 	# Not used: flash.txt rtclite.txt watchdog.txt

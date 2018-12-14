@@ -4,37 +4,37 @@
 echo "The date built"
 ./arm-wbregs version
 #sleep 2
-./arm-wbregs 0x0500000 0x10000001
+./arm-wbregs 0x0400000 0x10000001
 #sleep 2 
-./arm-wbregs 0x0500004 0x10000002
+./arm-wbregs 0x0400004 0x10000002
 #sleep 2
-./arm-wbregs 0x0500008 0x10000003
+./arm-wbregs 0x0400008 0x10000003
 #sleep 2
-./arm-wbregs 0x050000c 0x10000004
+./arm-wbregs 0x040000c 0x10000004
 #sleep 2
-./arm-wbregs 0x0500000 0x10000001
+./arm-wbregs 0x0400000 0x10000001
 #sleep 2 
-./arm-wbregs 0x0500004 0x10000002
+./arm-wbregs 0x0400004 0x10000002
 #sleep 2
-./arm-wbregs 0x0500008 0x10000003
+./arm-wbregs 0x0400008 0x10000003
 #sleep 2
-./arm-wbregs 0x050000c 0x10000004
+./arm-wbregs 0x040000c 0x10000004
 #sleep 2
-./arm-wbregs 0x0500000 
+./arm-wbregs 0x0400000 
 #sleep 2
-./arm-wbregs 0x0500004 
+./arm-wbregs 0x0400004 
 #sleep 2
-./arm-wbregs 0x0500008 
+./arm-wbregs 0x0400008 
 #sleep 2
-./arm-wbregs 0x050000c
+./arm-wbregs 0x040000c
 #sleep 2 
-./arm-wbregs 0x0500000 
+./arm-wbregs 0x0400000 
 #sleep 2 
-./arm-wbregs 0x0500004 
+./arm-wbregs 0x0400004 
 #sleep 2
-./arm-wbregs 0x0500008 
+./arm-wbregs 0x0400008 
 #sleep 2
-./arm-wbregs 0x050000c
+./arm-wbregs 0x040000c
 #sleep 2
 ./arm-wbregs 0x0800000 0x10000001
 #sleep 2 

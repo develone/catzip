@@ -53,7 +53,7 @@
 FPGA	*m_fpga;
 
 //#define	DUMPMEM		SDRAMBASE
-#define	DUMPMEM 	0x8098a8
+#define	DUMPMEM 	0x008094c8
 //#define	DUMPWORDS	(FLASHLEN>>2)	// 16MB Flash
 //#define	DUMPWORDS (4000>>2)
 #define	DUMPWORDS 	65535

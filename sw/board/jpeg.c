@@ -26,7 +26,7 @@ struct PTRs {
 	int h;
 	int *img;
 	int *red;
-	int *fwd_inv;
+	//int *fwd_inv;
 	int *grn;
 	int *blu;
 	int *alt;
@@ -61,6 +61,7 @@ int main(int argc, char **argv) {
 	ptrs.h = 256;
 	int *im_s_ptr; 
 	int i,x,y,z,ur,ug,ub;
+	int *fwd_inv;
 	ptrs.img = (int *)&ptrs.inpbuf;
 	printf("w = 0x%x h = 0x%x\n",ptrs.w,ptrs.h); 
 	
@@ -74,19 +75,16 @@ int main(int argc, char **argv) {
 	ptrs.red = ptrs.act;
  	split(ptrs.flag, i, ptrs.img, ptrs.red);
  	printf("back from split start of dwt \n");
- 	//ptrs.fwd_inv[0] = 1;
+	 
  	for(i=0;i<5;i++) printf("0x%x \n",ptrs.red[i]);
  	for(i=0;i<5;i++) printf("0x%x \n",ptrs.alt[i]);
- 	 
-	//printf("0x%x \n",ptrs.fwd_inv[0]);
- 
+ 	*fwd_inv = 1;    
+    printf("0x%x 0x%x 0x%x 0x%x  \n", ptrs.w,ptrs.red,ptrs.alt,*fwd_inv);
     
-    printf("0x%x 0x%x 0x%x  \n", ptrs.w,ptrs.red,ptrs.alt);
-    /*
 
-	lifting(ptrs.w,ptrs.red,ptrs.alt,ptrs.fwd_inv);
+	lifting(ptrs.w,ptrs.red,ptrs.alt,fwd_inv);
 	printf("back from dwt\n");
-	*/
+	
 	
 	
 }

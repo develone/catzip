@@ -178,7 +178,7 @@ void	lifting(int w, int *ibuf, int *tmpbuf, int *fwd) {
 	int	*ip = ibuf, *tp = tmpbuf, *test_fwd = fwd;
 	int	ov[3];
 
-	const int	LVLS = 1;
+	const int	LVLS = 3;
 
 /*
 	for(lvl=0; lvl<w*w; lvl++)

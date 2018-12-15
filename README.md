@@ -163,6 +163,17 @@
 # Below is the debug when running
 # 12/2/18 Currently since the HX8K does not have implement the mul & div instructions
 # the lifting step halts and does not complete the lifting step.
+
+# This was fixed with the dev branch of zipcpu 
+# commit 7f02a5f8d8e1b6ba9ef701249ef996a02aa38aa4
+# Author: Dan Gisselquist <dgisselq@ieee.org>
+# Date:   Fri Sep 21 16:53:28 2018 -0400
+# pi@mypi3-4:~/zipcpu $ git branch -a
+# * dev
+#  master
+#  remotes/origin/HEAD -> origin/master
+#  remotes/origin/dev
+#  remotes/origin/master
 # pi@mypi3-1:~/testbuilds/catzip/sw/host $ ./arm-wbregs cpu 0x0f
 # 02000000 (        )-> 0000000f
 # . img_ptr = 0x10098a8

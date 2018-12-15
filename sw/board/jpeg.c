@@ -70,7 +70,7 @@ int main(int argc, char **argv) {
 	//split red
 	ptrs.red = (int *)&ptrs.act;
 	ptrs.alt = (int *)&ptrs.act[65536];
-	ptrs.flag = 2;
+	ptrs.flag = 0;
 	i = 65535;
 	ptrs.red = ptrs.act;
  	split(ptrs.flag, i, ptrs.img, ptrs.red);

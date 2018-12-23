@@ -240,11 +240,11 @@ private:
 	}
 
 	void	pp_dump(void) {
-		unsigned	datab = 0, clk=0, clkfb=0, dir=0;
+		unsigned	datab = 0; // , clk=0, clkfb=0, dir=0;
 
-		dir   = digitalRead(RASPI_DIR);
-		clk   = digitalRead(RASPI_CLK);
-		clkfb = digitalRead(RASPI_CLKFB);
+		// dir   = digitalRead(RASPI_DIR);
+		// clk   = digitalRead(RASPI_CLK);
+		// clkfb = digitalRead(RASPI_CLKFB);
 
 		if (digitalRead(RASPI_D7))	datab |= 0x80;
 		if (digitalRead(RASPI_D6))	datab |= 0x40;
@@ -255,12 +255,13 @@ private:
 		if (digitalRead(RASPI_D1))	datab |= 0x02;
 		if (digitalRead(RASPI_D0))	datab |= 0x01;
 
-
+/*
 		printf("%s %s/%s %02x\n",
 			(dir)?"OUT":" IN",
 			(clk)?"CLK":" ( )",
 			(clkfb)?"FB":" ()",
 			datab & 0x0ff);
+*/
 	}
 
 	void	pp_init(void) {
@@ -598,7 +599,7 @@ int main(int argc, char **argv)
 		if (nr > 0) {
 			unsigned iterations = 0;
 			last_busy  = (nr == sizeof(rawbuf));
-			while((nr > 0)&&(iterations++ < 16)) {
+			while(nr > 0) {
 				int	ncmd = 0, ncon = 0;
 				for(unsigned i=0; i<nr; i++) {
 					if (rawbuf[i] & 0x80)
@@ -641,6 +642,8 @@ int main(int argc, char **argv)
 				if (ncon > 0)
 					lbcon.print_in(stdout, ncon, (lbcon.m_fd >= 0)?") ":". ");
 
+				if (iterations++ > 16)
+					break;
 				nr = pport->read(sizeof(rawbuf), rawbuf);
 			}
 		}

@@ -107,7 +107,7 @@ hello: $(OBJDIR)/hello.o boardram.ld
 	$(CC) $(CFLAGS) $(LFLAGS) -Wl,-Map=$(OBJDIR)/hello.map $< $(LIBS) -o $@
 
 jpeg: $(OBJDIR)/jpeg.o $(OBJDIR)/lifting.o  boardram.ld
-	$(CC) $(CFLAGS) $(LFLAGS) $(OBJDIR)/lifting.o  -Wl,-Map=$(OBJDIR)/jpeg.map $< $(LIBS) -o $@
+	$(CC) $(CFLAGS) $(LFLAGS) $(OBJDIR)/lifting.o  -Wl,-Map=$(OBJDIR)/jpeg.map $< $(LIBS) -o $@ -lgcc
 
 
 define	mk-objdir

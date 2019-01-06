@@ -2,7 +2,7 @@
 //
 // Filename: 	slowmpy.v
 //
-// Project:	A multiply core generator
+// Project:	Zip CPU -- a small, lightweight, RISC CPU soft core
 //
 // Purpose:	This is a signed (OPT_SIGNED=1) or unsigned (OPT_SIGNED=0)
 // 		multiply designed for low logic and slow data signals.  It
@@ -45,8 +45,8 @@
 //
 module	slowmpy(i_clk, i_reset, i_stb, i_a, i_b, i_aux, o_busy,
 		o_done, o_p, o_aux);
-	parameter			LGNA = 4;
-	parameter	[LGNA:0]	NA = 12;
+	parameter			LGNA = 6;
+	parameter	[LGNA:0]	NA = 33;
 	parameter	[0:0]		OPT_SIGNED = 1'b1;
 	localparam	NB = NA;	// Must be = NA for OPT_SIGNED to work
 	//
@@ -133,12 +133,11 @@ module	slowmpy(i_clk, i_reset, i_stb, i_a, i_b, i_aux, o_busy,
 	end
 
 `ifdef	FORMAL
+`define	ASSERT	assert
 `ifdef	SLOWMPY
 `define	ASSUME	assume
-`define	ASSERT	assert
 `else
 `define	ASSUME	assert
-`define	ASSERT	assume
 `endif
 
 	reg	f_past_valid;

@@ -44,7 +44,8 @@
 //
 module	cpuops(i_clk,i_reset, i_stb, i_op, i_a, i_b, o_c, o_f, o_valid,
 			o_busy);
-	parameter	IMPLEMENT_MPY = `OPT_MULTIPLY;
+	parameter		IMPLEMENT_MPY = `OPT_MULTIPLY;
+	parameter	[0:0]	OPT_SHIFTS = 1'b1;
 	input	wire	i_clk, i_reset, i_stb;
 	input	wire	[3:0]	i_op;
 	input	wire	[31:0]	i_a, i_b;
@@ -53,24 +54,35 @@ module	cpuops(i_clk,i_reset, i_stb, i_op, i_a, i_b, o_c, o_f, o_valid,
 	output	reg		o_valid;
 	output	wire		o_busy;
 
+	genvar	k;
+
 	// Shift register pre-logic
 	wire	[32:0]		w_lsr_result, w_asr_result, w_lsl_result;
-	wire	signed	[32:0]	w_pre_asr_input, w_pre_asr_shifted;
-	assign	w_pre_asr_input = { i_a, 1'b0 };
-	assign	w_pre_asr_shifted = w_pre_asr_input >>> i_b[4:0];
-	assign	w_asr_result = (|i_b[31:5])? {(33){i_a[31]}}
-				: w_pre_asr_shifted;// ASR
-	assign	w_lsr_result = ((|i_b[31:6])||(i_b[5]&&(i_b[4:0]!=0)))? 33'h00
-				:((i_b[5])?{32'h0,i_a[31]}
-				
-				: ( { i_a, 1'b0 } >> (i_b[4:0]) ));// LSR
-	assign	w_lsl_result = ((|i_b[31:6])||(i_b[5]&&(i_b[4:0]!=0)))? 33'h00
-				:((i_b[5])?{i_a[0], 32'h0}
-				: ({1'b0, i_a } << i_b[4:0]));	// LSL
+	generate if (OPT_SHIFTS)
+	begin : IMPLEMENT_SHIFTS
+		wire	signed	[32:0]	w_pre_asr_input, w_pre_asr_shifted;
+		assign	w_pre_asr_input = { i_a, 1'b0 };
+		assign	w_pre_asr_shifted = w_pre_asr_input >>> i_b[4:0];
+		assign	w_asr_result = (|i_b[31:5])? {(33){i_a[31]}}
+					: w_pre_asr_shifted;// ASR
+		assign	w_lsr_result = ((|i_b[31:6])||(i_b[5]&&(i_b[4:0]!=0)))? 33'h00
+					:((i_b[5])?{32'h0,i_a[31]}
 
+					: ( { i_a, 1'b0 } >> (i_b[4:0]) ));// LSR
+		assign	w_lsl_result = ((|i_b[31:6])||(i_b[5]&&(i_b[4:0]!=0)))? 33'h00
+					:((i_b[5])?{i_a[0], 32'h0}
+					: ({1'b0, i_a } << i_b[4:0]));	// LSL
+	end else begin : NO_SHIFTS
+
+		assign	w_asr_result = {   i_a[31], i_a[31:0] };
+		assign	w_lsr_result = {      1'b0, i_a[31:0] };
+		assign	w_lsl_result = { i_a[31:0],      1'b0 };
+
+	end endgenerate
+
+	//
 	// Bit reversal pre-logic
 	wire	[31:0]	w_brev_result;
-	genvar	k;
 	generate
 	for(k=0; k<32; k=k+1)
 	begin : bit_reversal_cpuop
@@ -81,16 +93,17 @@ module	cpuops(i_clk,i_reset, i_stb, i_op, i_a, i_b, o_c, o_f, o_valid,
 	wire	z, n, v;
 	reg	c, pre_sign, set_ovfl, keep_sgn_on_ovfl;
 	always @(posedge i_clk)
-		if (i_stb) // 1 LUT
-			set_ovfl<=(((i_op==4'h0)&&(i_a[31] != i_b[31]))//SUB&CMP
-				||((i_op==4'h2)&&(i_a[31] == i_b[31])) // ADD
-				||(i_op == 4'h6) // LSL
-				||(i_op == 4'h5)); // LSR
+	if (i_stb) // 1 LUT
+		set_ovfl<=(((i_op==4'h0)&&(i_a[31] != i_b[31]))//SUB&CMP
+			||((i_op==4'h2)&&(i_a[31] == i_b[31])) // ADD
+			||(i_op == 4'h6) // LSL
+			||(i_op == 4'h5)); // LSR
+
 	always @(posedge i_clk)
-		if (i_stb) // 1 LUT
-			keep_sgn_on_ovfl<=
-				(((i_op==4'h0)&&(i_a[31] != i_b[31]))//SUB&CMP
-				||((i_op==4'h2)&&(i_a[31] == i_b[31]))); // ADD
+	if (i_stb) // 1 LUT
+		keep_sgn_on_ovfl<=
+			(((i_op==4'h0)&&(i_a[31] != i_b[31]))//SUB&CMP
+			||((i_op==4'h2)&&(i_a[31] == i_b[31]))); // ADD
 
 	wire	[63:0]	mpy_result; // Where we dump the multiply result
 	wire	mpyhi;		// Return the high half of the multiply
@@ -109,7 +122,11 @@ module	cpuops(i_clk,i_reset, i_stb, i_op, i_a, i_b, o_c, o_f, o_valid,
 	//
 	// Pull in the multiply logic from elsewhere
 	//
+`ifdef	FORMAL
+`define	MPYOP	abs_mpy
+`else
 `define	MPYOP	mpyop
+`endif
 	`MPYOP #(.IMPLEMENT_MPY(IMPLEMENT_MPY)) thempy(i_clk, i_reset, this_is_a_multiply_op, i_op[1:0],
 		i_a, i_b, mpydone, mpybusy, mpy_result, mpyhi);
 
@@ -144,12 +161,12 @@ module	cpuops(i_clk,i_reset, i_stb, i_op, i_a, i_b, o_c, o_f, o_valid,
 	reg	r_busy;
 	initial	r_busy = 1'b0;
 	always @(posedge i_clk)
-		if (i_reset)
-			r_busy <= 1'b0;
-		else if (IMPLEMENT_MPY > 1)
-			r_busy <= ((i_stb)&&(this_is_a_multiply_op))||mpybusy;
-		else
-			r_busy <= 1'b0;
+	if (i_reset)
+		r_busy <= 1'b0;
+	else if (IMPLEMENT_MPY > 1)
+		r_busy <= ((i_stb)&&(this_is_a_multiply_op))||mpybusy;
+	else
+		r_busy <= 1'b0;
 
 	assign	o_busy = (r_busy); // ||((IMPLEMENT_MPY>1)&&(this_is_a_multiply_op));
 
@@ -163,14 +180,108 @@ module	cpuops(i_clk,i_reset, i_stb, i_op, i_a, i_b, o_c, o_f, o_valid,
 
 	initial	o_valid = 1'b0;
 	always @(posedge i_clk)
-		if (i_reset)
-			o_valid <= 1'b0;
-		else if (IMPLEMENT_MPY <= 1)
-			o_valid <= (i_stb);
-		else
-			o_valid <=((i_stb)&&(!this_is_a_multiply_op))||(mpydone);
+	if (i_reset)
+		o_valid <= 1'b0;
+	else if (IMPLEMENT_MPY <= 1)
+		o_valid <= (i_stb);
+	else
+		o_valid <=((i_stb)&&(!this_is_a_multiply_op))||(mpydone);
 
 `ifdef	FORMAL
-// Formal properties for this module are maintained elsewhere
+	initial	assume(i_reset);
+	reg	f_past_valid;
+
+	initial	f_past_valid = 1'b0;
+	always @(posedge i_clk)
+		f_past_valid = 1'b1;
+
+`define	ASSERT	assert
+`ifdef	CPUOPS
+`define	ASSUME	assume
+`else
+`define	ASSUME	assert
+`endif
+
+	// No request should be given us if/while we are busy
+	always @(posedge i_clk)
+	if (o_busy)
+		`ASSUME(!i_stb);
+
+	// Following any request other than a multiply request, we should
+	// respond in the next cycle
+	always @(posedge i_clk)
+	if ((f_past_valid)&&(!$past(o_busy))&&(!$past(this_is_a_multiply_op)))
+		`ASSERT(!o_busy);
+
+	// Valid and busy can never both be asserted
+	always @(posedge i_clk)
+		`ASSERT((!o_valid)||(!r_busy));
+
+	// Following any busy, we should always become valid
+	always @(posedge i_clk)
+	if ((f_past_valid)&&($past(o_busy))&&(!o_busy))
+		`ASSERT($past(i_reset) || o_valid);
+
+	// Check the shift values
+	always @(posedge i_clk)
+	if ((f_past_valid)&&($past(i_stb)))
+	begin
+		if (($past(|i_b[31:6]))||($past(i_b[5:0])>6'd32))
+		begin
+			assert(($past(i_op)!=4'h5)
+					||({o_c,c}=={(33){1'b0}}));
+			assert(($past(i_op)!=4'h6)
+					||({c,o_c}=={(33){1'b0}}));
+			assert(($past(i_op)!=4'h7)
+					||({o_c,c}=={(33){$past(i_a[31])}}));
+		end else if ($past(i_b[5:0]==6'd32))
+		begin
+			assert(($past(i_op)!=4'h5)
+				||(o_c=={(32){1'b0}}));
+			assert(($past(i_op)!=4'h6)
+				||(o_c=={(32){1'b0}}));
+			assert(($past(i_op)!=4'h7)
+				||(o_c=={(32){$past(i_a[31])}}));
+		end if ($past(i_b)==0)
+		begin
+			assert(($past(i_op)!=4'h5)
+				||({o_c,c}=={$past(i_a), 1'b0}));
+			assert(($past(i_op)!=4'h6)
+				||({c,o_c}=={1'b0, $past(i_a)}));
+			assert(($past(i_op)!=4'h7)
+				||({o_c,c}=={$past(i_a), 1'b0}));
+		end if ($past(i_b)==1)
+		begin
+			assert(($past(i_op)!=4'h5)
+				||({o_c,c}=={1'b0, $past(i_a)}));
+			assert(($past(i_op)!=4'h6)
+				||({c,o_c}=={$past(i_a),1'b0}));
+			assert(($past(i_op)!=4'h7)
+				||({o_c,c}=={$past(i_a[31]),$past(i_a)}));
+		end if ($past(i_b)==2)
+		begin
+			assert(($past(i_op)!=4'h5)
+				||({o_c,c}=={2'b0, $past(i_a[31:1])}));
+			assert(($past(i_op)!=4'h6)
+				||({c,o_c}=={$past(i_a[30:0]),2'b0}));
+			assert(($past(i_op)!=4'h7)
+				||({o_c,c}=={{(2){$past(i_a[31])}},$past(i_a[31:1])}));
+		end if ($past(i_b)==31)
+		begin
+			assert(($past(i_op)!=4'h5)
+				||({o_c,c}=={31'b0, $past(i_a[31:30])}));
+			assert(($past(i_op)!=4'h6)
+				||({c,o_c}=={$past(i_a[1:0]),31'b0}));
+			assert(($past(i_op)!=4'h7)
+				||({o_c,c}=={{(31){$past(i_a[31])}},$past(i_a[31:30])}));
+		end
+	end
 `endif
 endmodule
+//
+// iCE40	NoMPY,w/Shift	NoMPY,w/o Shift
+//  SB_CARRY		 64		 64
+//  SB_DFFE		  3		  3
+//  SB_DFFESR		  1		  1
+//  SB_DFFSR		 33		 33
+//  SB_LUT4		748		323

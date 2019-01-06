@@ -911,6 +911,7 @@ wbsdram sdrami(i_clk,
 `endif	// BUSPIC_ACCESS
 
 `ifdef	BUSCONSOLE_ACCESS
+	/* verilator lint_off PINMISSING */
 	console consolei(i_clk, 1'b0,
  			wb_cyc, (wb_stb)&&(console_sel), wb_we,
 				wb_addr[1:0], wb_data,
@@ -918,6 +919,7 @@ wbsdram sdrami(i_clk,
 			w_console_tx_stb, w_console_tx_data, w_console_busy,
 			w_console_rx_stb, w_console_rx_data,
 			uartrx_int, uarttx_int, uartrxf_int, uarttxf_int);
+	/* verilator lint_off PINMISSING */
 `else	// BUSCONSOLE_ACCESS
 	assign	w_console_tx_stb  = 1'b0;
 	assign	w_console_tx_data = 7'h7f;

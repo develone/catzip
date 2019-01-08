@@ -129,6 +129,7 @@
 # -#define        FPGAHOST        "rpi"
 # +#define        FPGAHOST        "localhost"
 # +//#define      FPGAHOST        "rpi"
+#
 # The new Goal currently is to get jpeg.c C program running on the CatBoard running with the ZipCPU.
 # This program was running on xulalx25soc 
 # [main program jpeg.c]()
@@ -140,93 +141,74 @@
 # Disassembly of [lifting.txt](https://github.com/develone/catzip/blob/master/sw/board/lifting.txt)
 # Steps to test running jpeg 
 # Need to read packed image into the SDRAM
-# pi@mypi3-1:~/testbuilds/catzip/sw/host $ ./arm-wrsdram rgb_pack.bin 
-# The size of the buffer is 0x00ffff or 65535 words
-# 
-# READ-COMPLETE
-# Need to load the jpeg program into the SDRAM
-# pi@mypi3-1:~/testbuilds/catzip/sw/host $ ./arm-zipload -v ../board/jpeg
-# Halting the CPU
-# Memory regions:
-# 	Block RAM: 00a00000 - 00a02000
-# 	SDRAM       : 01000000 - 02000000
-# Loading: ../board/jpeg
-# Section 0: 01000000 - 0100989c
-# Writing to MEM: 01000000-0100989c
-# Clearing the CPUs registers
-# Setting PC to 01000000
-# The CPU should be fully loaded, you may now
-# start it (from reset/reboot) with:
-# > wbregs cpu 0x0f
-# 
-# CPU Status is: 0000060f
 # Below is the debug when running
-# 12/2/18 Currently since the HX8K does not have implement the mul & div instructions
+# 01/07/18 Currently since the HX8K does not have implement the mul & div instructions
 # the lifting step halts and does not complete the lifting step.
 
-# This was fixed with the dev branch of zipcpu 
-# commit 7f02a5f8d8e1b6ba9ef701249ef996a02aa38aa4
-# Author: Dan Gisselquist <dgisselq@ieee.org>
-# Date:   Fri Sep 21 16:53:28 2018 -0400
-# pi@mypi3-4:~/zipcpu $ git branch -a
-# * dev
-#  master
-#  remotes/origin/HEAD -> origin/master
-#  remotes/origin/dev
-#  remotes/origin/master
-# pi@mypi3-1:~/testbuilds/catzip/sw/host $ ./arm-wbregs cpu 0x0f
-# 02000000 (        )-> 0000000f
-# . img_ptr = 0x10098a8
-# . buf_red = 0x10498b0
-# . buf_gr = 0x110b638
-# . buf_bl = 0x118b640
-# . fwd_inv = 0x10c98b8
-# . Start of JPEG DWT!
-# . w = 0x100 h = 0x100
-# . img_ptr = 0x10098a8 *img_ptr = 0xe22247c
-# . img_ptr = 0x10098ac *img_ptr = 0xde22083
-# . img_ptr = 0x10098b0 *img_ptr = 0xe221475
-# . img_ptr = 0x10098b4 *img_ptr = 0xe32207b
-# . img_ptr = 0x10098b8 *img_ptr = 0xe12287a
-# . 
-# . img_ptr = 0x1026d7c *img_ptr = 0xb611851
-# . img_ptr = 0x1026d80 *img_ptr = 0xb812051
-# . img_ptr = 0x1026d84 *img_ptr = 0xce1845b
-# . img_ptr = 0x1026d88 *img_ptr = 0xc312c53
-# . img_ptr = 0x1026d8c *img_ptr = 0xc31585a
-# . 
-# . img_ptr = 0x1049070 *img_ptr = 0x8b11058
-# . img_ptr = 0x1049074 *img_ptr = 0x800f054
-# . img_ptr = 0x1049078 *img_ptr = 0x7409c44
-# . img_ptr = 0x104907c *img_ptr = 0x680783b
-# . img_ptr = 0x1049080 *img_ptr = 0x6608c43
-# . 
-# . im_s_ptr = 0x10098a8
-# . buf_red = 0x10498b0 *buf_red = 0xe2
-# . buf_red = 0x10498b4 *buf_red = 0xde
-# . buf_red = 0x10498b8 *buf_red = 0xe2
-# . buf_red = 0x10498bc *buf_red = 0xe3
-# . buf_red = 0x10498c0 *buf_red = 0xe1
-# . 
-# . buf_gr = 0x110b638 *buf_gr = 0x89
-# . buf_gr = 0x110b63c *buf_gr = 0x88
-# . buf_gr = 0x110b640 *buf_gr = 0x85
-# . buf_gr = 0x110b644 *buf_gr = 0x88
-# . buf_gr = 0x110b648 *buf_gr = 0x8a
-# . 
-# . buf_bl = 0x118b640 *buf_bl = 0x7c
-# . buf_bl = 0x118b644 *buf_bl = 0x83
-# . buf_bl = 0x118b648 *buf_bl = 0x75
-# . buf_bl = 0x118b64c *buf_bl = 0x7b
-# . buf_bl = 0x118b650 *buf_bl = 0x7a
-# . 
-# . w = 0x100 buf_red wptr = 0x10498b0 alt =  0x10898b0 fwd_inverse =  0x10c98b8. wd_inverse =  0x1 
-# . w = 0x100 buf_gr wptr1 = 0x110b638 alt1 =  0x114b638 fwd_inverse =  0x10c98b. fwd_inverse =  0x1 
-# . w = 0x100 buf_bl wptr2 = 0x118b640 alt2 =  0x11cb640 fwd_inverse =  0x10c98b. fwd_inverse =  0x1 
-# . all pointers for r g b dwt should be setup correctly
-# . starting red dwt
-# . in lifting 
-# . in singlelift 
+# This was fixed with the update to zipcpu 
+commit 097c79344952c2caef83f057348d1d18ab2dd445
+Author: ZipCPU <dgisselq@ieee.org>
+Date:   Tue Dec 18 13:50:02 2018 -0500
+
+    Default to use OPT_DCACHE in ZipSystem
+
+#  pi@mypi3-1:~/testbuilds/testcatzipmypi3-4/catzip/sw/host $ ./arm-zipload -v ../board/jpeg
+#  Halting the CPU
+#  Memory regions:
+#  	Block RAM: 00400000 - 00402000
+#  	SDRAM       : 00800000 - 01000000
+#  Loading: ../board/jpeg
+#  Section 0: 00800000 - 008cef1c
+#  Writing to MEM: 00800000-008cef1c
+#  Clearing the CPUs registers
+#  Setting PC to 00800000
+#  The CPU should be fully loaded, you may now
+#  start it (from reset/reboot) with:
+#  > wbregs cpu 0x0f
+#  
+#  CPU Status is: 0000060f
+#
+#  pi@mypi3-1:~/testbuilds/testcatzipmypi3-4/catzip/sw/host $ ./arm-wrsdram rgb_pack.bin
+#  The size of the buffer is 0x00ffff or 65535 words
+#  
+#  READ-COMPLETE
+
+#  pi@mypi3-1:~/testbuilds/testcatzipmypi3-4/catzip/sw/host $ ./arm-wbregs cpu 0x0f
+#  01000000 (        )-> 0000000f
+#  . w = 0x100 h = 0x100
+#  . ptrs-->img = 0x80eeb0
+#  . x = 0xe22247c sp = 0xe2 z = 0xe200000
+#  . x = 0xde22083 sp = 0xde z = 0xde00000
+#  . x = 0xe221475 sp = 0xe2 z = 0xe200000
+#  . x = 0xe32207b sp = 0xe3 z = 0xe300000
+#  . x = 0xa812055 sp = 0xa8 z = 0xa800000
+#  . x = 0xb210c4c sp = 0xb2 z = 0xb200000
+#  . back from split start of dwt 
+#  . 0xe2 
+#  . 0xde 
+#  . 0xe2 
+#  . 0xe3 
+#  . 0xe1 
+#  . 0x0 
+#  . 0x0 
+#  . 0x0 
+#  . 0x0 
+#  . 0x0 
+#  . 0x100 0x84eeb0 0x88eeb0 0x1  
+#  . in lifting 
+#  . in singlelift 
+#  . in singlelift 
+#  . back from singlelift
+#  . in lifting 
+#  . in singlelift 
+#  . in singlelift 
+#  . back from singlelift
+#  . in lifting 
+#  . in singlelift 
+#  . in singlelift 
+#  . back from singlelift
+#  . testing test_fwd  
+#  
 # [rd_bytes.c](https://github.com/develone/catzip/blob/master/sw/board/rd_bytes.c)
 
 # Disassemble of [rd_bytes.txt](https://github.com/develone/catzip/blob/master/sw/board/rd_bytes.txt)

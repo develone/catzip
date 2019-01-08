@@ -169,6 +169,7 @@
 	wire	w_console_rx_stb, w_console_tx_stb, w_console_busy;
 	wire	[6:0]	w_console_rx_data, w_console_tx_data;
 @MAIN.INSERT=
+	/* verilator lint_off PINMISSING */
 	console @$(PREFIX)i(@$(SLAVE.BUS.CLOCK.WIRE), 1'b0,
  			wb_cyc, (wb_stb)&&(@$(PREFIX)_sel), wb_we,
 				wb_addr[1:0], wb_data,
@@ -176,6 +177,7 @@
 			w_console_tx_stb, w_console_tx_data, w_console_busy,
 			w_console_rx_stb, w_console_rx_data,
 			uartrx_int, uarttx_int, uartrxf_int, uarttxf_int);
+	/* verilator lint_off PINMISSING */
 @MAIN.ALT=
 	assign	w_console_tx_stb  = 1'b0;
 	assign	w_console_tx_data = 7'h7f;

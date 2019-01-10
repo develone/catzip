@@ -37,7 +37,7 @@
 ##
 @LEGAL=legalgen.txt
 @PROJECT=CAT Zip, iCE40 ZipCPU demonstration project
-@PCF.FILE=catzip.pcf
+@PCF.FILE=../rtl/catzip/catzip.pcf
 #
 @KEYS.INTLIST= BUS_ADDRESS_WIDTH NADDR NPIC NSCOPES PIC.MAX REGS.N ID
 @DEFAULT.BUS=wb

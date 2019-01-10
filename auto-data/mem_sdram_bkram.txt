@@ -1,6 +1,6 @@
 ################################################################################
 ##
-## Filename: 	mem_flash_bkram.txt
+## Filename: 	mem_sdram_bkram.txt
 ##
 ## Project:	OpenArty, an entirely open SoC based upon the Arty platform
 ##
@@ -39,19 +39,28 @@
 ##
 ##
 ##
-@PREFIX=mem_flash_bkram
+@PREFIX=mem_sdram_bkram
 @MASTER.TYPE=CPU
 @MASTER.BUS=zip
 @LD.FILE=board.ld
 @LD.DEFNS=
-/* LD.DEFNS from zipmaster.txt */
+/* LD.DEFNS from zipbones.txt */
 _kram  = 0; /* No high-speed kernel RAM */
 _ram   = ORIGIN(bkram);
 _rom   = ORIGIN(flash);
 _top_of_stack = ORIGIN(bkram) + LENGTH(bkram);
 
 @LD.SCRIPT=
-/* LD.SCRIPT from zipmaster.txt */
+/* LD.SCRIPT from zipbones.txt */
+MEMORY
+{
+		bkram(wx) : ORIGIN = 0x00400000, LENGTH = 0x00002000
+		sdram(wx) : ORIGIN = 0x00800000, LENGTH = 0x00800000
+}
+
+_bkram    = ORIGIN(bkram);
+_sdram    = ORIGIN(sdram);
+
 SECTIONS
 {
        .rocode @$[0x%08x](zip.RESET_ADDRESS) : ALIGN(4) {

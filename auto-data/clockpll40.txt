@@ -126,7 +126,8 @@
        	//SB_GB global_buffer(clk_40mhz, s_clk);
 	assign	s_clk = clk_40mhz;
 `endif
-
+@TOP.PORTLIST=i_clk 
+@TOP.IODECL= input  i_clk;
 @REGDEFS.H.DEFNS=
 #define	CLKFREQHZ	@$CLKFREQHZ
 @BDEF.DEFN=

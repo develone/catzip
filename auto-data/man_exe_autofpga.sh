@@ -1,1 +1,1 @@
-autofpga -d autofpga.dbg -o autofpga-generated global.txt bkram.txt buserr.txt clockpll40.txt dlyarbiter.txt pic.txt pwrcount.txt version.txt hbconsole.txt gpio.txt zipbones.txt sdramdev.txt mem_sdram_bkram.txt
+autofpga -d autofpga.dbg -o autofpga-generated global.txt bkram.txt buserr.txt clockpll40.txt dlyarbiter.txt pic.txt pwrcount.txt version.txt hbconsole.txt gpio.txt zipbones.txt sdramdev.txt mem_sdram_bkram.txt wbuart.txt

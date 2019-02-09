@@ -54,8 +54,8 @@ _top_of_stack = ORIGIN(bkram) + LENGTH(bkram);
 /* LD.SCRIPT from zipbones.txt */
 MEMORY
 {
-		bkram(wx) : ORIGIN = 0x00400000, LENGTH = 0x00002000
-		sdram(wx) : ORIGIN = 0x00800000, LENGTH = 0x00800000
+		bkram(wx) : ORIGIN = 0x00A00000, LENGTH = 0x00002000
+		sdram(wx) : ORIGIN = 0x01000000, LENGTH = 0x01000000
 }
 
 _bkram    = ORIGIN(bkram);

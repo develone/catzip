@@ -44,8 +44,8 @@ ENTRY(_start)
 
 MEMORY
 {
-	   bkram(wx) : ORIGIN = 0x00400000, LENGTH = 0x00002000
-	   sdram(wx) : ORIGIN = 0x00800000, LENGTH = 0x00800000	    
+	   bkram(wx) : ORIGIN = 0x00A00000, LENGTH = 0x00002000
+	   sdram(wx) : ORIGIN = 0x01000000, LENGTH = 0x01000000	    
 }
 
 _bkram    = ORIGIN(bkram);
@@ -54,7 +54,7 @@ _sdram     = ORIGIN(sdram);
 _top_of_stack = ORIGIN(sdram)+LENGTH(sdram);
 SECTIONS
 {
-	.ramcode 0x00800000 : ALIGN(4) {
+	.ramcode 0x01000000 : ALIGN(4) {
 		_boot_address = .;
 		*(.start) *(.boot)
 		*(.kernel)

@@ -78,7 +78,10 @@ i_clk,
 	//
 	// We start with any @CLOCK.TOP keys
 	//
+<<<<<<< HEAD
 	//toplevel.v instantiating busmaster.v 
+=======
+>>>>>>> 8ea1a9d5f1ccd3534af05fe0dcccbde0c452259c
 	//o_ram_cs_n,     Chip select
 	//o_ram_cke,      Clock enable
 	//o_ram_ras_n,    Row address strobe
@@ -197,8 +200,13 @@ input  i_clk;	// Parallel port to wishbone / console interface
 	//
  
 	//ppio #(.W(16))
+<<<<<<< HEAD
 		//sdramioi((!ram_drive_data), io_ram_data, o_ram_data, r_ram_data_ext_clk);
 	assign io_ram_data = (ram_drive_data) ? ram_data : 16'bzzzz_zzzz_zzzz_zzzz;
+=======
+		//sdramioi((o_ram_we_n||!ram_drive_data), io_ram_data, o_ram_data, r_ram_data_ext_clk);
+	assign io_ram_data = (ram_drive_data) ? o_ram_data : 16'bzzzz_zzzz_zzzz_zzzz;
+>>>>>>> 8ea1a9d5f1ccd3534af05fe0dcccbde0c452259c
 	reg	[15:0]	r_ram_data_ext_clk;
 	// always @(posedge intermediate_clk_n)
 	always @(posedge s_clk)

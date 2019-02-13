@@ -4,70 +4,73 @@
 echo "The date built"
 ./arm-wbregs version
 #sleep 2
-./arm-wbregs 0x0400000 0x10000001
+./arm-wbregs 0x0a00000 0x10000001
 #sleep 2 
-./arm-wbregs 0x0400004 0x10000002
+./arm-wbregs 0x0a00004 0x10000002
 #sleep 2
-./arm-wbregs 0x0400008 0x10000003
+./arm-wbregs 0x0a00008 0x10000003
 #sleep 2
-./arm-wbregs 0x040000c 0x10000004
+./arm-wbregs 0x0a0000c 0x10000004
 #sleep 2
-./arm-wbregs 0x0400000 0x10000001
+./arm-wbregs 0x0a00000 0x10000001
 #sleep 2 
-./arm-wbregs 0x0400004 0x10000002
+./arm-wbregs 0x0a00004 0x10000002
 #sleep 2
-./arm-wbregs 0x0400008 0x10000003
+./arm-wbregs 0x0a00008 0x10000003
 #sleep 2
-./arm-wbregs 0x040000c 0x10000004
+./arm-wbregs 0x0a0000c 0x10000004
 #sleep 2
-./arm-wbregs 0x0400000 
+./arm-wbregs 0x0a00000 
 #sleep 2
-./arm-wbregs 0x0400004 
+./arm-wbregs 0x0a00004 
 #sleep 2
-./arm-wbregs 0x0400008 
+./arm-wbregs 0x0a00008 
 #sleep 2
-./arm-wbregs 0x040000c
+./arm-wbregs 0x0a0000c
 #sleep 2 
-./arm-wbregs 0x0400000 
+./arm-wbregs 0x0a00000 
 #sleep 2 
-./arm-wbregs 0x0400004 
+./arm-wbregs 0x0a00004 
 #sleep 2
-./arm-wbregs 0x0400008 
+./arm-wbregs 0x0a00008 
 #sleep 2
-./arm-wbregs 0x040000c
+./arm-wbregs 0x0a0000c
 #sleep 2
-./arm-wbregs 0x0800000 0x10000001
+./arm-wbregs 0x01000000 0x10000001
 #sleep 2 
-./arm-wbregs 0x0800004 0x10000002
+./arm-wbregs 0x01000004 0x10000002
 #sleep 2
-./arm-wbregs 0x0800008 0x10000003
+./arm-wbregs 0x01000008 0x10000003
 #sleep 2
-./arm-wbregs 0x080000c 0x10000004
+./arm-wbregs 0x0100000c 0x10000004
 #sleep 2
-./arm-wbregs 0x0800000 0x10000001
+./arm-wbregs 0x01000000 0x10000001
 #sleep 2 
-./arm-wbregs 0x0800004 0x10000002
+./arm-wbregs 0x01000004 0x10000002
 #sleep 2
-./arm-wbregs 0x0800008 0x10000003
+./arm-wbregs 0x01000008 0x10000003
 #sleep 2
-./arm-wbregs 0x080000c 0x10000004
+./arm-wbregs 0x0100000c 0x10000004
 #sleep 2
-./arm-wbregs 0x0800000 
+./arm-wbregs 0x01fffffc 0x1ffffffc
 #sleep 2
-./arm-wbregs 0x0800004 
+./arm-wbregs 0x01000000 
 #sleep 2
-./arm-wbregs 0x0800008 
+./arm-wbregs 0x01000004 
 #sleep 2
-./arm-wbregs 0x080000c
+./arm-wbregs 0x01000008 
+#sleep 2
+./arm-wbregs 0x0100000c
 #sleep 2 
-./arm-wbregs 0x0800000 
+./arm-wbregs 0x01000000 
 #sleep 2 
-./arm-wbregs 0x0800004 
+./arm-wbregs 0x01000004 
 #sleep 2
-./arm-wbregs 0x0800008 
+./arm-wbregs 0x01000008 
 #sleep 2
-./arm-wbregs 0x080000c
+./arm-wbregs 0x0100000c
 #sleep 2
+./arm-wbregs 0x01fffffc
 echo "Turning on the 4th led "
 ./arm-wbregs gpio 0x00010001
 sleep 2 

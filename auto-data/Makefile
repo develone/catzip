@@ -49,7 +49,7 @@ all:	data install
 DATA := global.txt bkram.txt buserr.txt clockpll40.txt		\
 	pic.txt pwrcount.txt version.txt			\
 	hbconsole.txt gpio.txt dlyarbiter.txt zipbones.txt sdramdev.txt \
-	mem_sdram_bkram.txt 
+	mem_sdram_bkram.txt sdramscope.txt
          
 
 	# nodelay.txt

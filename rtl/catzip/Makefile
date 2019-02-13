@@ -104,14 +104,15 @@ bin: catzip.bin
 #
 #
 catzip.blif: toplevel.v $(VFLIST)
-	@echo yosys -ql simple.log -p 'synth_ice40 -blif catzip.blif -top toplevel' ...
-	@yosys -ql simple.log -p 'synth_ice40 -blif catzip.blif -top toplevel' $^
+	@echo yosys -ql simple.log -p 'synth_ice40 -blif catzip.blif -json catzip.json -top toplevel' ...
+	@yosys -ql simple.log -p 'synth_ice40 -blif catzip.blif -json catzip.json -top toplevel' $^
 
 .PHONY: yosys
 yosys: catzip.blif
 
 catzip.asc: $(PCFFILE) catzip.blif
 	arachne-pnr -d 8k -r -p $(PCFFILE) catzip.blif -o $@
+	#nextpnr-ice40 --hx8k --pcf $(PCFFILE) --json catzip.json --asc catzip.asc
 
 .PHONY: arachne
 arachne: catzip.asc

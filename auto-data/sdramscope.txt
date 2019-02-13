@@ -37,15 +37,16 @@
 ##
 @PREFIX=sdramscope
 @$NADDR=2
-@ACCESS= SDRAM_SCOPE
-@DEPENDS= SDRAM_ACCESS
+@ACCESS=SDRAM_SCOPE
+@DEPENDS=SDRAM_ACCESS
 @SLAVE.TYPE=OTHER
 @SLAVE.BUS=wb
 @MAIN.INSERT=
 	wire	[31:0]	sdram_debug;
 	wire		sdramscope_int;
-
+	/* verilator lint_off WIDTH */
 	assign	sdram_debug = { (!o_ram_cs_n),
+	/* verilator lint_off WIDTH */
 			wb_cyc, (wb_stb)&&(sdram_sel), wb_we,
 				sdram_stall,sdram_ack,
 				o_ram_cs_n, o_ram_ras_n, o_ram_we_n, o_ram_cas_n,

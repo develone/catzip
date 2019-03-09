@@ -1,3 +1,46 @@
+////////////////////////////////////////////////////////////////////////////////
+//
+// Filename: 	sdramsim.h
+//
+// Project:	ArrowZip, a demonstration of the Arrow MAX1000 FPGA board
+//
+// Purpose:	This module simulates an 16-bit SDRAM within a Verilator based
+//		simulation environment.  It was originally written for the
+//	xulalx25soc, but has now been modified for the ArrowZip project.
+//
+//	The simulator is designed to be called from the Verilator test harness
+//	"tick" routine, or once per clock.  It returns the values from the
+//	data lines, and asserts that the logic presented is done validly.
+//
+// Creator:	Dan Gisselquist, Ph.D.
+//		Gisselquist Technology, LLC
+//
+////////////////////////////////////////////////////////////////////////////////
+//
+// Copyright (C) 2018, Gisselquist Technology, LLC
+//
+// This program is free software (firmware): you can redistribute it and/or
+// modify it under the terms of  the GNU General Public License as published
+// by the Free Software Foundation, either version 3 of the License, or (at
+// your option) any later version.
+//
+// This program is distributed in the hope that it will be useful, but WITHOUT
+// ANY WARRANTY; without even the implied warranty of MERCHANTIBILITY or
+// FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+// for more details.
+//
+// You should have received a copy of the GNU General Public License along
+// with this program.  (It's in the $(ROOT)/doc directory.  Run make with no
+// target there if the PDF file isn't present.)  If not, see
+// <http://www.gnu.org/licenses/> for a copy.
+//
+// License:	GPL, v3, as defined and found on www.gnu.org,
+//		http://www.gnu.org/licenses/gpl.html
+//
+//
+////////////////////////////////////////////////////////////////////////////////
+//
+//
 #ifndef	SDRAMSIM_H
 
 #define	NBANKS	4
@@ -24,6 +67,7 @@ class	SDRAMSIM {
 	int	m_clocks_till_idle;
 	bool	m_next_wr;
 	unsigned	m_fail;
+	bool		m_debug;
 public:
 	SDRAMSIM(void) {
 		m_mem = new short[SDRAMSZB/2]; // 32 MB, or 16 Mshorts
@@ -45,6 +89,8 @@ public:
 
 		m_next_wr = true;
 		m_fail = 0;
+
+		m_debug = false;
 	}
 
 	~SDRAMSIM(void) {

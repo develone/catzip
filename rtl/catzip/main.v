@@ -697,7 +697,11 @@ parameter	RDLY = 6;
 wbsdram sdrami(i_clk,
 		wb_cyc, (wb_stb)&&(sdram_sel),
 		 
-		wb_we, wb_addr[(24-2):0], wb_data, wb_sel,
+		wb_we, 
+		/* verilator lint_off WIDTH */
+		wb_addr[(24-2):0], 
+		/* verilator lint_off WIDTH */
+		wb_data, wb_sel,
 		 
 		sdram_ack, sdram_stall, sdram_data,
 		o_ram_cs_n, o_ram_cke, o_ram_ras_n, o_ram_cas_n, o_ram_we_n,

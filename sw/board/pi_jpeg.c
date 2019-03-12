@@ -34,7 +34,7 @@ int main(int argc, char **argv) {
     printf("buf_red = 0x%x\n",buf_red);
      
     printf("fwd_inv = 0x%x\n",fwd_inv);
-    inptr = fopen("blu.bin","rb");
+    inptr = fopen("red.bin","rb");
     if (!inptr)
 	{
  	printf("Unle to open file!");
@@ -67,7 +67,8 @@ int main(int argc, char **argv) {
  	printf("Unle to open file!");
 	return 1;
 	}
-	fwrite(buf_red,sizeof(int),65536,outptr);
+	//fwrite(buf_red,sizeof(int),65536,outptr);
+	fwrite(alt,sizeof(int),65536,outptr);
 	fclose(outptr);	
  	free(buf_red);
 	free(fwd_inv);

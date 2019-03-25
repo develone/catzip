@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
  
-#include "lifting.h"
+
 
 struct PTRs {
 	int inpbuf[65536];
@@ -31,15 +31,12 @@ void pack(int ff, int loop, char *ibuf, int *obuf) {
 		if (ff == 0) sp = z<<20;
 		if (ff == 1) sp = z<<8;
 		if (ff == 2) sp = z;
-		/*
 		if (ff == 0) y = x & 0x1ff00000;
 		if (ff == 1) y = x & 0x1ff001ff;
 		if (ff == 2) y = x & 0x1ff7fc00;
 		y = y | sp;
-		*/
 		if (i <= 3) printf("x = 0x%x sp = 0x%x y = 0x%x\n",x,sp,y);
 		if (i > 65532) printf("x = 0x%x sp = 0x%x y = 0x%x\n",x,sp,y);
-		*op = sp;
 		ip++;
 		op++;
 	}
@@ -83,7 +80,7 @@ int main(int argc, char **argv) {
 	char ur,ug,ub,x,y,z;
 	int *fwd_inv;	
 
-	int i,j;
+	int val,i;
 	 
 	ptrs.w = 256;
 	ptrs.h = 256;
@@ -91,12 +88,10 @@ int main(int argc, char **argv) {
 	buf_red = (char *)malloc(sizeof(char)* ptrs.w*ptrs.h*2);	
 	red_s_ptr = buf_red;
 	
-	fwd_inv = (int *)malloc(1);
- 
 	if(buf_red == NULL) return 2;
 	
-	if(fwd_inv == NULL) return 5;
-	red_s_ptr = buf_red;
+ 
+	 
     printf("buf_red = 0x%x\n",buf_red);
      
     printf("fwd_inv = 0x%x\n",fwd_inv);
@@ -105,7 +100,7 @@ int main(int argc, char **argv) {
      * packed in bits grn 19-10
      * packed in bits blu 9-0 
     */ 
-    inptr = fopen("rgb_pack.bin","rb");
+    inptr = fopen("dwt_pack.bin","rb");
     if (!inptr)
 	{
 		printf("Unle to open file!");
@@ -118,23 +113,13 @@ int main(int argc, char **argv) {
 
 	} 
 	fclose(inptr);
-	
+	buf_red = red_s_ptr;
 	i = 65535;
-	 
-		ptrs.flag = 2;
-		split(ptrs.flag, i, ptrs.inpbuf,buf_red);
+	ptrs.flag = 2;
+	split(ptrs.flag, i, ptrs.inpbuf,buf_red);
 	
 
-		*fwd_inv = 1;
-		buf_red = red_s_ptr;
-		wptr = buf_red;
-		alt = &buf_red[ptrs.w*ptrs.h];
-		printf("w = 0x%x buf_red wptr = 0x%x alt =  0x%x fwd_inverse =  0x%x fwd_inverse =  0x%x \n",ptrs.w, wptr,alt,fwd_inv,*fwd_inv);
-		printf("starting red dwt\n");
-		lifting(ptrs.w,wptr,alt,fwd_inv);
-		printf("finished ted dwt\n");
-		pack(ptrs.flag, i,buf_red, ptrs.inpbuf);
-	
+ 
     outptr = fopen("dwt8.bin","wb");
     if (!outptr)
 	{
@@ -142,19 +127,11 @@ int main(int argc, char **argv) {
 	return 1;
 	}
 	fwrite(buf_red,sizeof(char),65536,outptr);
-	//fwrite(alt,sizeof(char),65536,outptr);
+	 
 	fclose(outptr);
-    outptr = fopen("dwt_pack.bin","wb");
-    if (!outptr)
-	{
- 	printf("Unle to open file!");
-	return 1;
-	}
-	fwrite(ptrs.inpbuf,sizeof(int),65536,outptr);
-	//fwrite(alt,sizeof(char),65536,outptr);
-	fclose(outptr);			
+
  	free(buf_red);
-	free(fwd_inv);
+	 
  
 	return 0;
 

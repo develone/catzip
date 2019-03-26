@@ -43,11 +43,11 @@
 //
 #include "lifting.h"
 #include <stdio.h>
-void	singlelift(int rb, int w, int * const ibuf, int * const obuf) {
+void	singlelift(int rb, int w, char * const ibuf, char * const obuf) {
 	int	col, row;
 	printf("in singlelift \n");
 	for(row=0; row<w; row++) {
-		register int	*ip, *op, *opb;
+		register char	*ip, *op, *opb;
 		register int	ap,b,cp,d;
 
 		//
@@ -109,11 +109,11 @@ void	singlelift(int rb, int w, int * const ibuf, int * const obuf) {
 	}
 }
 
-void	ilift(int rb, int w, int * const ibuf, int * const obuf) {
+void	ilift(int rb, int w, char * const ibuf, char * const obuf) {
 	int	col, row;
 
 	for(row=0; row<w; row++) {
-		register int	*ip, *ipb, *op;
+		register char	*ip, *ipb, *op;
 		register int	b,c,d,e;
 
 		//
@@ -171,11 +171,12 @@ void	ilift(int rb, int w, int * const ibuf, int * const obuf) {
 	}
 }
 
-void	lifting(int w, int *ibuf, int *tmpbuf, int *fwd) {
+void	lifting(int w, char *ibuf, char *tmpbuf, int *fwd) {
 	const	int	rb = w;
 	int	lvl;
 
-	int	*ip = ibuf, *tp = tmpbuf, *test_fwd = fwd;
+	char	*ip = ibuf, *tp = tmpbuf;
+	int *test_fwd = fwd;
 	int	ov[3];
 
 	const int	LVLS = 3;
@@ -244,7 +245,9 @@ void	lifting(int w, int *ibuf, int *tmpbuf, int *fwd) {
 		tp = &tmpbuf[offset];
 
 		ilift(rb, w, ip, tp);
+		printf("back from ilift\n");
 		ilift(rb, w, tp, ip);
+		printf("back from ilift\n");
 	}
 	}
 }

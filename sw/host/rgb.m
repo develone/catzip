@@ -21,4 +21,4 @@ title "blu split from packed rgb catboard 0x0100effc 04/01/19"
 figure;
 imagesc(im4);
 colorbar;
-title "dwt/inv red sub band catboard 0x0100effc 04/01/19"
+title "dwt red sub band catboard 0x0100effc 04/01/19"

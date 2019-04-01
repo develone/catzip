@@ -6,19 +6,19 @@ fid = fopen('dwt.bin','r'); im4 = fread(fid, [256,inf], 'int32'); fclose(fid);
 figure;
 imagesc(im1);
 colorbar;
-title "red split from packed rgb catboard 0x0104eeb0 03/12/19"
+title "red split from packed rgb catboard 0x0100effc 04/01/19"
 
 figure;
 imagesc(im2);
 colorbar;
-title "grn split from packed rgb catboard 0x0104eeb0 03/12/19"
+title "grn split from packed rgb catboard 0x0100effc 04/01/19"
 
 figure;
 imagesc(im3);
 colorbar;
-title "blu split from packed rgb catboard 0x0104eeb0 03/12/19"
+title "blu split from packed rgb catboard 0x0100effc 04/01/19"
 
 figure;
 imagesc(im4);
 colorbar;
-title "dwt red sub band catboard 0x0104eeb0 03/12/19"
+title "dwt/inv red sub band catboard 0x0100effc 04/01/19"

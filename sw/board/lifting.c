@@ -43,11 +43,11 @@
 //
 #include "lifting.h"
 #include <stdio.h>
-void	singlelift(int rb, int w, char * const ibuf, char * const obuf) {
+void	singlelift(int rb, int w, int * const ibuf, int * const obuf) {
 	int	col, row;
 	printf("in singlelift \n");
 	for(row=0; row<w; row++) {
-		register char	*ip, *op, *opb;
+		register int	*ip, *op, *opb;
 		register int	ap,b,cp,d;
 
 		//
@@ -68,7 +68,7 @@ void	singlelift(int rb, int w, char * const ibuf, char * const obuf) {
 		//
 		op = obuf+row;
 		opb = op + w*rb/2;
-
+		//printf("ip = 0x%x op = 0x%x opb = 0x%x\n",ip,op,opb);
 		//
 		// Pre-charge our pipeline
 		//
@@ -79,6 +79,7 @@ void	singlelift(int rb, int w, char * const ibuf, char * const obuf) {
 		b  = ip[1];
 		cp = ip[2];
 		d  = ip[3]; ip += 4;
+		//printf("ap = %d b = %d cp = %d d = %d\n",ap,b,cp,d);
 		//
 		ap = ap-b; // img[0]-(img[1]+img[-1])>>1)
 		cp = cp- ((b+d)>>1);
@@ -109,11 +110,11 @@ void	singlelift(int rb, int w, char * const ibuf, char * const obuf) {
 	}
 }
 
-void	ilift(int rb, int w, char * const ibuf, char * const obuf) {
+void	ilift(int rb, int w,  int * const ibuf,  int * const obuf) {
 	int	col, row;
 
 	for(row=0; row<w; row++) {
-		register char	*ip, *ipb, *op;
+		register int	*ip, *ipb, *op;
 		register int	b,c,d,e;
 
 		//
@@ -134,7 +135,7 @@ void	ilift(int rb, int w, char * const ibuf, char * const obuf) {
 		//
 		ip  = ibuf+row;
 		ipb = ip + w*rb/2;
-
+		//printf("ip = 0x%x op = 0x%x ipb = 0x%x\n",ip,op,ipb);
 		//
 		// Pre-charge our pipeline
 		//
@@ -148,7 +149,7 @@ void	ilift(int rb, int w, char * const ibuf, char * const obuf) {
 
 		op[0] = c+d;	// Here's the mirror, left-side
 		op[1] = d;
-
+		//printf("c = %d e = %d d = %d c+d = %d\n",c,e,c,c+d);
 		for(col=1; col<w/2-1; col++) {
 			op += 2;
 			ip += rb; ipb += rb;
@@ -171,12 +172,12 @@ void	ilift(int rb, int w, char * const ibuf, char * const obuf) {
 	}
 }
 
-void	lifting(int w, char *ibuf, char *tmpbuf, int *fwd) {
+void	lifting(int w, int *ibuf, int *tmpbuf, int *fwd) {
 	const	int	rb = w;
 	int	lvl;
 
-	char	*ip = ibuf, *tp = tmpbuf;
-	int *test_fwd = fwd;
+	int	*ip = ibuf, *tp = tmpbuf, *test_fwd = fwd;
+	printf("ip = 0x%x tp = 0x%x \n",ip,tp);
 	int	ov[3];
 
 	const int	LVLS = 3;
@@ -243,6 +244,7 @@ void	lifting(int w, char *ibuf, char *tmpbuf, int *fwd) {
 			offset = 0;
 		ip = &ibuf[offset];
 		tp = &tmpbuf[offset];
+		printf("ip = 0x%x tp = 0x%x \n",ip,tp);
 
 		ilift(rb, w, ip, tp);
 		printf("back from ilift\n");

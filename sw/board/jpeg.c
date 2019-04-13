@@ -96,7 +96,7 @@ int main(int argc, char **argv) {
 		split(ptrs.flag, i, ptrs.inpbuf,buf_red);
 	
 
-		*fwd_inv = 0;
+		*fwd_inv = 1;
 		buf_red = red_s_ptr;
 		wptr = buf_red;
 		alt = &buf_red[ptrs.w*ptrs.h];

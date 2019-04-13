@@ -5,7 +5,7 @@
 // Project:	ICO Zip, iCE40 ZipCPU demonsrtation project
 //
 // Purpose:	To start a program from flash, loading its various components
-//		into on-chip block RAM, or off-chip SRAM, as indicated
+//		into on-chip block RAM, or off-chip SDRAM, as indicated
 //	by the symbols/pointers within the program itself.  As you will notice
 //	by the names of the symbols, it is assumed that a kernel will be placed
 //	into block RAM.
@@ -38,7 +38,7 @@
 //		The first address of the block RAM memory within the FPGA.
 //
 //	_sdram:
-//		The address of the beginning of physical SRAM.
+//		The address of the beginning of physical SDRAM.
 //
 //	_kernel_image_start:
 //		The address of that location within FLASH where the sections
@@ -54,17 +54,17 @@
 //		block RAM was used at all.
 //
 //	_ram_image_end:
-//		This is one past the last address in SRAM that needs to be
+//		This is one past the last address in SDRAM that needs to be
 //		set with valid data.
 //
 //		This pointer is made even more confusing by the fact that,
-//		if there is nothing allocated in SRAM, this pointer will
+//		if there is nothing allocated in SDRAM, this pointer will
 //		still point to block RAM.  To make matters worse, the MAP
 //		file won't match the pointer in memory.  (I spent three days
 //		trying to chase this down, and came up empty.  Basically,
 //		the BFD structures may set this to point to block RAM, whereas
 //		the MAP--which uses different data and different methods of
-//		computation--may leave this pointing to SRAM.  Go figure.)
+//		computation--may leave this pointing to SDRAM.  Go figure.)
 //
 //	_bss_image_end:
 //		This is the last address of memory that must be cleared upon
@@ -111,7 +111,7 @@
 
 // A bootloader is about nothing more than copying memory from a couple
 // particular locations (Flash/ROM) to other locations in memory (BLKRAM
-// and SRAM).  Our DMA is a hardware accelerator that does nothing but
+// and SDRAM).  Our DMA is a hardware accelerator that does nothing but
 // copy memory from one location to another.  Why not use the DMA for this
 // purpose then?
 //
@@ -131,7 +131,7 @@
 
 __attribute__ ((section (".boot")))
 void __define_the_top_of_the_stack__(void)  {
-#if	defined(_BOARD_HAS_SRAM)
+#if	defined(_BOARD_HAS_SDRAM)
 asm volatile(".equ\t_top_of_stack,%0\n":: "i"(_sdram+sizeof(_sdram)));
 // extern	int	const	*_top_of_stack = _sdram + sizeof(_sdram);
 #elif	defined(_BOARD_HAS_BKRAM)
@@ -213,7 +213,7 @@ extern	void	_bootloader(void) __attribute__ ((section (".boot")));
 //
 // Here's the actual boot loader itself.  It copies three areas from flash:
 //	1. An area from flash to block RAM
-//	2. A second area from flash to SRAM
+//	2. A second area from flash to SDRAM
 //	3. The third area isn't copied from flash, but rather it is just set to
 //		zero.  This is sometimes called the BSS segment.
 //
@@ -287,8 +287,8 @@ void	_bootloader(void) {
 #endif
 
 	//
-	// Now, we move on to the SRAM image.  We'll here load into SRAM
-	// memory up to the end of the SRAM image, _ram_image_end.
+	// Now, we move on to the SDRAM image.  We'll here load into SDRAM
+	// memory up to the end of the SDRAM image, _ram_image_end.
 	// As with the last pointer, this one is also created for us by the
 	// linker.
 	// 
@@ -300,7 +300,7 @@ void	_bootloader(void) {
 	// Finally, we load BSS.  This is the segment that only needs to be
 	// cleared to zero.  It is available for global variables, but some
 	// initialization is expected within it.  We start writing where
-	// the valid SRAM context, i.e. the non-zero contents, end.
+	// the valid SDRAM context, i.e. the non-zero contents, end.
 	//
 	while(wrp < _bss_image_end)
 		*wrp++ = 0;

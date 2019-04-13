@@ -2,7 +2,7 @@
 ##
 ## Filename:	auto-data/Makefile
 ##
-## Project:	ICO Zip, iCE40 ZipCPU demonsrtation project
+## Project:	CAT Zip, iCE40 ZipCPU demonsrtation project
 ##
 ## Purpose:	To coordinate the build of the glue logic holding this design
 ##		together via autofpga.
@@ -58,7 +58,7 @@ DATA := global.txt bkram.txt buserr.txt clockpll40.txt		\
 AUTOFPGA := autofpga
 .PHONY: data
 data: $(DATA)
-	$(AUTOFPGA) -o . $(DATA)
+	$(AUTOFPGA) -d -o . $(DATA)
 
 .PHONY: install
 install: data

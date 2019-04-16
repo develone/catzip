@@ -3,9 +3,25 @@
 #include <stdlib.h>
 #include "board.h"
 #include "lifting.h"
-#define SDRAM 0x800000
+#define BLKRAM_FLAG 0x00A01000
+#define BLKRAM_INVFWD 0x00A01004
 #define imgsize 256
-
+#define DBUG 1
+#define DBUG1 1
+/* ./arm-zipload -v ../board/jpeg
+ * ./arm-wbregs 0x00A01000 0x0
+ * ./arm-wbregs 0x00A01004 0x1
+ * ./arm-wrsdram rgb_pack.bin
+ * ./arm-wbregs cpu 0x0f
+ * ./arm-rdsdram dwt.bin
+ *  BLKRAM_FLAG is used to tell the program which sub band to use 
+ * 0 Red ./arm-wbregs 0x00A01000 0x0
+ * 1 Green ./arm-wbregs 0x00A01000 0x1
+ * 2 Blue ./arm-wbregs 0x00A01000 0x2
+ * BLKRAM_INVFWD is used to tell the program to compute the fwd lifting step only or fwd lifting then inv lifting step
+ * 0 fwd lifting then inv lifting step ./arm-wbregs 0x00A01004 0x0
+ * 1 fwd lifting step only ./arm-wbregs 0x00A01004 0x1
+ */
 void out2inpbuf(int loop, int *ibuf,  int *obuf) {
 int i;
 for(i=0;i<loop;i++) {
@@ -27,6 +43,8 @@ struct PTRs {
 	 int *grn;
 	 int *blu;
 	 int *alt;
+	 int *ptr_blkram_flag;
+	 int *ptr_blkram_invfwd;
 	//int *fwd_inv;
 } ptrs;
 
@@ -47,8 +65,10 @@ void split(int ff, int loop, int *ibuf,  int *obuf) {
 		if (ff == 1) sp = z>>8;
 		if (ff == 2) sp = z;
 		*op = sp;
-		if (i <= 3) printf("x = 0x%x sp = 0x%x z = 0x%x\n",x,sp,z);
-		if (i > 65532) printf("x = 0x%x sp = 0x%x z = 0x%x\n",x,sp,z);
+		if(DBUG) {
+			if (i <= 3) printf("x = 0x%x sp = 0x%x z = 0x%x\n",x,sp,z);
+			if (i > 65532) printf("x = 0x%x sp = 0x%x z = 0x%x\n",x,sp,z);
+		}
 		ip++;
 		op++;
 	}
@@ -71,7 +91,8 @@ int main(int argc, char **argv) {
 	 
 	ptrs.w = 256;
 	ptrs.h = 256;
-	  
+	ptrs.ptr_blkram_flag = (int *)BLKRAM_FLAG; 
+	ptrs.ptr_blkram_invfwd = (int *)BLKRAM_INVFWD;  
 	buf_red = ( int *)malloc(sizeof( int)* ptrs.w*ptrs.h*2);	
 	red_s_ptr = buf_red;
 	
@@ -92,18 +113,77 @@ int main(int argc, char **argv) {
  	
 	i = 65535;
 	 
-		ptrs.flag = 0;
+		ptrs.flag = ptrs.ptr_blkram_flag[0];
 		split(ptrs.flag, i, ptrs.inpbuf,buf_red);
 	
 
-		*fwd_inv = 1;
+		*fwd_inv = ptrs.ptr_blkram_invfwd[0];
+		
+		if (ptrs.flag == 0) { 
+			if (DBUG1) {
+				printf("spliting red sub band\n");
+			}
+			
+		}
+		else if (ptrs.flag == 1) {
+			if (DBUG1) {
+				printf("spliting green sub band\n");
+			}
+			
+		}	
+		else if (ptrs.flag == 2) {
+			if (DBUG1) {
+				printf("spliting blue sub band\n");
+			}
+		
+		}
+		else {
+			if (DBUG1) {
+				printf("First parameter can only be 0 1 2 \n");
+			}
+			free(buf_red);
+	        free(fwd_inv);
+			exit (1);
+		}
+ 
+ 
+ 
+		if (fwd_inv[0] == 0) { 
+			if (DBUG1) {
+				printf("fwd lifting then inv lifting step\n");
+			}
+			
+		}
+		else if (fwd_inv[0] == 1) {
+			if (DBUG1) {
+				printf("fwd lifting step only\n");
+			}
+			
+		} else
+		{
+			if (DBUG1) {
+				printf("BLKRAM_INVFWD parameter can only be 0 1  \n");
+			}
+			free(buf_red);
+	        free(fwd_inv);
+			exit (2);
+		}
+
 		buf_red = red_s_ptr;
 		wptr = buf_red;
 		alt = &buf_red[ptrs.w*ptrs.h];
-		printf("w = 0x%x buf_red wptr = 0x%x alt =  0x%x fwd_inverse =  0x%x fwd_inverse =  0x%x \n",ptrs.w, wptr,alt,fwd_inv,*fwd_inv);
-		printf("starting red dwt\n");
-		lifting(ptrs.w,wptr,alt,fwd_inv);
-		printf("finished ted dwt\n");
+		if(DBUG) {
+			printf("w = 0x%x buf_red wptr = 0x%x alt =  0x%x fwd_inverse =  0x%x fwd_inverse =  0x%x \n",ptrs.w, wptr,alt,fwd_inv,*fwd_inv);
+		}
+		if(DBUG1) {
+			printf("starting red dwt\n");
+		}
+		if(DBUG) {
+			lifting(ptrs.w,wptr,alt,fwd_inv);
+		}
+		if(DBUG1) {
+			printf("finished ted dwt\n");
+		}
 		out2inpbuf(i,buf_red, ptrs.inpbuf);
 		//pack(ptrs.flag, i,buf_red, ptrs.inpbuf);
 	

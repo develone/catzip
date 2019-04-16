@@ -1,9 +1,19 @@
 
 #include <stdio.h>
 #include <stdlib.h>
- 
+#include <string.h> 
 #include "lifting.h"
-
+/* First parameter is used to tell the program which sub band to use 
+ * 0 Red
+ * 1 Green
+ * 2 Blue
+ * 2nd parameter is used to tell the program to compute the fwd lifting step only or fwd lifting then inv lifting step
+ * 0 fwd lifting then inv lifting step
+ * 1 fwd lifting step only
+ * ./pi_jpeg 0 1 or ./pi_jpeg 0 0
+ * ./pi_jpeg 1 1 or ./pi_jpeg 1 0
+ * ./pi_jpeg 2 1 or ./pi_jpeg 2 0
+ */
 struct PTRs {
 	int inpbuf[65536];
 	 
@@ -47,7 +57,8 @@ void split(int ff, int loop, int *ibuf,  int *obuf) {
 int main(int argc, char **argv) {
 	
 	FILE *inptr,*outptr;
-	  
+	  char *ch;
+	  int tmp;
 	 
 	 int *red_s_ptr, *gr_s_ptr, *bl_s_ptr;
 	 int *wptr,*wptr1,*wptr2;
@@ -91,12 +102,50 @@ int main(int argc, char **argv) {
 	fclose(inptr);
 	
 	i = 65535;
-	 
-		ptrs.flag = 0;
+		
+		ch = argv[1];
+		tmp = atoi(ch);
+		if (tmp == 0) { 
+			printf("spliting red sub band\n");
+			ptrs.flag = tmp;
+		}
+		else if (tmp == 1) {
+			printf("spliting green sub band\n");
+			ptrs.flag = tmp;
+		}	
+		else if (tmp == 2) {
+			printf("spliting blue sub band\n");
+			ptrs.flag = tmp; 
+		}
+		else {
+			printf("First parameter can only be 0 1 2 \n");
+			free(buf_red);
+	        free(fwd_inv);
+			exit (1);
+		}
+ 
+		ch = argv[2];
+		tmp = atoi(ch); 
+ 
+		if (tmp == 0) { 
+			printf("fwd lifting then inv lifting step\n");
+			*fwd_inv = tmp;
+		}
+		else if (tmp == 1) {
+			printf("fwd lifting step only\n");
+			*fwd_inv = tmp;
+		} else
+		{
+			printf("2nd parameter can only be 0 1  \n");
+			free(buf_red);
+	        free(fwd_inv);
+			exit (2);
+		}
 		split(ptrs.flag, i, ptrs.inpbuf,buf_red);
-	
+		
 
-		*fwd_inv = 1;
+		 
+		
 		buf_red = red_s_ptr;
 		wptr = buf_red;
 		alt = &buf_red[ptrs.w*ptrs.h];

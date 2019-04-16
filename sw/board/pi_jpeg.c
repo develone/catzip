@@ -86,12 +86,8 @@ int main(int argc, char **argv) {
 		printf("Unle to open file!");
 		return 1;
 	}
-	fread(ptrs.inpbuf,sizeof(int),65536,inptr);
-	for(i=0;i<5;i++) {
-		printf("ptrs.inpbuf = 0x%x *ptrs.inpbuf = 0x%x\n",ptrs.inpbuf,*ptrs.inpbuf);
-		buf_red++;
-
-	} 
+	else fread(ptrs.inpbuf,sizeof(int),65536,inptr);
+ 
 	fclose(inptr);
 	
 	i = 65535;

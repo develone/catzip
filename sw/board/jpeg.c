@@ -102,9 +102,11 @@ int main(int argc, char **argv) {
 	
 	if(fwd_inv == NULL) return 5;
 	red_s_ptr = buf_red;
-    printf("ptrs.inpbuf = 0x%x buf_red = 0x%x\n",ptrs.inpbuf,buf_red);
+	if (DBUG) {
+		printf("ptrs.inpbuf = 0x%x buf_red = 0x%x\n",ptrs.inpbuf,buf_red);
      
-    printf("fwd_inv = 0x%x\n",fwd_inv);
+		printf("fwd_inv = 0x%x\n",fwd_inv);
+	}
     /*The file rgb_pack.bin contains the rgb images
      * packed in bits red 29-20
      * packed in bits grn 19-10
@@ -173,7 +175,7 @@ int main(int argc, char **argv) {
 		wptr = buf_red;
 		alt = &buf_red[ptrs.w*ptrs.h];
 		if(DBUG) {
-			printf("w = 0x%x buf_red wptr = 0x%x alt =  0x%x fwd_inverse =  0x%x fwd_inverse =  0x%x \n",ptrs.w, wptr,alt,fwd_inv,*fwd_inv);
+			printf("w = 0x%x wptr = 0x%x alt =  0x%x fwd_inverse =  0x%x fwd_inverse =  0x%x \n",ptrs.w, wptr,alt,fwd_inv,*fwd_inv);
 		}
 		if(DBUG1) {
 			printf("starting red dwt\n");

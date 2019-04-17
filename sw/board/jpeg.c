@@ -6,7 +6,7 @@
 #define BLKRAM_FLAG 0x00A01000
 #define BLKRAM_INVFWD 0x00A01004
 #define imgsize 256
-#define DBUG 1
+#define DBUG 0
 #define DBUG1 1
 /* ./arm-zipload -v ../board/jpeg
  * ./arm-wbregs 0x00A01000 0x0
@@ -96,7 +96,7 @@ int main(int argc, char **argv) {
 	buf_red = ( int *)malloc(sizeof( int)* ptrs.w*ptrs.h*2);	
 	red_s_ptr = buf_red;
 	
-	fwd_inv = (int *)malloc(1);
+	fwd_inv = (int *)malloc(sizeof( int)*1);
  
 	if(buf_red == NULL) return 2;
 	
@@ -180,15 +180,16 @@ int main(int argc, char **argv) {
 		if(DBUG1) {
 			printf("starting red dwt\n");
 		}
-		if(DBUG) {
+		
 			lifting(ptrs.w,wptr,alt,fwd_inv);
-		}
+		
 		if(DBUG1) {
 			printf("finished ted dwt\n");
 		}
 		out2inpbuf(i,buf_red, ptrs.inpbuf);
 		//pack(ptrs.flag, i,buf_red, ptrs.inpbuf);
-	
+	while (DBUG1) {
+	}
   	free(buf_red);
 	free(fwd_inv);
 	return 0;

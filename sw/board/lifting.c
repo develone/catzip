@@ -177,7 +177,7 @@ void	lifting(int w, int *ibuf, int *tmpbuf, int *fwd) {
 	int	lvl;
 
 	int	*ip = ibuf, *tp = tmpbuf, *test_fwd = fwd;
-	printf("ip = 0x%x tp = 0x%x \n",ip,tp);
+	//printf("ip = 0x%x tp = 0x%x \n",ip,tp);
 	int	ov[3];
 
 	const int	LVLS = 3;
@@ -200,14 +200,14 @@ void	lifting(int w, int *ibuf, int *tmpbuf, int *fwd) {
 
 	for(lvl=0; lvl<LVLS; lvl++) {
 		// Process columns -- leave result in tmpbuf
-		printf("in lifting \n");
+		//printf("in lifting \n");
 		singlelift(rb, w, ip, tp);
 		// Process columns, what used to be the rows from the last
 		// round, pulling the data from tmpbuf and moving it back
 		// to ibuf.
 		//printf("w = 0x%x ip = 0x%x tp = 0x%x \n",w,ip,tp);
 		singlelift(rb, w, tp, ip);
-		printf("back from singlelift\n");
+		//printf("back from singlelift\n");
 		// lower_upper
 		//
 		// For this, we just adjust our pointer(s) so that the "image"
@@ -244,12 +244,12 @@ void	lifting(int w, int *ibuf, int *tmpbuf, int *fwd) {
 			offset = 0;
 		ip = &ibuf[offset];
 		tp = &tmpbuf[offset];
-		printf("ip = 0x%x tp = 0x%x \n",ip,tp);
+		//printf("ip = 0x%x tp = 0x%x \n",ip,tp);
 
 		ilift(rb, w, ip, tp);
-		printf("back from ilift\n");
+		//printf("back from ilift\n");
 		ilift(rb, w, tp, ip);
-		printf("back from ilift\n");
+		//printf("back from ilift\n");
 	}
 	}
 }

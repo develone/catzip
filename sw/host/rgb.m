@@ -22,6 +22,8 @@ figure;
 imagesc(im4);
 colorbar;
 %title "FPGA HX8K fwd lifting step blue sub band catboard 0x0100f1fc ./jpeg 0 1 04/16/19"
-title "RPi3B fwd lifting step blue sub band ./pi_jpeg 2 1 04/16/19"
+%title "RPi3B fwd lifting step blue sub band ./pi_jpeg 2 1 04/16/19"
 %title "FPGA HX8K fwd lifting step green sub band catboard 0x0100f204 04/16/19"
 %title "FPGA HX8K fwd lifting step blue sub band catboard 0x0100f204 04/16/19"
+
+title "simulator fwd lifting step red sub band ./jpeg 0 1 04/16/19"

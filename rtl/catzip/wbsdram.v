@@ -63,7 +63,7 @@ module	wbsdram(i_clk,
 			o_ram_dmod, i_ram_data, o_ram_data, o_ram_dqm,
 		o_debug);
 	parameter	RDLY = 6;
-	localparam	NCA=8, NRA=12, AW=(NCA+NRA+2)-1, DW=32;
+	localparam	NCA=9, NRA=13, AW=(NCA+NRA+2)-1, DW=32;
 	localparam	[NCA-2:0] COL_THRESHOLD = -16;
 	input	wire			i_clk;
 	// Wishbone
@@ -81,7 +81,7 @@ module	wbsdram(i_clk,
 	output	reg		o_ram_cs_n,
 				o_ram_ras_n, o_ram_cas_n, o_ram_we_n;
 	output	reg	[1:0]	o_ram_bs;
-	output	reg	[11:0]	o_ram_addr;
+	output	reg	[12:0]	o_ram_addr;
 	output	reg		o_ram_dmod;
 	input		[15:0]	i_ram_data;
 	output	reg	[15:0]	o_ram_data;
@@ -476,7 +476,7 @@ module	wbsdram(i_clk,
 	initial	maintenance_mode = 1'b1;
 	initial	maintenance_clocks = 4'hf;
 	initial	maintenance_clocks_zero = 1'b0;
-	initial	m_ram_addr  = { 2'b00, 1'b0, 2'b00, 3'b010, 1'b0, 3'b001 };
+	initial	m_ram_addr  = { 3'b000, 1'b0, 2'b00, 3'b010, 1'b0, 3'b001 };
 	initial	m_state = `RAM_POWER_UP;
 	initial	m_ram_cs_n  = 1'b1;
 	initial	m_ram_ras_n = 1'b1;
@@ -493,7 +493,7 @@ module	wbsdram(i_clk,
 		// The only time the RAM address matters is when we set
 		// the mode.  At other times, addr[10] matters, but the rest
 		// is ignored.  Hence ... we'll set it to a constant.
-		m_ram_addr  <= { 2'b00, 1'b0, 2'b00, 3'b010, 1'b0, 3'b001 };
+		m_ram_addr  <= { 3'b000, 1'b0, 2'b00, 3'b010, 1'b0, 3'b001 };
 		if (m_state == `RAM_POWER_UP)
 		begin
 			// All signals must be held in NOOP state during powerup
@@ -636,9 +636,9 @@ module	wbsdram(i_clk,
 	localparam	REFRESH_CLOCKS = 6;
 	localparam	ACTIVATE_CLOCKS = 6;
 
-	// This device is 23MB, assert such
+	// This device is 32MB, assert such
 	always @(*)
-		assert(AW == 21);
+		assert(AW == 23);
 	always @(*)
 		assert(NRA+NCA+2 == AW+1);
 

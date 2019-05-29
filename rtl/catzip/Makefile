@@ -111,8 +111,8 @@ catzip.blif: toplevel.v $(VFLIST)
 yosys: catzip.blif
 
 catzip.asc: $(PCFFILE) catzip.blif
-	arachne-pnr -d 8k -r -p $(PCFFILE) catzip.blif -o $@
-	#nextpnr-ice40 --hx8k --pcf $(PCFFILE) --json catzip.json --asc catzip.asc
+	#arachne-pnr -d 8k -r -p $(PCFFILE) catzip.blif -o $@
+	nextpnr-ice40 --hx8k --pcf $(PCFFILE) --json catzip.json --asc catzip.asc
 
 .PHONY: arachne
 arachne: catzip.asc

@@ -6,7 +6,7 @@
 #define BLKRAM_FLAG 0x00A01000
 #define BLKRAM_INVFWD 0x00A01004
 #define imgsize 256
-#define DBUG 0
+#define DBUG 1
 #define DBUG1 1
 /* ./arm-zipload -v ../board/jpeg
  * ./arm-wbregs 0x00A01000 0x0
@@ -22,6 +22,16 @@
  * 0 fwd lifting then inv lifting step ./arm-wbregs 0x00A01004 0x0
  * 1 fwd lifting step only ./arm-wbregs 0x00A01004 0x1
  */
+
+void clrram(int loop, int *obuf) {
+int i,value=0;
+for(i=0;i<loop;i++) {
+	*obuf = value;
+	obuf++;
+	
+}
+}
+
 void out2inpbuf(int loop, int *ibuf,  int *obuf) {
 int i;
 for(i=0;i<loop;i++) {
@@ -112,7 +122,8 @@ int main(int argc, char **argv) {
      * packed in bits grn 19-10
      * packed in bits blu 9-0 
     */ 
- 	
+ 	i = ptrs.w*ptrs.h*2;
+ 	clrram(i,buf_red);
 	i = 65535;
 	 
 		ptrs.flag = ptrs.ptr_blkram_flag[0];

@@ -78,18 +78,18 @@
 #define	GPIO_LEDG1_CLR	GPIO_CLR(GPIO_LEDG1)
 
 
-#define	CLKFREQHZ	40000000
-
-
-#define BUSPIC(X) (1<<X)
-
-
 typedef struct  CONSOLE_S {
 	unsigned	u_setup;
 	unsigned	u_fifo;
 	unsigned	u_rx, u_tx;
 } CONSOLE;
 
+
+
+#define	CLKFREQHZ	40000000
+
+
+#define BUSPIC(X) (1<<X)
 
 
 #ifdef	SDRAM_ACCESS
@@ -100,25 +100,25 @@ extern char	_sdram[0x01000000];
 #define	_BOARD_HAS_GPIO
 static volatile unsigned *const _gpio = ((unsigned *)8);
 #endif	// GPIO_ACCESS
-#define	_BOARD_HAS_BUSERR
-static volatile unsigned *const _buserr = ((unsigned *)8388608);
-#define	_BOARD_HAS_VERSION
-#ifdef	BUSTIMER_ACCESS
-#define	_BOARD_HAS_BUSTIMER
-static volatile unsigned *const _bustimer = ((unsigned *)0x00400000);
-#endif	// BUSTIMER_ACCESS
-#ifdef	BKRAM_ACCESS
-#define	_BOARD_HAS_BKRAM
-extern char	_bkram[0x00002000];
-#endif	// BKRAM_ACCESS
-#ifdef	BUSPIC_ACCESS
-#define	_BOARD_HAS_BUSPIC
-static volatile unsigned *const _buspic = ((unsigned *)8388612);
-#endif	// BUSPIC_ACCESS
 #ifdef	BUSCONSOLE_ACCESS
 #define	_BOARD_HAS_BUSCONSOLE
 static volatile CONSOLE *const _uart = ((CONSOLE *)6291456);
 #endif	// BUSCONSOLE_ACCESS
+#ifdef	BUSTIMER_ACCESS
+#define	_BOARD_HAS_BUSTIMER
+static volatile unsigned *const _bustimer = ((unsigned *)0x00400000);
+#endif	// BUSTIMER_ACCESS
+#define	_BOARD_HAS_BUSERR
+static volatile unsigned *const _buserr = ((unsigned *)8388608);
+#ifdef	BKRAM_ACCESS
+#define	_BOARD_HAS_BKRAM
+extern char	_bkram[0x00002000];
+#endif	// BKRAM_ACCESS
+#define	_BOARD_HAS_VERSION
+#ifdef	BUSPIC_ACCESS
+#define	_BOARD_HAS_BUSPIC
+static volatile unsigned *const _buspic = ((unsigned *)8388612);
+#endif	// BUSPIC_ACCESS
 //
 // Interrupt assignments (2 PICs)
 //
@@ -127,7 +127,7 @@ static volatile CONSOLE *const _uart = ((CONSOLE *)6291456);
 #define	CPU_RESET_WATCHDOG	CPU_RESET(1)
 // PIC: buspic
 #define	BUSPIC_GPIO	BUSPIC(0)
-#define	BUSPIC_BUSTIMER	BUSPIC(1)
-#define	BUSPIC_UARTTXF	BUSPIC(2)
-#define	BUSPIC_UARTRXF	BUSPIC(3)
+#define	BUSPIC_UARTTXF	BUSPIC(1)
+#define	BUSPIC_UARTRXF	BUSPIC(2)
+#define	BUSPIC_BUSTIMER	BUSPIC(3)
 #endif	// BOARD_H

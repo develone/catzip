@@ -61,11 +61,11 @@ module	toplevel(
 		io_ram_data,
 		// GPIO wires
 		o_ledg, o_ledr, i_btn,
-	o_dbgwires_scope,
-i_clk,
 		// Parallel port to wishbone / console interface
 		i_pp_dir, i_pp_clk, io_pp_data, o_pp_clkfb,
-		o_dbgwires);
+		o_dbgwires,
+i_clk,
+	o_dbgwires_scope);
 	//
 	// Declaring our input and output ports.  We listed these above,
 	// now we are declaring them here.
@@ -110,12 +110,12 @@ i_clk,
 	output	wire	[1:0]	o_ledg;
 	output	wire		o_ledr;
 	input	wire	[1:0]	i_btn;
-	output	wire	[7:0]	o_dbgwires_scope;
-input  i_clk;	// Parallel port to wishbone / console interface
+	// Parallel port to wishbone / console interface
 	input	wire		i_pp_dir, i_pp_clk;
 	inout	wire	[7:0]	io_pp_data;
 	output	wire		o_pp_clkfb;
 	output	wire	[7:0]	o_dbgwires;
+input  i_clk;	output	wire	[7:0]	o_dbgwires_scope;
 
 
 	//
@@ -129,7 +129,6 @@ input  i_clk;	// Parallel port to wishbone / console interface
 	// input (or output) ports.
 	wire	[2 -1:0]	i_gpio;
 	wire	[11-1:0]	o_gpio;
-	wire		s_clk, s_reset;
 	//
 	//
 	// Parallel port interface
@@ -138,6 +137,7 @@ input  i_clk;	// Parallel port to wishbone / console interface
 	wire	[7:0]	i_pp_data, w_pp_data;
 	wire		w_pp_dbg;
 
+	wire		s_clk, s_reset;
 
 
 	//
@@ -216,9 +216,13 @@ input  i_clk;	// Parallel port to wishbone / console interface
 	assign	o_ledr = o_gpio[0];
 	assign	o_ledg = o_gpio[2:1];
 
-	assign	o_dbgwires_scope[7:3] = { o_ram_cs_n, o_ram_ras_n, o_ram_we_n,
-					o_ram_cas_n };
-	assign	o_dbgwires_scope[2:0] = (o_ram_we_n)? i_ram_data[2:0] : o_ram_data[2:0];
+	//
+	// Parallel port I/O pin control
+	ppio	hbi_io(i_pp_dir, io_pp_data, w_pp_data, i_pp_data);
+
+	assign	o_dbgwires = { i_pp_dir, i_pp_clk, o_pp_clkfb,
+				w_pp_dbg, i_pp_data[3:0] };
+
 
 	assign	s_reset = 1'b0; // This design requires local, not global resets
 
@@ -248,13 +252,9 @@ input  i_clk;	// Parallel port to wishbone / console interface
 	assign	s_clk = clk_40mhz;
 `endif
 
-	//
-	// Parallel port I/O pin control
-	ppio	hbi_io(i_pp_dir, io_pp_data, w_pp_data, i_pp_data);
-
-	assign	o_dbgwires = { i_pp_dir, i_pp_clk, o_pp_clkfb,
-				w_pp_dbg, i_pp_data[3:0] };
-
+	assign	o_dbgwires_scope[7:3] = { o_ram_cs_n, o_ram_ras_n, o_ram_we_n,
+					o_ram_cas_n };
+	assign	o_dbgwires_scope[2:0] = (o_ram_we_n)? i_ram_data[2:0] : o_ram_data[2:0];
 
 
 

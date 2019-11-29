@@ -59,34 +59,23 @@
 `define	SDRAM_ACCESS
 `define	WATCHDOG_ACCESS
 `define	GPIO_ACCESS
+`define	BUSCONSOLE_ACCESS
 `define	BUSTIMER_ACCESS
 `define	BKRAM_ACCESS
 `define	BUSPIC_ACCESS
-`define	BUSCONSOLE_ACCESS
 //
 //
 // The list of those things that have @DEPENDS tags
 //
 //
-// Dependencies are listed within the @DEPENDS tag
-// Values prefixed by a !, yet with no spaces between the ! and the
-// dependency, are ifndef dependencies.  As an example, an
-// an access and depends tag such as:
 //
-// @ACCESS=  THIS_COMPONENT
-// @DEPENDS= MUST_HAVE_A !MUST_NOT_HAVE_B
-//
-// will turn into:
-//
-// `ifdef MUST_HAVE_A
-// `ifndef MUST_NOT_HAVE_B
-// `define THIS_COMPONENT
-// `endif // MUST_NOT_HAVE_B
-// `endif // MUST_HAVE_A
-//
+// Dependencies
+// Any core with both an @ACCESS and a @DEPENDS tag will show up here.
+// The @DEPENDS tag will turn into a series of ifdef's, with the @ACCESS
+// being defined only if all of the ifdef's are true//
 `ifdef	SDRAM_ACCESS
 `define	SDRAM_SCOPE
-`endif
+`endif	// SDRAM_ACCESS
 //
 // End of dependency list
 //
@@ -186,16 +175,16 @@ parameter	RDLY = 6;
 	// These declarations come from the various components values
 	// given under the @INT.<interrupt name>.WIRE key.
 	//
+	wire	zip_cpu_int;	// zip.INT.ZIP.WIRE
 	wire	i_reset;	// watchdog.INT.RESET.WIRE
 	wire	watchdog_reset;	// watchdog.INT.WATCHDOG.WIRE
-	wire	zip_cpu_int;	// zip.INT.ZIP.WIRE
 	wire	gpio_int;	// gpio.INT.GPIO.WIRE
-	wire	bustimer_int;	// bustimer.INT.BUSTIMER.WIRE
-	wire	w_bus_int;	// buspic.INT.BUS.WIRE
 	wire	uarttxf_int;	// console.INT.UARTTXF.WIRE
 	wire	uartrxf_int;	// console.INT.UARTRXF.WIRE
-	wire	uarttx_int;	// console.INT.UARTTX.WIRE
 	wire	uartrx_int;	// console.INT.UARTRX.WIRE
+	wire	uarttx_int;	// console.INT.UARTTX.WIRE
+	wire	bustimer_int;	// bustimer.INT.BUSTIMER.WIRE
+	wire	w_bus_int;	// buspic.INT.BUS.WIRE
 
 
 	//
@@ -211,28 +200,28 @@ parameter	RDLY = 6;
 	wire		zip_trigger;
 	wire		zip_halted;
 	reg	cpu_reset;
-	// Bus arbiter's internal lines
-	wire		hb_dwbi_cyc, hb_dwbi_stb, hb_dwbi_we,
-			hb_dwbi_ack, hb_dwbi_stall, hb_dwbi_err;
-	wire	[(23-1):0]	hb_dwbi_addr;
-	wire	[31:0]	hb_dwbi_odata, hb_dwbi_idata;
-	wire	[3:0]	hb_dwbi_sel;
 	localparam	NGPI = 2, NGPO=11;
 	// GPIO ports
 	input		[(NGPI-1):0]	i_gpio;
 	output	wire	[(NGPO-1):0]	o_gpio;
-	reg	[23-1:0]	r_buserr_addr;
-	reg	[31:0]	r_pwrcount_data;
-`include "builddate.v"
-	// Console definitions
-	wire	w_console_rx_stb, w_console_tx_stb, w_console_busy;
-	wire	[6:0]	w_console_rx_data, w_console_tx_data;
 	// Definitions for the WB-UART converter.  We really only need one
 	// (more) non-bus wire--one to use to select if we are interacting
 	// with the ZipCPU or not.
 	wire	[0:0]	wbubus_dbg;
 	wire		pp_rx_stb,  pp_tx_stb,  pp_tx_busy;
 	wire	[7:0]	pp_rx_data, pp_tx_data;
+	// Bus arbiter's internal lines
+	wire		hb_dwbi_cyc, hb_dwbi_stb, hb_dwbi_we,
+			hb_dwbi_ack, hb_dwbi_stall, hb_dwbi_err;
+	wire	[(23-1):0]	hb_dwbi_addr;
+	wire	[31:0]	hb_dwbi_odata, hb_dwbi_idata;
+	wire	[3:0]	hb_dwbi_sel;
+	// Console definitions
+	wire	w_console_rx_stb, w_console_tx_stb, w_console_busy;
+	wire	[6:0]	w_console_rx_data, w_console_tx_data;
+	reg	[23-1:0]	r_buserr_addr;
+	reg	[31:0]	r_pwrcount_data;
+`include "builddate.v"
 
 
 	//
@@ -577,6 +566,7 @@ parameter	RDLY = 6;
 	//
 	// BUS-LOGIC for zip
 	//
+		// Only one peripheral attached
 	assign	zip_none_sel = 1'b0;
 	always @(*)
 		zip_many_ack = 1'b0;
@@ -702,9 +692,9 @@ parameter	RDLY = 6;
 		1'b0,
 		1'b0,
 		1'b0,
+		bustimer_int,
 		uartrxf_int,
 		uarttxf_int,
-		bustimer_int,
 		gpio_int
 	};
 
@@ -723,6 +713,34 @@ parameter	RDLY = 6;
 	// or making sure all of the various interrupt wires are set to
 	// zero if the component is not included.
 	//
+`ifdef	SDRAM_SCOPE
+	wire	[31:0]	sdram_debug;
+	wire		sdramscope_int;
+	/* verilator lint_off WIDTH */
+	assign	sdram_debug = { (!o_ram_cs_n),
+	/* verilator lint_off WIDTH */
+			wb_cyc, (wb_stb)&&(sdram_sel), wb_we,
+				sdram_stall,sdram_ack,
+				o_ram_cs_n, o_ram_ras_n, o_ram_we_n, o_ram_cas_n,
+				o_ram_addr[4:0],
+				(!o_ram_we_n) ? i_ram_data[15:0]
+						: o_ram_data[15:0]
+				};
+	wbscope #(.LGMEM(4), .SYNCHRONOUS(1), .HOLDOFFBITS(4))
+		sdramscopei(i_clk, 1'b1, (!o_ram_we_n), sdram_debug,
+			i_clk, wb_cyc, (wb_stb)&&(sdramscope_sel),
+			wb_we, wb_addr[0], wb_data,
+			sdramscope_ack, sdramscope_stall, sdramscope_data,
+			sdramscope_int);
+`else	// SDRAM_SCOPE
+
+	// In the case that there is no sdramscope peripheral responding on the wb bus
+	assign	sdramscope_stall = 0;
+	assign	sdramscope_data  = 0;
+	assign	sdramscope_ack   = (wb_stb) && (sdramscope_sel);
+
+`endif	// SDRAM_SCOPE
+
 `ifdef	SDRAM_ACCESS
 wbsdram sdrami(i_clk,
 		wb_cyc, (wb_stb)&&(sdram_sel),
@@ -742,28 +760,11 @@ wbsdram sdrami(i_clk,
 `else	// SDRAM_ACCESS
 
 	// In the case that there is no sdram peripheral responding on the wb bus
-	assign	sdram_ack   = (wb_stb) && (sdram_sel);
 	assign	sdram_stall = 0;
 	assign	sdram_data  = 0;
+	assign	sdram_ack   = (wb_stb) && (sdram_sel);
 
 `endif	// SDRAM_ACCESS
-
-`ifdef	WATCHDOG_ACCESS
-	ziptimer #(.VW(16), .RELOADABLE(0))
-		watchdogi(i_clk, i_reset, 1'b1,
-			wb_cyc, (wb_stb)&&(watchdog_sel), wb_we, wb_data,
-				watchdog_ack, watchdog_stall,
-				watchdog_data, watchdog_reset);
-`else	// WATCHDOG_ACCESS
-
-	// In the case that there is no watchdog peripheral responding on the wb bus
-	assign	watchdog_ack   = (wb_stb) && (watchdog_sel);
-	assign	watchdog_stall = 0;
-	assign	watchdog_data  = 0;
-
-	assign	i_reset = 1'b0;	// watchdog.INT.RESET.WIRE
-	assign	watchdog_reset = 1'b0;	// watchdog.INT.WATCHDOG.WIRE
-`endif	// WATCHDOG_ACCESS
 
 `ifdef	INCLUDE_ZIPCPU
 	//
@@ -794,15 +795,93 @@ wbsdram sdrami(i_clk,
 	assign	zip_addr= 0;
 	assign	zip_data= 0;
 	// verilator lint_off UNUSED
-	wire	[35:0]	unused_bus_zip;
-	assign	unused_bus_zip = { zip_ack, zip_stall, zip_err, zip_data };
+	wire	unused_bus_zip;
+	assign	unused_bus_zip = &{ 1'b0, zip_ack, zip_stall, zip_err, zip_data };
 	// verilator lint_on  UNUSED
 
 	assign	zip_cpu_int = 1'b0;	// zip.INT.ZIP.WIRE
 `endif	// INCLUDE_ZIPCPU
 
+`ifdef	WATCHDOG_ACCESS
+	ziptimer #(.VW(16), .RELOADABLE(0))
+		watchdogi(i_clk, i_reset, 1'b1,
+			wb_cyc, (wb_stb)&&(watchdog_sel), wb_we, wb_data,
+				watchdog_ack, watchdog_stall,
+				watchdog_data, watchdog_reset);
+`else	// WATCHDOG_ACCESS
+
+	// In the case that there is no watchdog peripheral responding on the wb bus
+	assign	watchdog_stall = 0;
+	assign	watchdog_data  = 0;
+	assign	watchdog_ack   = (wb_stb) && (watchdog_sel);
+
+	assign	i_reset = 1'b0;	// watchdog.INT.RESET.WIRE
+	assign	watchdog_reset = 1'b0;	// watchdog.INT.WATCHDOG.WIRE
+`endif	// WATCHDOG_ACCESS
+
 	always @(posedge i_clk)
 		cpu_reset <= (|cpu_reset_bus);
+`ifdef	GPIO_ACCESS
+	//
+	// GPIO
+	//
+	// This interface should allow us to control up to 16 GPIO inputs, and
+	// another 16 GPIO outputs.  The interrupt trips when any of the inputs
+	// changes.  (Sorry, which input isn't (yet) selectable.)
+	//
+	localparam	INITIAL_GPIO = 11'h0;
+	wbgpio	#(NGPI, NGPO, INITIAL_GPIO)
+		gpioi(i_clk, 1'b1, (wb_stb)&&(gpio_sel), 1'b1,
+			wb_data, gpio_data, i_gpio, o_gpio,
+			gpio_int);
+`else	// GPIO_ACCESS
+
+	// In the case that there is no gpio peripheral responding on the wb bus
+	assign	gpio_stall = 0;
+	assign	gpio_data  = 0;
+	assign	gpio_ack   = (wb_stb) && (gpio_sel);
+
+	assign	gpio_int = 1'b0;	// gpio.INT.GPIO.WIRE
+`endif	// GPIO_ACCESS
+
+`ifdef	WBUBUS_MASTER
+	// Parallel port logic
+	pport	hbi_pp(i_clk,
+			pp_rx_stb, pp_rx_data,
+			pp_tx_stb, pp_tx_data, pp_tx_busy,
+			i_pp_dir, i_pp_clk, i_pp_data, o_pp_data,
+				o_pp_clkfb, o_pp_dbg);
+`ifndef	BUSPIC_ACCESS
+	wire	w_bus_int;
+	assign	w_bus_int = 1'b0;
+`endif
+	wire	[29:0]	hb_tmp_addr;
+	hbconsole genbus(i_clk, pp_rx_stb, pp_rx_data,
+			hb_cyc, hb_stb, hb_we, hb_tmp_addr, hb_data, hb_sel,
+			hb_ack, hb_stall, hb_err, hb_idata,
+			w_bus_int,
+			pp_tx_stb, pp_tx_data, pp_tx_busy,
+			//
+			w_console_tx_stb, w_console_tx_data, w_console_busy,
+			w_console_rx_stb, w_console_rx_data);
+	assign	hb_sel = 4'hf;
+	assign	hb_addr= hb_tmp_addr[(24-1):0];
+`else	// WBUBUS_MASTER
+
+	// In the case that nothing drives the hb bus ...
+	assign	hb_cyc = 1'b0;
+	assign	hb_stb = 1'b0;
+	assign	hb_we  = 1'b0;
+	assign	hb_sel = 0;
+	assign	hb_addr= 0;
+	assign	hb_data= 0;
+	// verilator lint_off UNUSED
+	wire	unused_bus_hb;
+	assign	unused_bus_hb = &{ 1'b0, hb_ack, hb_stall, hb_err, hb_data };
+	// verilator lint_on  UNUSED
+
+`endif	// WBUBUS_MASTER
+
 `ifdef	INCLUDE_ZIPCPU
 	//
 	//
@@ -872,119 +951,6 @@ wbsdram sdrami(i_clk,
 `ifdef	INCLUDE_ZIPCPU
 	assign	zip_dwb_data = hb_dwbi_idata;
 `endif
-`ifdef	GPIO_ACCESS
-	//
-	// GPIO
-	//
-	// This interface should allow us to control up to 16 GPIO inputs, and
-	// another 16 GPIO outputs.  The interrupt trips when any of the inputs
-	// changes.  (Sorry, which input isn't (yet) selectable.)
-	//
-	localparam	INITIAL_GPIO = 11'h0;
-	wbgpio	#(NGPI, NGPO, INITIAL_GPIO)
-		gpioi(i_clk, 1'b1, (wb_stb)&&(gpio_sel), 1'b1,
-			wb_data, gpio_data, i_gpio, o_gpio,
-			gpio_int);
-`else	// GPIO_ACCESS
-
-	// In the case that there is no gpio peripheral responding on the wb bus
-	assign	gpio_ack   = (wb_stb) && (gpio_sel);
-	assign	gpio_stall = 0;
-	assign	gpio_data  = 0;
-
-	assign	gpio_int = 1'b0;	// gpio.INT.GPIO.WIRE
-`endif	// GPIO_ACCESS
-
-	always @(posedge i_clk)
-		if (wb_err)
-			r_buserr_addr <= wb_addr;
-	assign	buserr_data = { {(32-2-23){1'b0}},
-			r_buserr_addr, 2'b00 };
-	initial	r_pwrcount_data = 32'h0;
-	always @(posedge i_clk)
-	if (r_pwrcount_data[31])
-		r_pwrcount_data[30:0] <= r_pwrcount_data[30:0] + 1'b1;
-	else
-		r_pwrcount_data[31:0] <= r_pwrcount_data[31:0] + 1'b1;
-	assign	pwrcount_data = r_pwrcount_data;
-	assign	version_data = `DATESTAMP;
-	assign	version_ack = 1'b0;
-	assign	version_stall = 1'b0;
-`ifdef	SDRAM_SCOPE
-	wire	[31:0]	sdram_debug;
-	wire		sdramscope_int;
-	/* verilator lint_off WIDTH */
-	assign	sdram_debug = { (!o_ram_cs_n),
-	/* verilator lint_off WIDTH */
-			wb_cyc, (wb_stb)&&(sdram_sel), wb_we,
-				sdram_stall,sdram_ack,
-				o_ram_cs_n, o_ram_ras_n, o_ram_we_n, o_ram_cas_n,
-				o_ram_addr[4:0],
-				(!o_ram_we_n) ? i_ram_data[15:0]
-						: o_ram_data[15:0]
-				};
-	wbscope #(.LGMEM(4), .SYNCHRONOUS(1), .HOLDOFFBITS(4))
-		sdramscopei(i_clk, 1'b1, (!o_ram_we_n), sdram_debug,
-			i_clk, wb_cyc, (wb_stb)&&(sdramscope_sel),
-			wb_we, wb_addr[0], wb_data,
-			sdramscope_ack, sdramscope_stall, sdramscope_data,
-			sdramscope_int);
-`else	// SDRAM_SCOPE
-
-	// In the case that there is no sdramscope peripheral responding on the wb bus
-	assign	sdramscope_ack   = (wb_stb) && (sdramscope_sel);
-	assign	sdramscope_stall = 0;
-	assign	sdramscope_data  = 0;
-
-`endif	// SDRAM_SCOPE
-
-`ifdef	BUSTIMER_ACCESS
-	ziptimer #(.VW(16))
-		bustimeri(i_clk, i_reset, 1'b1,
-			wb_cyc, (wb_stb)&&(bustimer_sel), wb_we, wb_data,
-				bustimer_ack, bustimer_stall,
-				bustimer_data, bustimer_int);
-`else	// BUSTIMER_ACCESS
-
-	// In the case that there is no bustimer peripheral responding on the wb bus
-	assign	bustimer_ack   = (wb_stb) && (bustimer_sel);
-	assign	bustimer_stall = 0;
-	assign	bustimer_data  = 0;
-
-	assign	bustimer_int = 1'b0;	// bustimer.INT.BUSTIMER.WIRE
-`endif	// BUSTIMER_ACCESS
-
-`ifdef	BKRAM_ACCESS
-	memdev #(.LGMEMSZ(13), .EXTRACLOCK(1))
-		bkrami(i_clk, 1'b0,
-			(wb_cyc), (wb_stb)&&(bkram_sel), wb_we,
-				wb_addr[(13-3):0], wb_data, wb_sel,
-				bkram_ack, bkram_stall, bkram_data);
-`else	// BKRAM_ACCESS
-
-	// In the case that there is no bkram peripheral responding on the wb bus
-	assign	bkram_ack   = (wb_stb) && (bkram_sel);
-	assign	bkram_stall = 0;
-	assign	bkram_data  = 0;
-
-`endif	// BKRAM_ACCESS
-
-`ifdef	BUSPIC_ACCESS
-	//
-	// The BUS Interrupt controller
-	//
-	icontrol #(15)	buspici(i_clk, 1'b0, (wb_stb)&&(buspic_sel),
-			wb_data, buspic_data, bus_int_vector, w_bus_int);
-`else	// BUSPIC_ACCESS
-
-	// In the case that there is no buspic peripheral responding on the wb bus
-	assign	buspic_ack   = (wb_stb) && (buspic_sel);
-	assign	buspic_stall = 0;
-	assign	buspic_data  = 0;
-
-	assign	w_bus_int = 1'b0;	// buspic.INT.BUS.WIRE
-`endif	// BUSPIC_ACCESS
-
 `ifdef	BUSCONSOLE_ACCESS
 	/* verilator lint_off PINMISSING */
 	console consolei(i_clk, 1'b0,
@@ -1000,53 +966,77 @@ wbsdram sdrami(i_clk,
 	assign	w_console_tx_data = 7'h7f;
 
 	// In the case that there is no console peripheral responding on the wb bus
-	assign	console_ack   = (wb_stb) && (console_sel);
 	assign	console_stall = 0;
 	assign	console_data  = 0;
+	assign	console_ack   = (wb_stb) && (console_sel);
 
 	assign	uarttxf_int = 1'b0;	// console.INT.UARTTXF.WIRE
 	assign	uartrxf_int = 1'b0;	// console.INT.UARTRXF.WIRE
-	assign	uarttx_int = 1'b0;	// console.INT.UARTTX.WIRE
 	assign	uartrx_int = 1'b0;	// console.INT.UARTRX.WIRE
+	assign	uarttx_int = 1'b0;	// console.INT.UARTTX.WIRE
 `endif	// BUSCONSOLE_ACCESS
 
-`ifdef	WBUBUS_MASTER
-	// Parallel port logic
-	pport	hbi_pp(i_clk,
-			pp_rx_stb, pp_rx_data,
-			pp_tx_stb, pp_tx_data, pp_tx_busy,
-			i_pp_dir, i_pp_clk, i_pp_data, o_pp_data,
-				o_pp_clkfb, o_pp_dbg);
-`ifndef	BUSPIC_ACCESS
-	wire	w_bus_int;
-	assign	w_bus_int = 1'b0;
-`endif
-	wire	[29:0]	hb_tmp_addr;
-	hbconsole genbus(i_clk, pp_rx_stb, pp_rx_data,
-			hb_cyc, hb_stb, hb_we, hb_tmp_addr, hb_data, hb_sel,
-			hb_ack, hb_stall, hb_err, hb_idata,
-			w_bus_int,
-			pp_tx_stb, pp_tx_data, pp_tx_busy,
-			//
-			w_console_tx_stb, w_console_tx_data, w_console_busy,
-			w_console_rx_stb, w_console_rx_data);
-	assign	hb_sel = 4'hf;
-	assign	hb_addr= hb_tmp_addr[(24-1):0];
-`else	// WBUBUS_MASTER
+`ifdef	BUSTIMER_ACCESS
+	ziptimer #(.VW(16))
+		bustimeri(i_clk, i_reset, 1'b1,
+			wb_cyc, (wb_stb)&&(bustimer_sel), wb_we, wb_data,
+				bustimer_ack, bustimer_stall,
+				bustimer_data, bustimer_int);
+`else	// BUSTIMER_ACCESS
 
-	// In the case that nothing drives the hb bus ...
-	assign	hb_cyc = 1'b0;
-	assign	hb_stb = 1'b0;
-	assign	hb_we  = 1'b0;
-	assign	hb_sel = 0;
-	assign	hb_addr= 0;
-	assign	hb_data= 0;
-	// verilator lint_off UNUSED
-	wire	[35:0]	unused_bus_hb;
-	assign	unused_bus_hb = { hb_ack, hb_stall, hb_err, hb_data };
-	// verilator lint_on  UNUSED
+	// In the case that there is no bustimer peripheral responding on the wb bus
+	assign	bustimer_stall = 0;
+	assign	bustimer_data  = 0;
+	assign	bustimer_ack   = (wb_stb) && (bustimer_sel);
 
-`endif	// WBUBUS_MASTER
+	assign	bustimer_int = 1'b0;	// bustimer.INT.BUSTIMER.WIRE
+`endif	// BUSTIMER_ACCESS
+
+	always @(posedge i_clk)
+		if (wb_err)
+			r_buserr_addr <= wb_addr;
+	assign	buserr_data = { {(32-2-23){1'b0}},
+			r_buserr_addr, 2'b00 };
+`ifdef	BKRAM_ACCESS
+	memdev #(.LGMEMSZ(13), .EXTRACLOCK(1))
+		bkrami(i_clk, 1'b0,
+			(wb_cyc), (wb_stb)&&(bkram_sel), wb_we,
+				wb_addr[(13-3):0], wb_data, wb_sel,
+				bkram_ack, bkram_stall, bkram_data);
+`else	// BKRAM_ACCESS
+
+	// In the case that there is no bkram peripheral responding on the wb bus
+	assign	bkram_stall = 0;
+	assign	bkram_data  = 0;
+	assign	bkram_ack   = (wb_stb) && (bkram_sel);
+
+`endif	// BKRAM_ACCESS
+
+	initial	r_pwrcount_data = 32'h0;
+	always @(posedge i_clk)
+	if (r_pwrcount_data[31])
+		r_pwrcount_data[30:0] <= r_pwrcount_data[30:0] + 1'b1;
+	else
+		r_pwrcount_data[31:0] <= r_pwrcount_data[31:0] + 1'b1;
+	assign	pwrcount_data = r_pwrcount_data;
+	assign	version_data = `DATESTAMP;
+	assign	version_ack = 1'b0;
+	assign	version_stall = 1'b0;
+`ifdef	BUSPIC_ACCESS
+	//
+	// The BUS Interrupt controller
+	//
+	icontrol #(15)	buspici(i_clk, 1'b0, (wb_stb)&&(buspic_sel),
+			wb_data, buspic_data, bus_int_vector, w_bus_int);
+`else	// BUSPIC_ACCESS
+
+	// In the case that there is no buspic peripheral responding on the wb bus
+	assign	buspic_stall = 0;
+	assign	buspic_data  = 0;
+	assign	buspic_ack   = (wb_stb) && (buspic_sel);
+
+	assign	w_bus_int = 1'b0;	// buspic.INT.BUS.WIRE
+`endif	// BUSPIC_ACCESS
 
 
 

@@ -1,6 +1,6 @@
 /*******************************************************************************
 *
-* Filename:	board.ld
+* Filename:	./board.ld
 *
 * Project:	CAT Zip, iCE40 ZipCPU demonstration project
 *
@@ -56,13 +56,6 @@ MEMORY
 * memory.  The name of this pointer is given by the @LD.NAME tag within
 * the memory peripheral's configuration
 */
-/* LD.DEFNS from zipbones.txt */
-_kram  = 0; /* No high-speed kernel RAM */
-_ram   = ORIGIN(bkram);
-_rom   = ORIGIN(flash);
-_top_of_stack = ORIGIN(bkram) + LENGTH(bkram);
-
-
 /* LD.SCRIPT from zipbones.txt */
 MEMORY
 {

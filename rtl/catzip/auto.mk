@@ -39,23 +39,23 @@
 ################################################################################
 ##
 ##
+SCOPE := wbscope.v
+
 SDRAM := wbsdram.v
 
 ZIPCPUD := cpu
 ZIPCPU  := $(addprefix $(ZIPCPUD)/,zipcpu.v cpuops.v dblfetch.v prefetch.v memops.v idecode.v ziptimer.v wbpriarbiter.v zipbones.v busdelay.v cpudefs.v icontrol.v div.v mpyop.v wbdblpriarb.v slowmpy.v)
-BUSDLYD := cpu
-BUSDLY  := $(addprefix $(BUSDLYD)/,busdelay.v wbpriarbiter.v)
 GPIO := wbgpio.v
 
-SCOPE := wbscope.v
-
-BKRAM := memdev.v
-
-PICD := cpu
-PIC  := $(addprefix $(PICD)/,icontrol.v)
+BUSDLYD := cpu
+BUSDLY  := $(addprefix $(BUSDLYD)/,busdelay.v wbpriarbiter.v)
 HBBUSD := ../hexbus
 HBBUS  := $(addprefix $(HBBUSD)/,hbconsole.v hbdechex.v hbdeword.v hbexec.v hbgenhex.v hbidle.v hbints.v hbnewline.v hbpack.v console.v)
 PPORTD := ../pport
 PPORT  := $(addprefix $(PPORTD)/,ppio.v pport.v ufifo.v)
-VFLIST := main.v  $(SDRAM) $(ZIPCPU) $(BUSDLY) $(GPIO) $(SCOPE) $(BKRAM) $(PIC) $(HBBUS) $(PPORT)
+BKRAM := memdev.v
+
+PICD := cpu
+PIC  := $(addprefix $(PICD)/,icontrol.v)
+VFLIST := main.v  $(SCOPE) $(SDRAM) $(ZIPCPU) $(GPIO) $(BUSDLY) $(HBBUS) $(PPORT) $(BKRAM) $(PIC)
 AUTOVDIRS :=  -y cpu -y ../hexbus -y ../pport

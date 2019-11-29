@@ -57,9 +57,9 @@
 #include "sdramsim.h"
 #include "zipelf.h"
 
-#include "byteswap.h"
 #include "port.h"
 #include "pportsim.h"
+#include "byteswap.h"
 //
 // SIM.DEFINES
 //

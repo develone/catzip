@@ -43,9 +43,11 @@ all: switch_leds
 # $<	- Name of the first prerequisite
 # $^	- Names of all the prerequisites
 %.blif: %.v
-	yosys -p 'synth_ice40 -blif $@' $^
+	#yosys -p 'synth_ice40 -blif $@' $^
+	yosys -l simple.log -p 'synth_ice40 -blif switch_leds.blif -json switch_leds.json -top buttons_display' switch_leds.v
 %.asc: %.blif %.pcf
-	arachne-pnr -d 8k -p $*.pcf -o $@ $<
+	#arachne-pnr -d 8k -p $*.pcf -o $@ $<
+	nextpnr-ice40 --seed 8 --freq 100 --hx8k --pcf switch_leds.pcf --json switch_leds.json --asc switch_leds.asc
 
 %.bin: %.asc
 	icetime -d hx8k -c 70 $<
@@ -61,6 +63,6 @@ switch_leds.blif:   switch_leds.v
 
 .PHONY: clean
 clean:
-	rm -f *.blif *.asc *.bin
+	rm -f *.blif *.asc *.bin *.json
 	rm -rf obj_dir
 

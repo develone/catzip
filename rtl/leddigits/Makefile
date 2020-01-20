@@ -43,10 +43,11 @@ all: leddigits
 # $<	- Name of the first prerequisite
 # $^	- Names of all the prerequisites
 %.blif: %.v
-	yosys -p 'synth_ice40 -blif $@' $^
+	#yosys -p 'synth_ice40 -blif $@' $^
+	yosys -l simple.log -p 'synth_ice40 -blif leddigits.blif -json leddigits.json -top catboard' leddigits.v
 %.asc: %.blif %.pcf
-	arachne-pnr -d 8k -p $*.pcf -o $@ $<
-
+	#arachne-pnr -d 8k -p $*.pcf -o $@ $<
+	nextpnr-ice40 --seed 8 --freq 100 --hx8k --pcf leddigits.pcf --json leddigits.json --asc leddigits.asc
 %.bin: %.asc
 	icetime -d hx8k -c 70 $<
 	icepack $< $@
@@ -61,6 +62,6 @@ leddigits.blif:   leddigits.v
 
 .PHONY: clean
 clean:
-	rm -f *.blif *.asc *.bin
+	rm -f *.blif *.asc *.bin *.json
 	rm -rf obj_dir
 

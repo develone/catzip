@@ -35,16 +35,20 @@
 ################################################################################
 ##
 ##
-all: blinky pmodtest clktest dimmer
+#all: blinky pmodtest clktest dimmer
+all: blinky clktest dimmer pmodtest
 
 # GNU Make automatic variables (since I can never remember these ...)
 # $@	- name of the target
 # $<	- Name of the first prerequisite
 # $^	- Names of all the prerequisites
 %.blif: %.v
-	yosys -p 'synth_ice40 -blif $@' $<
+	#yosys -p 'synth_ice40 -blif $@' $<
+	#yosys -l simple.log -p 'synth_ice40 -blif $@ -json $@' $<
+	yosys -l simple.log -p 'synth_ice40 -blif $@ -json $*.json' $<
 %.asc: %.blif %.pcf
-	arachne-pnr -d 8k -p $*.pcf -o $@ $<
+	#arachne-pnr -d 8k -p $*.pcf -o $@ $<
+	nextpnr-ice40 --hx8k --pcf $*.pcf --json $*.json --asc $*.asc 
 %.bin: %.asc
 	icetime -d hx8k -c 100 $<
 	icepack $< $@
@@ -60,6 +64,6 @@ load: blinky.bin
 	icoprog -p < blinky.bin # Needs sudo
 
 clean:
-	rm -f *.blif *.asc *.bin
+	rm -f *.blif *.asc *.bin *.json
 	# rm -rf obj_dir
 

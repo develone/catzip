@@ -88,9 +88,9 @@ check-gpp:
 check-yosys:
 	$(call checkif-installed,yosys,-h,yosys)
 
-.PHONY: check-arachnepnr
-check-arachnepnr:
-	$(call checkif-installed,arachne-pnr,-v,arachne-pnr)
+#.PHONY: check-arachnepnr
+#check-arachnepnr:
+#	$(call checkif-installed,arachne-pnr,-v,arachne-pnr)
 
 .PHONY: check-icetime
 check-icetime:
@@ -151,7 +151,8 @@ doc:
 verilated: rtl
 
 .PHONY: rtl
-rtl: check-yosys check-arachnepnr check-icepack check-icetime datestamp autodata
+#rtl: check-yosys check-arachnepnr check-icepack check-icetime datestamp autodata
+rtl: check-yosys  check-icepack check-icetime datestamp autodata
 	$(SUBMAKE) rtl
 
 #

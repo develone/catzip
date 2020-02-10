@@ -162,8 +162,6 @@ public:
 	}
 
 	void	tick(void) {
-		if (done())
-			return;
 		TESTB<Vmain>::tick(); // Clock.size = 1
 	}
 

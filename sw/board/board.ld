@@ -1,6 +1,6 @@
 /*******************************************************************************
 *
-* Filename:	./board.ld
+* Filename:	board.ld
 *
 * Project:	CAT Zip, iCE40 ZipCPU demonstration project
 *
@@ -46,8 +46,10 @@ MEMORY
 {
 	/* To be listed here, a slave must be of type MEMORY.  If the slave
 	* has a defined name in its @LD.NAME tag, it will be listed here
-	* under that name.  The permissions are given by the @LD.PERM tag.
-	* If no permission tag exists, a permission of 'r' will be assumed.
+	* under that name, otherwise it will be listed under it's
+	* @$(PREFIX) tag with an underscore prepended to it.  The permissions
+	* are given by the @LD.PERM tag.  If no permission tag exists, a
+	* permission of 'r' will be assumed.
 	*/
 	/* No memories found */
 }
@@ -56,6 +58,13 @@ MEMORY
 * memory.  The name of this pointer is given by the @LD.NAME tag within
 * the memory peripheral's configuration
 */
+/* LD.DEFNS from zipbones.txt */
+_kram  = 0; /* No high-speed kernel RAM */
+_ram   = ORIGIN(bkram);
+_rom   = ORIGIN(flash);
+_top_of_stack = ORIGIN(bkram) + LENGTH(bkram);
+
+
 /* LD.SCRIPT from zipbones.txt */
 MEMORY
 {

@@ -250,55 +250,55 @@ parameter	RDLY = 6;
 	reg		wb_ack;
 
 	// Wishbone slave definitions for bus wb(SIO), slave buserr
-	wire		buserr_sel, buserr_ack, buserr_stall;
+	wire		buserr_sel, buserr_stall, buserr_ack;
 	wire	[31:0]	buserr_data;
 
 	// Wishbone slave definitions for bus wb(SIO), slave buspic
-	wire		buspic_sel, buspic_ack, buspic_stall;
+	wire		buspic_sel, buspic_stall, buspic_ack;
 	wire	[31:0]	buspic_data;
 
 	// Wishbone slave definitions for bus wb(SIO), slave gpio
-	wire		gpio_sel, gpio_ack, gpio_stall;
+	wire		gpio_sel, gpio_stall, gpio_ack;
 	wire	[31:0]	gpio_data;
 
 	// Wishbone slave definitions for bus wb(SIO), slave pwrcount
-	wire		pwrcount_sel, pwrcount_ack, pwrcount_stall;
+	wire		pwrcount_sel, pwrcount_stall, pwrcount_ack;
 	wire	[31:0]	pwrcount_data;
 
 	// Wishbone slave definitions for bus wb(SIO), slave version
-	wire		version_sel, version_ack, version_stall;
+	wire		version_sel, version_stall, version_ack;
 	wire	[31:0]	version_data;
 
 	// Wishbone slave definitions for bus wb(DIO), slave bustimer
-	wire		bustimer_sel, bustimer_ack, bustimer_stall;
+	wire		bustimer_sel, bustimer_stall, bustimer_ack;
 	wire	[31:0]	bustimer_data;
 
 	// Wishbone slave definitions for bus wb(DIO), slave watchdog
-	wire		watchdog_sel, watchdog_ack, watchdog_stall;
+	wire		watchdog_sel, watchdog_stall, watchdog_ack;
 	wire	[31:0]	watchdog_data;
 
 	// Wishbone slave definitions for bus wb, slave sdramscope
-	wire		sdramscope_sel, sdramscope_ack, sdramscope_stall;
+	wire		sdramscope_sel, sdramscope_stall, sdramscope_ack;
 	wire	[31:0]	sdramscope_data;
 
 	// Wishbone slave definitions for bus wb, slave wb_dio
-	wire		wb_dio_sel, wb_dio_ack, wb_dio_stall;
+	wire		wb_dio_sel, wb_dio_stall, wb_dio_ack;
 	wire	[31:0]	wb_dio_data;
 
 	// Wishbone slave definitions for bus wb, slave console
-	wire		console_sel, console_ack, console_stall;
+	wire		console_sel, console_stall, console_ack;
 	wire	[31:0]	console_data;
 
 	// Wishbone slave definitions for bus wb, slave wb_sio
-	wire		wb_sio_sel, wb_sio_ack, wb_sio_stall;
+	wire		wb_sio_sel, wb_sio_stall, wb_sio_ack;
 	wire	[31:0]	wb_sio_data;
 
 	// Wishbone slave definitions for bus wb, slave bkram
-	wire		bkram_sel, bkram_ack, bkram_stall;
+	wire		bkram_sel, bkram_stall, bkram_ack;
 	wire	[31:0]	bkram_data;
 
 	// Wishbone slave definitions for bus wb, slave sdram
-	wire		sdram_sel, sdram_ack, sdram_stall;
+	wire		sdram_sel, sdram_stall, sdram_ack;
 	wire	[31:0]	sdram_data;
 
 	// Bus zip
@@ -313,7 +313,7 @@ parameter	RDLY = 6;
 	reg		zip_ack;
 
 	// Wishbone slave definitions for bus zip, slave zip_dwb
-	wire		zip_dwb_sel, zip_dwb_ack, zip_dwb_stall, zip_dwb_err;
+	wire		zip_dwb_sel, zip_dwb_stall, zip_dwb_ack, zip_dwb_err;
 	wire	[31:0]	zip_dwb_data;
 
 	// Bus hb
@@ -328,11 +328,11 @@ parameter	RDLY = 6;
 	reg		hb_ack;
 
 	// Wishbone slave definitions for bus hb, slave hb_dwb
-	wire		hb_dwb_sel, hb_dwb_ack, hb_dwb_stall, hb_dwb_err;
+	wire		hb_dwb_sel, hb_dwb_stall, hb_dwb_ack, hb_dwb_err;
 	wire	[31:0]	hb_dwb_data;
 
 	// Wishbone slave definitions for bus hb, slave zip_dbg
-	wire		zip_dbg_sel, zip_dbg_ack, zip_dbg_stall;
+	wire		zip_dbg_sel, zip_dbg_stall, zip_dbg_ack;
 	wire	[31:0]	zip_dbg_data;
 
 
@@ -796,7 +796,7 @@ wbsdram sdrami(i_clk,
 	assign	zip_data= 0;
 	// verilator lint_off UNUSED
 	wire	unused_bus_zip;
-	assign	unused_bus_zip = &{ 1'b0, zip_ack, zip_stall, zip_err, zip_data };
+	assign	unused_bus_zip = &{ 1'b0, zip_stall, zip_ack, zip_err, zip_data };
 	// verilator lint_on  UNUSED
 
 	assign	zip_cpu_int = 1'b0;	// zip.INT.ZIP.WIRE
@@ -877,7 +877,7 @@ wbsdram sdrami(i_clk,
 	assign	hb_data= 0;
 	// verilator lint_off UNUSED
 	wire	unused_bus_hb;
-	assign	unused_bus_hb = &{ 1'b0, hb_ack, hb_stall, hb_err, hb_data };
+	assign	unused_bus_hb = &{ 1'b0, hb_stall, hb_ack, hb_err, hb_data };
 	// verilator lint_on  UNUSED
 
 `endif	// WBUBUS_MASTER

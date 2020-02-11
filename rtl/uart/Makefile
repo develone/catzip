@@ -43,9 +43,12 @@ all: helloworld speechfifo
 # $<	- Name of the first prerequisite
 # $^	- Names of all the prerequisites
 %.blif: %.v
-	yosys -p 'synth_ice40 -blif $@' $<
+	#yosys -p 'synth_ice40 -blif $@' $<
+	#yosys -l simple.log -p 'synth_ice40 -blif $@ -json $@' $<
+	yosys -l simple.log -p 'synth_ice40 -abc9 -blif $@ -json $*.json' $<
 %.asc: %.blif %.pcf
-	arachne-pnr -d 8k -p $*.pcf -o $@ $<
+	#arachne-pnr -d 8k -p $*.pcf -o $@ $<
+	nextpnr-ice40 --hx8k --pcf $*.pcf --json $*.json --asc $*.asc 
 %.bin: %.asc
 	#icetime -d hx8k -c 100 $<
 	icepack $< $@
@@ -55,6 +58,6 @@ helloworld: helloworld.bin
 speechfifo: speechfifo.bin
 
 clean:
-	rm -f *.blif *.asc *.bin
+	rm -f *.blif *.asc *.bin *.json
 	rm -rf obj_dir
 

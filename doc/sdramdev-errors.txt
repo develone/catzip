@@ -1,0 +1,41 @@
+git clone git@github.com:develone/catzip-icozip.git
+
+
+
+cd catzip-icozip/
+
+make 
+
+cd sw/host/
+
+make 
+arm-flashid & arm-wbregs
+
+cd ../zlib/
+
+make 
+
+cd ../board
+
+make
+
+cputest & hello
+
+rtl/icozip/main.v
+In main.v 
+	sdramdev #(.WBADDR(24-2))
+		sdrami(i_clk,
+
+rtl/icozip/toplevel.v
+module  toplevel(
+i_clk,
+                // GPIO ports
+                o_ledg, o_ledr, i_btn,
+                i_ram_feedback_clk, o_ram_clk, o_ram_cke, o_ram_cs_n, o_ram_ras_n, o_ram_cas_n,
+                o_ram_we_n, o_ram_bs, o_ram_addr, o_ram_udqm, o_ram_ldqm,
+                io_ram_data,
+                // Parallel port to wishbone / console interface
+                i_pp_dir, i_pp_clk, io_pp_data, o_pp_clkfb);
+
+rtl/icozip/sdramdev.v
+module  sdramdev(i_clk,

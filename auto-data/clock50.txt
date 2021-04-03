@@ -1,10 +1,11 @@
 ################################################################################
 ##
-## Filename: 	wbpwmfifo.txt
+## Filename: 	clock50.txt
 ##
 ## Project:	AutoFPGA, a utility for composing FPGA designs from peripherals
 ##
-## Purpose:	To define the interface of a generic PWM audio component
+## Purpose:	Creates and defines a 50MHz clock for the rest of the design to
+##		use as the system clock.
 ##
 ## Creator:	Dan Gisselquist, Ph.D.
 ##		Gisselquist Technology, LLC
@@ -35,43 +36,30 @@
 ################################################################################
 ##
 ##
-@PREFIX=pwmfifo
-@DEVID=PWMAUDIO
-@$NADDR=2
-@ACCESS=@$(DEVID)_ACCESS
-@SLAVE.TYPE=DOUBLE
-@SLAVE.BUS=wb
+@$CLKFREQHZ=50000000
+@PREFIX=clk
+@CLOCK.TOP=i_clk
 @CLOCK.NAME=clk
-@MAIN.PORTLIST=
-	o_@$(PREFIX), o_@$(PREFIX)_gain, o_@$(PREFIX)_shutdown_n
-@MAIN.IODECL=
-	output	wire o_@$(PREFIX), o_@$(PREFIX)_gain, o_@$(PREFIX)_shutdown_n;
-@MAIN.INSERT=
-	wbpwmfifo #(.DEFAULT_RELOAD(16'd1042),.VARIABLE_RATE(0))
-		@$(PREFIX)i(i_clk,
-			@$(SLAVE.PORTLIST),
-			o_@$(PREFIX),
-			{ o_@$(PREFIX)_gain, o_@$(PREFIX)_shutdown_n },
-			@$(PREFIX)_int);
-@REGS.N=2
-@REGS.0= 0 R_@$(DEVID) PWM PWMSAMPLE
-@REGS.1= 1 R_@$(DEVID)STATUS PWMRATE
-@BDEF.DEFNS=
-#define	PWM_SET_GAIN		0x218000
-#define	PWM_CLEAR_GAIN		0x018000
-#define	PWM_SHUTDOWN		0x018000
-#define	PWM_CLEAR_SHUTDOWN	0x118000
-#define	PWM_POWER_ON		(PWM_SET_GAIN | PWM_CLEAR_SHUTDOWN)
+@TOP.DEFNS=
+	wire		s_clk, s_reset;
+@TOP.INSERT=
+	assign	s_reset = 1'b0; // This design requires local, not global resets
 
-typedef	struct	@$(PREFIX)_S {
-	int	pwm_sample;
-	int	pwm_rate;
-};
-@INT.PWM.WIRE=@$(PREFIX)_int
-@INT.PWM.PIC=buspic
-@BDEF.OSDEF=_BOARD_HAS_@$(DEVID)
-@BDEF.IONAME=_@$(PREFIX)
-@BDEF.IOTYPE=@$(DEVID)
-@BDEF.OSVAL=static volatile @$(BDEF.IOTYPE) *const @$(BDEF.IONAME) = ((@$BDEF.IOTYPE *)@$(REGBASE));
-@RTL.MAKE.GROUP= @$(DEVID)
-@RTL.MAKE.FILES= wbpwmaudio.v wbpwmfifo.v dacfifo.v
+`ifdef	VERILATOR
+	assign	s_clk = i_clk;
+`else
+	reg	clk_50mhz;
+
+	initial	clk_50mhz = 1'b0;
+	always @(posedge i_clk)
+		clk_50mhz <= !clk_50mhz;
+
+	SB_GB global_buffer(clk_50mhz, s_clk);
+`endif
+
+@REGDEFS.H.DEFNS=
+#define	CLKFREQHZ	@$CLKFREQHZ
+@BDEF.DEFN=
+#define	CLKFREQHZ	@$CLKFREQHZ
+@CLOCK.NAME=clk
+@CLOCK.FREQUENCY= @$CLKFREQHZ

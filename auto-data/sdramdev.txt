@@ -130,9 +130,11 @@ parameter	RDLY = 6;
 	sdramdev 
 	
 		@$(PREFIX)i(i_clk,
-		/* verilator lint_off WIDTH */
-			@$(SLAVE.PORTLIST),
-		/* verilator lint_off WIDTH */
+			wb_sdram_cyc, wb_sdram_stb, wb_sdram_we,
+			wb_sdram_addr[(@$LGMEMSZ-2):0],
+			wb_sdram_data, // 32 bits wide
+			wb_sdram_sel,  // 32/8 bits wide
+			wb_sdram_stall, wb_sdram_ack, wb_sdram_idata,
 
 
 		o_ram_cs_n, o_ram_cke, o_ram_ras_n, o_ram_cas_n, o_ram_we_n,

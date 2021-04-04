@@ -45,7 +45,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 //
-// Copyright (C) 2015,2017-2018, Gisselquist Technology, LLC
+// Copyright (C) 2015,2017-2020, Gisselquist Technology, LLC
 //
 // This program is free software (firmware): you can redistribute it and/or
 // modify it under the terms of  the GNU General Public License as published
@@ -72,22 +72,25 @@
 `default_nettype	none
 //
 module	ziptimer(i_clk, i_reset, i_ce,
-		i_wb_cyc, i_wb_stb, i_wb_we, i_wb_data,
-			o_wb_ack, o_wb_stall, o_wb_data,
+		i_wb_cyc, i_wb_stb, i_wb_we, i_wb_data, i_wb_sel,
+			o_wb_stall, o_wb_ack, o_wb_data,
 		o_int);
 	parameter	BW = 32, VW = (BW-1), RELOADABLE=1;
-	input	wire		i_clk, i_reset, i_ce;
+	input	wire			i_clk, i_reset, i_ce;
 	// Wishbone inputs
-	input	wire		i_wb_cyc, i_wb_stb, i_wb_we;
-	input	wire [(BW-1):0]	i_wb_data;
+	input	wire			i_wb_cyc, i_wb_stb, i_wb_we;
+	input	wire [(BW-1):0]		i_wb_data;
+	input	wire [(BW/8-1):0]	i_wb_sel;
 	// Wishbone outputs
-	output	reg			o_wb_ack;
 	output	wire			o_wb_stall;
+	output	reg			o_wb_ack;
 	output	wire	[(BW-1):0]	o_wb_data;
 	// Interrupt line
 	output	reg		o_int;
 
 	reg			r_running;
+	reg			r_zero  = 1'b1;
+	reg	[(VW-1):0]	r_value;
 
 	wire	wb_write;
 	assign	wb_write = ((i_wb_stb)&&(i_wb_we));
@@ -133,7 +136,6 @@ module	ziptimer(i_clk, i_reset, i_ce,
 	end endgenerate
 
 
-	reg	[(VW-1):0]	r_value;
 	initial	r_value = 0;
 	always @(posedge i_clk)
 		if (i_reset)
@@ -148,7 +150,6 @@ module	ziptimer(i_clk, i_reset, i_ce,
 				r_value <= interval_count;
 		end
 
-	reg	r_zero  = 1'b1;
 	always @(posedge i_clk)
 		if (i_reset)
 			r_zero <= 1'b1;
@@ -190,96 +191,6 @@ module	ziptimer(i_clk, i_reset, i_ce,
 	// verilator lint_on  UNUSED
 
 `ifdef	FORMAL
-	reg	f_past_valid;
-	initial	f_past_valid = 1'b0;
-	always @(posedge i_clk)
-		f_past_valid <= 1'b1;
-	initial	assume(i_reset);
-	always @(*)
-		if (!f_past_valid)
-			assume(i_reset);
-
-	always @(posedge i_clk)
-	if ((!f_past_valid)||($past(i_reset)))
-	begin
-		assert(r_value     == 0);
-		assert(r_running   == 0);
-		assert(auto_reload == 0);
-		assert(r_zero      == 1'b1);
-	end
-
-
-	always @(*)
-		assert(r_zero == (r_value == 0));
-
-	always @(*)
-		if (r_value != 0)
-			assert(r_running);
-
-	always @(*)
-		if (auto_reload)
-			assert(r_running);
-
-	always @(*)
-		if (!RELOADABLE)
-			assert(auto_reload == 0);
-
-	always @(*)
-		if (auto_reload)
-			assert(interval_count != 0);
-
-	always @(posedge i_clk)
-	if ((f_past_valid)&&($past(r_value)==0)
-			&&(!$past(wb_write))&&(!$past(auto_reload)))
-		assert(r_value == 0);
-
-	always @(posedge i_clk)
-	if ((f_past_valid)&&(!$past(i_reset))&&(!$past(wb_write))
-			&&($past(r_value)==0)&&($past(auto_reload)))
-	begin
-		if ($past(i_ce))
-			assert(r_value == interval_count);
-		else
-			assert(r_value == $past(r_value));
-	end
-
-	always @(posedge i_clk)
-	if ((f_past_valid)&&(!$past(i_reset))
-			&&(!$past(wb_write))&&($past(r_value)!=0))
-	begin
-		if ($past(i_ce))
-			assert(r_value == $past(r_value)-1'b1);
-		else
-			assert(r_value == $past(r_value));
-	end
-
-	always @(posedge i_clk)
-	if ((f_past_valid)&&(!$past(i_reset))&&($past(wb_write)))
-		assert(r_value == $past(i_wb_data[(VW-1):0]));
-	always @(posedge i_clk)
-	if ((f_past_valid)&&(!$past(i_reset))&&($past(wb_write))
-			&&(RELOADABLE)&&(|$past(i_wb_data[(VW-1):0])))
-		assert(auto_reload == $past(i_wb_data[(BW-1)]));
-
-	always @(posedge i_clk)
-	if (!(f_past_valid)||($past(i_reset)))
-		assert(!o_int);
-	else if (($past(wb_write))||(!$past(i_ce)))
-		assert(!o_int);
-	else
-		assert(o_int == ((r_running)&&(r_value == 0)));
-
-	always @(posedge i_clk)
-	if ((!f_past_valid)||($past(i_reset)))
-		assert(!o_wb_ack);
-	else if ($past(i_wb_stb))
-		assert(o_wb_ack);
-
-	always @(*)
-		assert(!o_wb_stall);
-	always @(*)
-		assert(o_wb_data[BW-1] == auto_reload);
-	always @(*)
-		assert(o_wb_data[VW-1:0] == r_value);
+// The formal properties for this module are maintained elsewhere
 `endif
 endmodule

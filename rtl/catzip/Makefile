@@ -12,7 +12,7 @@
 ##
 ################################################################################
 ##
-## Copyright (C) 2015-2017, Gisselquist Technology, LLC
+## Copyright (C) 2015-2020, Gisselquist Technology, LLC
 ##
 ## This program is free software (firmware): you can redistribute it and/or
 ## modify it under the terms of  the GNU General Public License as published
@@ -32,7 +32,6 @@
 ## License:	GPL, v3, as defined and found on www.gnu.org,
 ##		http://www.gnu.org/licenses/gpl.html
 ##
-##
 ################################################################################
 ##
 ##
@@ -46,9 +45,12 @@ VDIRFB:= $(FBDIR)/obj-$(ARCH)
 VOBJ := obj-$(ARCH)
 include auto.mk
 PCFFILE := catzip.pcf
+VERILATOR := verilator
+VFLAGS := -O3 -Mdir $(VDIRFB) -Wno-TIMESCALEMOD -trace -cc $(AUTOVDIRS)
+# VERILATOR := VERILATOR_ROOT=/home/dan/tmp/verilator.git /home/dan/tmp/verilator.git/bin/verilator
 # toplevel.v rxuart.v txuart.v
 # rtcdate.v wbubus.v
-ICOSRCS := toplevel.v main.v $(WBUBUS) $(PPBUS) $(PPORT) cpu/icontrol.v memdev.v ufifo.v
+ICOSRCS := toplevel.v main.v $(WBUBUS) $(PPBUS) $(PPORT) cpu/icontrol.v memdev.v ufifo.v wbxbar.v addrdecode.v skidbuffer.v
 
 #
 # Verilator build from the main level.  This is not the toplevel verilog
@@ -63,13 +65,12 @@ verilated: $(VDIRFB)/Vmain__ALL.a
 # $(VDIRFB)/V%.cpp: $(VDIRFB)/V%.h
 # $(VDIRFB)/V%.mk:  $(VDIRFB)/V%.h
 # $(VDIRFB)/V%.h: $(FBDIR)/%.v
-#	verilator -O3 -Mdir $(VDIRFB) -trace -cc $(AUTOVDIRS) $*.v
+#	$(VERILATOR) -O3 -Mdir $(VDIRFB) -trace -cc $(AUTOVDIRS) $*.v
 
 $(VDIRFB)/Vmain.cpp: $(VDIRFB)/Vmain.h
 $(VDIRFB)/Vmain.mk:  $(VDIRFB)/Vmain.h
 $(VDIRFB)/Vmain.h: main.v $(VFLIST)
-	verilator -Wno-TIMESCALEMOD -O3 -Mdir $(VDIRFB) -trace -cc $(AUTOVDIRS) main.v
-
+	$(VERILATOR) $(VFLAGS) main.v
 cpudefs.h: cpu/cpudefs.v
 	@echo "Building cpudefs.h"
 	@echo "// " > $@
@@ -103,16 +104,16 @@ $(VDIRFB)/V%__ALL.a: $(VDIRFB)/V%.mk
 bin: catzip.bin
 #
 #
-catzip.blif: toplevel.v $(VFLIST)
-	@echo yosys -ql simple.log -p 'synth_ice40 -blif catzip.blif -json catzip.json -top toplevel' ...
-	@yosys -ql simple.log -p 'synth_ice40 -blif catzip.blif -json catzip.json -top toplevel' $^
+catzip.json: toplevel.v wbxbar.v addrdecode.v skidbuffer.v $(VFLIST)
+	@echo yosys -ql yosys.log -p 'synth_ice40 -top toplevel' ...
+	@yosys -ql yosys.log -p 'synth_ice40 -json catzip.json -top toplevel' $^
 
 .PHONY: yosys
-yosys: catzip.blif
+yosys: catzip.json
 
-catzip.asc: $(PCFFILE) catzip.blif
-	#arachne-pnr -d 8k -r -p $(PCFFILE) catzip.blif -o $@
-	nextpnr-ice40 --seed 8 --freq 40 --hx8k --pcf $(PCFFILE) --json catzip.json --asc catzip.asc
+catzip.asc: $(PCFFILE) catzip.json
+	# arachne-pnr -d 8k -r -P ct256 -p $(PCFFILE) catzip.blif -o $@
+	nextpnr-ice40 --hx8k -r --freq 40 --package ct256 --pcf $(PCFFILE) --json catzip.json --asc catzip.asc --no-promote-globals
 
 .PHONY: arachne
 arachne: catzip.asc
@@ -124,28 +125,22 @@ catzip.bin: catzip.asc
 #
 #
 #
-#
-#
-simple.blif: simple.ys simplefirst.v
-	yosys -p 'synth_ice40 -blif simple.blif' simplefirst.v |tee simple.log
-simple.asc: catzip.pcf simple.blif
-
-	arachne-pnr -d 8k -p catzip.pcf simple.blif -o simple.asc
-simple.bin: simple.asc
-	icetime -d hx8k -c 100 simple.asc
-	icepack simple.asc simple.bin
+tags: $(wildcard *.v)
+	ctags *.v
 
 .PHONY: clean
 clean:
 	rm -rf $(VOBJ) cpudefs.h design.h
-	rm -rf *.blif *.asc *.bin
+	rm -rf *.blif *.asc *.bin *.json
 	rm -rf $(VDIRFB)/*.mk
 	rm -rf $(VDIRFB)/*.cpp
 	rm -rf $(VDIRFB)/*.h
 	rm -rf $(VDIRFB)/
 
+DEPS := $(wildcard $(VDIRFB)/*.d)
 
-
-# yosys -p synth_ice40 -blif catzip.blif toplevel.v main.v wbubus/wbconsole.v wbubus/wbubus.v wbubus/wbucompactlines.v wbubus/wbucompress.v wbubus/wbuconsole.v wbubus/wbudecompress.v wbubus/wbudeword.v wbubus/wbuexec.v wbubus/wbufifo.v wbubus/wbuidleint.v wbubus/wbuinput.v wbubus/wbuoutput.v wbubus/wbureadcw.v wbubus/wbusixchar.v wbubus/wbutohex.v cpu/busdelay.v cpu/cpudefs.v cpu/cpuops.v cpu/dblfetch.v cpu/div.v cpu/icontrol.v cpu/idecode.v cpu/memops.v cpu/pfcache.v cpu/pipefetch.v cpu/pipemem.v cpu/prefetch.v cpu/wbarbiter.v cpu/wbdblpriarb.v cpu/wbdmac.v cpu/wbpriarbiter.v cpu/wbwatchdog.v cpu/zipbones.v cpu/zipcounter.v cpu/zipcpu.v cpu/zipjiffies.v cpu/zipsystem.v cpu/ziptimer.v ../pport/ppio.v ../pport/pport.v ../pport/wbpport.v memdev.v ufifo.v
-# arachne-pnr -d 8k -p catzip.pcf catzip.blif -o catzip.asc
-# icetime -d hx8k -c 45 catzip.asc
+ifneq ($(MAKECMDGOALS),clean)
+ifneq ($(DEPS),)
+include $(DEPS)
+endif
+endif

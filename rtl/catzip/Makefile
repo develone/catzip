@@ -115,11 +115,9 @@ catzip.json: toplevel.v wbxbar.v addrdecode.v skidbuffer.v $(VFLIST)
 yosys: catzip.json
 
 catzip.asc: $(PCFFILE) catzip.json
-<<<<<<< HEAD
 	# arachne-pnr -d 8k -r -P ct256 -p $(PCFFILE) icozip.blif -o $@
-=======
 	# arachne-pnr -d 8k -r -P ct256 -p $(PCFFILE) catzip.blif -o $@
->>>>>>> cf0a63f18ee6344da225a121414df0dcf9cd5e21
+
 	nextpnr-ice40 --hx8k -r --freq 40 --package ct256 --pcf $(PCFFILE) --json catzip.json --asc catzip.asc --no-promote-globals
 
 .PHONY: arachne

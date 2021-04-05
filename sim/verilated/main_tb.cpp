@@ -237,7 +237,7 @@ public:
 		//
 		// Loading the bkram component
 		//
-		base  = 0x01400000; // in octets
+		base  = 0x00a00000; // in octets
 		adrln = 0x00002000;
 
 		if ((addr >= base)&&(addr < base + adrln)) {
@@ -274,8 +274,8 @@ public:
 		//
 		// Loading the sdram component
 		//
-		base  = 0x02000000; // in octets
-		adrln = 0x01000000;
+		base  = 0x01000000; // in octets
+		adrln = 0x00800000;
 
 		if ((addr >= base)&&(addr < base + adrln)) {
 			// If the start access is in sdram

@@ -39,7 +39,7 @@
 ## This is 24 to SDRAM
 @PREFIX=sdram
 @DEVID=SDRAM
-@$LGMEMSZ=24
+@$LGMEMSZ=23
 @LGMEMSZ.FORMAT=%d
 @$NADDR=(1<<(@$THIS.LGMEMSZ-2))
 @$NBYTES=(1<<(@$THIS.LGMEMSZ))
@@ -131,7 +131,11 @@ parameter	RDLY = 6;
 	
 		@$(PREFIX)i(i_clk,
 			wb_sdram_cyc, wb_sdram_stb, wb_sdram_we,
+<<<<<<< HEAD
+			wb_sdram_addr[(@$LGMEMSZ-1):0],
+=======
 			wb_sdram_addr[(@$LGMEMSZ-2):0],
+>>>>>>> cf0a63f18ee6344da225a121414df0dcf9cd5e21
 			wb_sdram_data, // 32 bits wide
 			wb_sdram_sel,  // 32/8 bits wide
 			wb_sdram_stall, wb_sdram_ack, wb_sdram_idata,

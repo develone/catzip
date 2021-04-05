@@ -5,7 +5,7 @@
 ## Project:	ICO Zip, iCE40 ZipCPU demonstration project
 ##
 ## Purpose:	This makefile builds both the final bit file for loading, as
-##		well as a verilator simulation of the entire catzip project.
+##		well as a verilator simulation of the entire icozip project.
 ##
 ## Creator:	Dan Gisselquist, Ph.D.
 ##		Gisselquist Technology, LLC
@@ -36,7 +36,10 @@
 ##
 ##
 .PHONY: all
-all: cpudefs.h design.h verilated bin
+
+#all: cpudefs.h design.h  bin
+#all: cpudefs.h design.h verilated bin
+all: cpudefs.h design.h bin #verilated
 CROSS ?=
 ARCH  ?= $(shell bash ../../sw/host/arch.sh)
 CXX   := $(CROSS)g++
@@ -112,7 +115,11 @@ catzip.json: toplevel.v wbxbar.v addrdecode.v skidbuffer.v $(VFLIST)
 yosys: catzip.json
 
 catzip.asc: $(PCFFILE) catzip.json
+<<<<<<< HEAD
+	# arachne-pnr -d 8k -r -P ct256 -p $(PCFFILE) icozip.blif -o $@
+=======
 	# arachne-pnr -d 8k -r -P ct256 -p $(PCFFILE) catzip.blif -o $@
+>>>>>>> cf0a63f18ee6344da225a121414df0dcf9cd5e21
 	nextpnr-ice40 --hx8k -r --freq 40 --package ct256 --pcf $(PCFFILE) --json catzip.json --asc catzip.asc --no-promote-globals
 
 .PHONY: arachne

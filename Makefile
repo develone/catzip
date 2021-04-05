@@ -2,7 +2,7 @@
 ##
 ## Filename:	Makefile
 ##
-## Project:	CAT Zip, iCE40 ZipCPU demonsrtation project
+## Project:	cat Zip, iCE40 ZipCPU demonstration project
 ##
 ## Purpose:	A master project makefile.  It tries to build all targets
 ##		within the project, mostly by directing subdirectory makes.
@@ -13,7 +13,7 @@
 ##
 ################################################################################
 ##
-## Copyright (C) 2016-2017, Gisselquist Technology, LLC
+## Copyright (C) 2016-2020, Gisselquist Technology, LLC
 ##
 ## This program is free software (firmware): you can redistribute it and/or
 ## modify it under the terms of  the GNU General Public License as published
@@ -38,7 +38,7 @@
 ##
 ##
 .PHONY: all
-all:	check-install archive datestamp autodata rtl sw sim # verilated bench
+all:	check-install archive datestamp autodata rtl sw sim # bench
 #
 # Could also depend upon load, if desired, but not necessary
 SIM   := `find sim -name Makefile` `find sim -name "*.cpp"` `find sim -name "*.h"` `find sim -name "*.c"`
@@ -88,9 +88,9 @@ check-gpp:
 check-yosys:
 	$(call checkif-installed,yosys,-h,yosys)
 
-#.PHONY: check-arachnepnr
-#check-arachnepnr:
-#	$(call checkif-installed,arachne-pnr,-v,arachne-pnr)
+.PHONY: check-arachnepnr
+check-arachnepnr:
+	$(call checkif-installed,arachne-pnr,-v,arachne-pnr)
 
 .PHONY: check-icetime
 check-icetime:
@@ -154,8 +154,7 @@ doc:
 verilated: rtl
 
 .PHONY: rtl
-#rtl: check-yosys check-arachnepnr check-icepack check-icetime datestamp autodata
-rtl: check-yosys  check-icepack check-icetime datestamp autodata
+rtl: check-yosys check-arachnepnr check-icepack check-icetime datestamp autodata
 	$(SUBMAKE) rtl
 
 #

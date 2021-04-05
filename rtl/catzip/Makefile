@@ -39,7 +39,7 @@
 
 #all: cpudefs.h design.h  bin
 #all: cpudefs.h design.h verilated bin
-all: cpudefs.h design.h bin #verilated
+all: cpudefs.h design.h bin verilated
 CROSS ?=
 ARCH  ?= $(shell bash ../../sw/host/arch.sh)
 CXX   := $(CROSS)g++

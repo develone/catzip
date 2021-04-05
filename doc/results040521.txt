@@ -1,3 +1,146 @@
+git clone git@github.com:develone/catzip.git
+
+cd catzip/
+
+git checkout newautofpga
+
+. ./myenv-a.sh  Only need if zipcpu is not in PATH
+yosys -V
+Yosys 0.9+4052 (git sha1 0ccc7229, gcc 8.3.0-6+rpi1 -fPIC -Os)
+
+nextpnr-ice40 -V
+nextpnr-ice40 -- Next Generation Place and Route (Version 4419c36d)
+
+rtl/catzip/Makefile nnow will include verilated all: cpudefs.h design.h bin verilated
+
+commit 657f9e312ed99c2e80d40768f65721fc4aec196d (HEAD -> newautofpga, origin/newautofpga)
+Author: Ed Vidal Jr <devel@mypi3-16.attlocal.net>
+Date:   Mon Apr 5 09:32:50 2021 -0600
+
+make 
+
+Info: Program finished normally.
+icepack catzip.asc catzip.bin
+icetime -d hx8k -c 40 catzip.asc
+// Reading input .asc file..
+// Reading 8k chipdb file..
+// Creating timing netlist..
+// Timing estimate: 16.45 ns (60.80 MHz)
+// Checking 25.00 ns (40.00 MHz) clock constraint: PASSED.
+
+38.2.1. Analyzing design hierarchy..
+Top module:  \toplevel
+Used module:     \ppio
+Used module:     \main
+Used module:         \zipbones
+Used module:             \zipcpu
+Used module:                 \wbdblpriarb
+Used module:                 \memops
+Used module:                 \div
+Used module:                 \cpuops
+Used module:                     \mpyop
+Used module:                 \idecode
+Used module:                 \dblfetch
+Used module:         \ziptimer
+Used module:         \hbconsole
+Used module:             \hbnewline
+Used module:             \hbgenhex
+Used module:             \hbdeword
+Used module:             \hbidle
+Used module:             \hbints
+Used module:             \hbexec
+Used module:             \hbpack
+Used module:             \hbdechex
+Used module:         \pport
+Used module:         \console
+Used module:         \sdramdev
+Used module:         \wbgpio
+Used module:         \memdev
+Used module:         \icontrol
+Used module:         \wbxbar
+Used module:             \addrdecode
+Used module:             \skidbuffer
+Parameter \W = 16
+
+
+=== toplevel ===
+
+   Number of wires:               3956
+   Number of wire bits:          19534
+   Number of public wires:        3956
+   Number of public wire bits:   19534
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:               8084
+     SB_CARRY                      675
+     SB_DFF                        788
+     SB_DFFE                      1227
+     SB_DFFESR                     385
+     SB_DFFESS                      67
+     SB_DFFSR                      337
+     SB_DFFSS                       14
+     SB_IO                          24
+     SB_LUT4                      4544
+     SB_PLL40_CORE                   1
+     SB_RAM40_4K                    22
+
+
+rtl/catzip/toplevel.v
+
+module	toplevel(
+i_clk,
+		// GPIO ports
+		o_ledg, o_ledr, i_btn,
+		i_ram_feedback_clk, o_ram_clk, o_ram_cke, o_ram_cs_n, o_ram_ras_n, o_ram_cas_n,
+		o_ram_we_n, o_ram_bs, o_ram_addr, o_ram_udqm, o_ram_ldqm,
+		io_ram_data,
+		// Parallel port to wishbone / console interface
+		i_pp_dir, i_pp_clk, io_pp_data, o_pp_clkfb);
+
+`ifdef	VERILATOR
+	assign	s_clk = i_clk;
+`else
+	wire	clk_40mhz, pll_locked;
+	SB_PLL40_CORE #(
+		.FEEDBACK_PATH("SIMPLE"),
+		.DELAY_ADJUSTMENT_MODE_FEEDBACK("FIXED"),
+		.DELAY_ADJUSTMENT_MODE_RELATIVE("FIXED"),
+		.PLLOUT_SELECT("GENCLK"),
+		.FDA_FEEDBACK(4'b1111),
+		.FDA_RELATIVE(4'b1111),
+		.DIVR(4'b0100),		// DIVR =  4
+		.DIVQ(7'b0011111),		// DIVQ =  31
+		.DIVF(3'b100),		// DIVF =  4
+		.FILTER_RANGE(3'b010)	// FILTER_RANGE = 2
+	) plli (
+		.REFERENCECLK     (i_clk        ),
+		.PLLOUTCORE     (clk_40mhz    ),
+		.LOCK           (pll_locked  ),
+		.BYPASS         (1'b0         ),
+		.RESETB         (1'b1         )
+	);
+       	//SB_GB global_buffer(clk_40mhz, s_clk);
+	assign	s_clk = clk_40mhz;
+`endif
+
+rtl/catzip/main.v
+ 
+`ifdef	SDRAM_ACCESS
+	sdramdev 
+	
+		sdrami(i_clk,
+			wb_sdram_cyc, wb_sdram_stb, wb_sdram_we,
+			wb_sdram_addr[(23-1):0],
+			wb_sdram_data, // 32 bits wide
+			wb_sdram_sel,  // 32/8 bits wide
+			wb_sdram_stall, wb_sdram_ack, wb_sdram_idata,
+
+
+		o_ram_cs_n, o_ram_cke, o_ram_ras_n, o_ram_cas_n, o_ram_we_n,
+		o_ram_bs, o_ram_addr,
+		o_ram_drive_data, i_ram_data, o_ram_data, o_ram_dqm,
+		o_debug);
 
 04/05/21
 sim/verilated $ ./arm-main_tb 

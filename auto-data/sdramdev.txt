@@ -1,8 +1,8 @@
 ################################################################################
 ##
-## Filename: 	sdram.txt
+## Filename: 	sdramdev.txt
 ##
-## Project:	ICO Zip, iCE40 ZipCPU demonsrtation project
+## Project:	ICO Zip, iCE40 ZipCPU demonstration project
 ##
 ## Purpose:	Describes how an HDL project needs to be patched to include the
 ##		SRAM device driver/controller.
@@ -12,7 +12,7 @@
 ##
 ################################################################################
 ##
-## Copyright (C) 2018, Gisselquist Technology, LLC
+## Copyright (C) 2018-2020, Gisselquist Technology, LLC
 ##
 ## This program is free software (firmware): you can redistribute it and/or
 ## modify it under the terms of  the GNU General Public License as published
@@ -36,12 +36,12 @@
 ################################################################################
 ##
 ##
+## This is 24 to SDRAM
 @PREFIX=sdram
 @DEVID=SDRAM
-## This is 24 to SDRAM
 @$LGMEMSZ=24
 @LGMEMSZ.FORMAT=%d
-@$NADDR=(1<<(@$THIS.LGMEMSZ-2))
+@$NADDR=(1<<(@$THIS.LGMEMSZ-3))
 @$NBYTES=(1<<(@$THIS.LGMEMSZ))
 @NBYTES.FORMAT=0x%08x
 @ACCESS=@$(DEVID)_ACCESS
@@ -52,40 +52,8 @@
 		i_ram_feedback_clk, o_ram_clk, o_ram_cke, o_ram_cs_n, o_ram_ras_n, o_ram_cas_n,
 		o_ram_we_n, o_ram_bs, o_ram_addr, o_ram_udqm, o_ram_ldqm,
 		io_ram_data
-@TOP.MAIN=
 
-		//*********************************************************
-			//toplevel
-			//o_ram_cs_n,	// Chip select
-			//o_ram_cke,	// Clock enable
-			//o_ram_ras_n,	// Row address strobe
-			//o_ram_cas_n,	// Column address strobe
-			//o_ram_we_n,	// Write enable
-			//o_ram_bs,	// Bank select
-			//o_ram_addr,	// Address lines
-			//ram_drive_data,
-			//r_ram_data,	// Data lines (input)
-			//ram_data,	// Data lines (output)
-			//{ o_ram_udqm, o_ram_ldqm },
-		//*********************************************************			
-		o_ram_cs_n, o_ram_cke, o_ram_ras_n, o_ram_cas_n, o_ram_we_n, 
-			o_ram_bs, o_ram_addr,
-			ram_drive_data, r_ram_data, ram_data, { o_ram_udqm, o_ram_ldqm },
-		o_debug		
-    
 @TOP.IODECL=
-	//toplevel.v instantiating busmaster.v 
-	//o_ram_cs_n,     Chip select
-	//o_ram_cke,      Clock enable
-	//o_ram_ras_n,    Row address strobe
-	//o_ram_cas_n,    Column address strobe
-	//o_ram_we_n,     Write enable
-	//o_ram_bs,       Bank select
-	//o_ram_addr,     Address lines
-	//ram_drive_data, toplevel in tristate
-	//o_ram_drive_data, in main.v & main_tb.cpp
-	//r_ram_data,     Data lines (input)
-	//ram_data,       Data lines (output)
 	input		i_ram_feedback_clk;
 	output	wire	o_ram_clk, o_ram_cke;
 	output	wire	o_ram_cs_n, o_ram_ras_n, o_ram_cas_n, o_ram_we_n;
@@ -127,6 +95,13 @@
 	assign o_ram_clk = s_clk;
 @TOP.DEFNS=
 	wire	[15:0]		i_ram_data, o_ram_data;
+@TOP.MAIN=
+			
+		o_ram_cs_n, o_ram_cke, o_ram_ras_n, o_ram_cas_n, o_ram_we_n, 
+			o_ram_bs, o_ram_addr,
+			ram_drive_data, r_ram_data, ram_data, { o_ram_udqm, o_ram_ldqm },
+		o_debug		
+    
 @MAIN.PORTLIST=	
 		o_ram_cs_n, o_ram_cke, o_ram_ras_n, o_ram_cas_n, o_ram_we_n, 
 			o_ram_bs, o_ram_addr,
@@ -152,16 +127,20 @@ parameter	RDLY = 6;
 	output	wire		o_ram_drive_data; 
 	
 @MAIN.INSERT=
-wbsdram sdrami(i_clk,
-		wb_cyc, (wb_stb)&&(sdram_sel),
-		 
-		wb_we, 
-		/* verilator lint_off WIDTH */
-		wb_addr[(@$LGMEMSZ-2):0], 
-		/* verilator lint_off WIDTH */
-		wb_data, wb_sel,
-		 
-		sdram_ack, sdram_stall, sdram_data,
+	sdramdev 
+	
+		@$(PREFIX)i(i_clk,
+			wb_sdram_cyc,
+			/* verilator lint_off WIDTH */ 
+			((wb_sdram_stb)&&(wb_sdram_sel)),
+			/* verilator lint_off WIDTH */
+			wb_sdram_we,
+			wb_sdram_addr[(@$LGMEMSZ-2):0],
+			wb_sdram_data, // 32 bits wide
+			wb_sdram_sel,  // 32/8 bits wide
+			wb_sdram_ack, wb_sdram_stall, wb_sdram_idata,
+
+
 		o_ram_cs_n, o_ram_cke, o_ram_ras_n, o_ram_cas_n, o_ram_we_n,
 		o_ram_bs, o_ram_addr,
 		o_ram_drive_data, i_ram_data, o_ram_data, o_ram_dqm,
@@ -175,12 +154,8 @@ wbsdram sdrami(i_clk,
 @BDEF.OSDEF=_BOARD_HAS_@$(DEVID)
 @MEM.NAME= @$(PREFIX)
 @BDEF.OSVAL=extern char	_@$(MEM.NAME)[@$NBYTES];
-@LDSCRIPT.PSTR=	wx
-@LDSCRIPT.PTR=	@$(MEM.NAME)
-@LDSCRIPT.DEF=
-_@$(MEM.NAME) = ORIGIN(@$(MEM.NAME))
 @RTL.MAKE.GROUP= @$(DEVID)
-@RTL.MAKE.FILES= wbsdram.v
+@RTL.MAKE.FILES= sdramdev.v
 @$BASEHX = @$REGBASE
 @BASEHX.FORMAT= 0x%08x
 @$NADDRHX = @$NADDR
@@ -189,16 +164,15 @@ _@$(MEM.NAME) = ORIGIN(@$(MEM.NAME))
 #include "sdramsim.h"
 @SIM.DEFNS=
 #ifdef	@$(ACCESS)
-
 	SDRAMSIM		*m_@$(MEM.NAME);
-	
 #endif // @$(ACCESS)
 @SIM.INIT=
 #ifdef	@$(ACCESS)
 
-	m_sdram = new SDRAMSIM;
+	m_@$(MEM.NAME) = new SDRAMSIM();
 	
 #endif // @$(ACCESS)
+@SIM.CLOCK=clk
 @SIM.TICK=
 #ifdef	@$(ACCESS)
 

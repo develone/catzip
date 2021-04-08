@@ -33,7 +33,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 //
-// Copyright (C) 2017-2018, Gisselquist Technology, LLC
+// Copyright (C) 2017-2020, Gisselquist Technology, LLC
 //
 // This file is part of the hexbus debugging interface.
 //
@@ -116,10 +116,10 @@ module	hbgenhex(i_clk, i_reset, i_stb, i_bits, o_gx_busy, o_gx_stb, o_gx_char, i
 
 	assign	o_gx_busy = (o_gx_stb)&&(i_busy);
 
-	// verilator lint_off UNUSED
+	// Verilator lint_off UNUSED
 	wire	unused;
 	assign	unused = w_gx_char[7];
-	// verilator lint_on  UNUSED
+	// Verilator lint_on  UNUSED
 `ifdef	FORMAL
 `ifdef	HBGENHEX
 `define	ASSUME	assume

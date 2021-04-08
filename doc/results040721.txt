@@ -1,0 +1,262 @@
+. testbuilds/catzip-newautofpga/catzip/myenv-a.sh
+
+devel@mypi3-16:~ $ cd testbuilds/catzip-newautofpga/catzip/sim/verilated/
+
+devel@mypi3-16:~/testbuilds/catzip-newautofpga/catzip/sim/verilated $ ./arm-main_tb -trace wr-rd.vcd
+Listening on port 8363
+Listening on port 8364
+> T
+CMD: Only sent 0 bytes of 3!
+Accepted CMD connection
+POLL = 1
+RCVD: 13 bytes
+< A01000001W55
+> A01000001K00000000
+POLL = 1
+RCVD: 0 bytes
+<  [CLOSED]
+Accepted CMD connection
+POLL = 1
+RCVD: 13 bytes
+< A01000005Waa
+> A01000005K00000000
+POLL = 1
+RCVD: 0 bytes
+<  [CLOSED]
+Accepted CMD connection
+POLL = 1
+RCVD: 12 bytes
+< A01000009W1
+> A01000009K00000000
+POLL = 1
+RCVD: 0 bytes
+<  [CLOSED]
+Accepted CMD connection
+POLL = 1
+RCVD: 12 bytes
+< A0100000dW2
+> A0100000dK00000000
+POLL = 1
+RCVD: 0 bytes
+<  [CLOSED]
+Accepted CMD connection
+POLL = 1
+RCVD: 16 bytes
+< A01000011W10000
+> A01000011K00000000
+POLL = 1
+RCVD: 0 bytes
+<  [CLOSED]
+Accepted CMD connection
+POLL = 1
+RCVD: 16 bytes
+< A01000015W20000
+> A01000015K00000000
+POLL = 1
+RCVD: 0 bytes
+<  [CLOSED]
+Accepted CMD connection
+POLL = 1
+RCVD: 11 bytes
+< A01000001R
+> A01000001R00000055
+POLL = 1
+RCVD: 0 bytes
+<  [CLOSED]
+Accepted CMD connection
+POLL = 1
+RCVD: 11 bytes
+< A01000005R
+> A01000005R000000aa
+POLL = 1
+RCVD: 0 bytes
+<  [CLOSED]
+Accepted CMD connection
+POLL = 1
+RCVD: 11 bytes
+< A01000009R
+> A01000009R00000001
+POLL = 1
+RCVD: 0 bytes
+<  [CLOSED]
+Accepted CMD connection
+POLL = 1
+RCVD: 11 bytes
+< A0100000dR
+> A0100000dR00000002
+POLL = 1
+RCVD: 0 bytes
+<  [CLOSED]
+Accepted CMD connection
+POLL = 1
+RCVD: 11 bytes
+< A01000011R
+> A01000011R00010000
+POLL = 1
+RCVD: 0 bytes
+<  [CLOSED]
+Accepted CMD connection
+POLL = 1
+RCVD: 11 bytes
+< A01000015R
+> A01000015R00020000
+POLL = 1
+RCVD: 0 bytes
+<  [CLOSED]
+^C
+
+devel@mypi3-16:~/testbuilds/catzip-newautofpga/catzip/sim/verilated $ gtkwave wr-rd.vcd
+
+devel@mypi3-16:~ $ cd testbuilds/catzip-newautofpga/catzip/sw/host
+
+devel@mypi3-16:~/testbuilds/catzip-newautofpga/catzip/sw/host $ ./wr.sh
+01000000 (   SDRAM)-> 00000055
+01000004 (        )-> 000000aa
+01000008 (        )-> 00000001
+0100000c (        )-> 00000002
+01000010 (        )-> 00010000
+01000014 (        )-> 00020000
+01000000 (   SDRAM) : [...U] 00000055
+01000004 (        ) : [....] 000000aa
+01000008 (        ) : [....] 00000001
+0100000c (        ) : [....] 00000002
+01000010 (        ) : [....] 00010000
+01000014 (        ) : [....] 00020000
+
+devel@mypi3-16:/media/devel/1b763776-4e1d-499c-9f24-a116a58c161f/fpgatools $ sudo mksquashfs ~/testbuilds/catzip-newautofpga/ catzip-newautofpga040721.img
+Parallel mksquashfs: Using 4 processors
+Creating 4.0 filesystem on catzip-newautofpga040721.img, block size 131072.
+[=============================================================\] 3843/3843 100%
+
+Exportable Squashfs 4.0 filesystem, gzip compressed, data block size 131072
+	compressed data, compressed metadata, compressed fragments, compressed xattrs
+	duplicates are removed
+Filesystem size 118300.53 Kbytes (115.53 Mbytes)
+	27.39% of uncompressed filesystem size (431843.33 Kbytes)
+Inode table size 12576 bytes (12.28 Kbytes)
+	36.32% of uncompressed inode table size (34630 bytes)
+Directory table size 7495 bytes (7.32 Kbytes)
+	51.30% of uncompressed directory table size (14609 bytes)
+Number of duplicate files found 21
+Number of inodes 662
+Number of files 569
+Number of fragments 81
+Number of symbolic links  1
+Number of device nodes 0
+Number of fifo nodes 0
+Number of socket nodes 0
+Number of directories 92
+Number of ids (unique uids + gids) 1
+Number of uids 1
+	devel (1001)
+Number of gids 1
+	devel (1001)
+
+devel@mypi3-16:/media/devel/1b763776-4e1d-499c-9f24-a116a58c161f $ sudo unsquashfs -d fixed-git fpgatools/catzip-newautofpga040721.img 
+Parallel unsquashfs: Using 4 processors
+570 inodes (3844 blocks) to write
+
+[=============================================================-] 3844/3844 100%
+
+created 569 files
+created 92 directories
+created 1 symlinks
+created 0 devices
+created 0 fifos
+
+Make a copy of the working software to test on RPi3 with Catboard.
+
+devel@mypi3-16:~/testbuilds $ rsync -avl catzip-newautofpga mypi3-21:~/
+
+devel@mypi3-21:~ $ cd catzip-newautofpga/catzip/sw/host
+
+Program the FPGA using config_cat
+
+devel@mypi3-21:~/catzip-newautofpga/catzip/sw/host $ sudo config_cat ../../rtl/catzip/catzip.bin
+
+GPIO 25 not exported, trying to export...
+GPIO 17 not exported, trying to export...
+GPIO 22 not exported, trying to export...
+
+OK: SPI driver loaded
+
+Setting GPIO directions
+out
+out
+in
+Setting output to low
+0
+Reseting FPGA
+0
+1
+Checking DONE pin
+0
+Continuing with configuration procedure
+263+1 records in
+263+1 records out
+135100 bytes (135 kB, 132 KiB) copied, 0.0268802 s, 5.0 MB/s
+Setting output to high
+1
+Checking DONE pin
+1
+Start the software that listens to local port & a remote port.
+
+devel@mypi3-21:~/catzip-newautofpga/catzip/sw/host $ sudo  ./arm-netpport
+Listening on port 8363
+Listening on port 8364
+
+Check the date the catzip was created using local software.
+
+devel@mypi3-21:~/catzip-newautofpga/catzip/sw/host $ ./arm-wbregs version
+00800014 ( VERSION) : [.!..] 20210406
+
+Check the date the catzip was created using remote software.
+
+devel@mypi3-16:~/testbuilds/catzip-newautofpga/catzip/sw/host $ ./arm-wbregs -n mypi3-21 -p 8363 version
+00800014 ( VERSION) : [.!..] 20210406
+
+devel@mypi3-21:~/catzip-newautofpga/catzip/sw/host $ cat wr.sh 
+#!/bin/bash
+./arm-wbregs 16777216 0x55
+./arm-wbregs 16777220 0xaa
+./arm-wbregs 16777224 0x01
+./arm-wbregs 16777228 0x02
+./arm-wbregs 16777232 0x00010000
+./arm-wbregs 16777236 0x00020000
+./arm-wbregs 16777216
+./arm-wbregs 16777220
+./arm-wbregs 16777224
+./arm-wbregs 16777228
+./arm-wbregs 16777232
+./arm-wbregs 16777236
+
+A prorgram using ./arm-wbregs which is Poke & Peek to the FPGA.
+devel@mypi3-21:~/catzip-newautofpga/catzip/sw/host $ ./wr.sh 
+01000000 (   SDRAM)-> 00000055
+01000004 (        )-> 000000aa
+01000008 (        )-> 00000001
+0100000c (        )-> 00000002
+01000010 (        )-> 00010000
+01000014 (        )-> 00020000
+01000000 (   SDRAM) : [...U] 00000055
+01000004 (        ) : [....] 000000aa
+01000008 (        ) : [....] 00000001
+0100000c (        ) : [....] 00000002
+01000010 (        ) : [....] 00010000
+01000014 (        ) : [....] 00020000
+
+devel@mypi3-21:~/catzip-newautofpga/catzip/sw/host $ ./arm-wbregs 16777220
+01000004 (        ) : [....] 000000aa
+devel@mypi3-21:~/catzip-newautofpga/catzip/sw/host $ ./arm-wbregs 16777236
+01000014 (        ) : [....] 00020000
+devel@mypi3-21:~/catzip-newautofpga/catzip/sw/host $ ./arm-wbregs 0x01000000
+01000000 (   SDRAM) : [...U] 00000055
+devel@mypi3-21:~/catzip-newautofpga/catzip/sw/host $ ./arm-wbregs 0x01000010
+01000010 (        ) : [....] 00010000
+
+devel@mypi3-16:~/testbuilds/catzip-newautofpga/catzip/sw/host $ ./arm-wbregs -n mypi3-21  gpio 0x00010001
+0080000c (    GPIO)-> 00010001
+devel@mypi3-16:~/testbuilds/catzip-newautofpga/catzip/sw/host $ ./arm-wbregs -n mypi3-21  gpio 0x00020002
+0080000c (    GPIO)-> 00020002
+devel@mypi3-16:~/testbuilds/catzip-newautofpga/catzip/sw/host $ ./arm-wbregs -n mypi3-21  gpio 0x00070000
+0080000c (    GPIO)-> 00070000

@@ -16,7 +16,7 @@
 ##
 ################################################################################
 ##
-## Copyright (C) 2017, Gisselquist Technology, LLC
+## Copyright (C) 2017-2020, Gisselquist Technology, LLC
 ##
 ## This program is free software (firmware): you can redistribute it and/or
 ## modify it under the terms of  the GNU General Public License as published
@@ -56,14 +56,12 @@
 @$BUS_ADDRESS_WIDTH= @$(MASTER.BUS.AWID)
 @TOP.PORTLIST=
 		// Parallel port to wishbone / console interface
-		i_pp_dir, i_pp_clk, io_pp_data, o_pp_clkfb,
-		o_dbgwires
+		i_pp_dir, i_pp_clk, io_pp_data, o_pp_clkfb
 @TOP.IODECL=
 	// Parallel port to wishbone / console interface
 	input	wire		i_pp_dir, i_pp_clk;
 	inout	wire	[7:0]	io_pp_data;
 	output	wire		o_pp_clkfb;
-	output	wire	[7:0]	o_dbgwires;
 @TOP.DEFNS=
 	//
 	//
@@ -77,10 +75,6 @@
 	//
 	// Parallel port I/O pin control
 	ppio	@$(PREFIX)i_io(i_pp_dir, io_pp_data, w_pp_data, i_pp_data);
-
-	assign	o_dbgwires = { i_pp_dir, i_pp_clk, o_pp_clkfb,
-				w_pp_dbg, i_pp_data[3:0] };
-
 @TOP.MAIN=
 		// External USB-UART bus control
 		i_pp_clk, i_pp_dir, i_pp_data, w_pp_data, o_pp_clkfb, w_pp_dbg
@@ -97,9 +91,9 @@
 	// Definitions for the WB-UART converter.  We really only need one
 	// (more) non-bus wire--one to use to select if we are interacting
 	// with the ZipCPU or not.
-	wire	[0:0]	wbubus_dbg;
 	wire		pp_rx_stb,  pp_tx_stb,  pp_tx_busy;
 	wire	[7:0]	pp_rx_data, pp_tx_data;
+	wire	[31:0]	console_dbg;
 @$ZIP_ADDRESS_BIT=@$BUS_ADDRESS_WIDTH-1
 @$ZIP_ADDRESS=(1<<(@$.ZIP_ADDRESS_BIT+2))
 @ZIP_ADDRESS.FORMAT= 0x%08x
@@ -118,15 +112,14 @@
 `endif
 	wire	[29:0]	@$(PREFIX)_tmp_addr;
 	hbconsole genbus(@$(CLOCK.WIRE), pp_rx_stb, pp_rx_data,
-			@$(PREFIX)_cyc, @$(PREFIX)_stb, @$(PREFIX)_we, @$(PREFIX)_tmp_addr, @$(PREFIX)_data, @$(PREFIX)_sel,
-			@$(PREFIX)_ack, @$(PREFIX)_stall, @$(PREFIX)_err, @$(PREFIX)_idata,
+			@$(MASTER.PREFIX)_cyc, @$(MASTER.PREFIX)_stb, @$(MASTER.PREFIX)_we, @$(PREFIX)_tmp_addr, @$(MASTER.PREFIX)_data, @$(MASTER.PREFIX)_sel,
+			@$(MASTER.PREFIX)_stall, @$(MASTER.PREFIX)_ack, @$(MASTER.PREFIX)_err, @$(MASTER.PREFIX)_idata,
 			w_bus_int,
 			pp_tx_stb, pp_tx_data, pp_tx_busy,
 			//
 			w_console_tx_stb, w_console_tx_data, w_console_busy,
 			w_console_rx_stb, w_console_rx_data);
-	assign	@$(PREFIX)_sel = 4'hf;
-	assign	@$(PREFIX)_addr= @$(PREFIX)_tmp_addr[(@$BUS_ADDRESS_WIDTH-1):0];
+	assign	@$(MASTER.PREFIX)_addr= @$(PREFIX)_tmp_addr[(@$BUS_ADDRESS_WIDTH-1):0];
 @REGDEFS.H.DEFNS=
 #define	R_ZIPCTRL	@$.ZIP_ADDRESS
 #define	R_ZIPDATA	@$.ZIP_DBGDATA
@@ -138,6 +131,7 @@
 	PPORTSIM	*m_@$(PREFIX);
 @SIM.INIT=
 		m_@$(PREFIX) = new PPORTSIM(FPGAPORT, true);
+@SIM.CLOCK=clk
 @SIM.TICK=
 		int	pp_clk = m_core->i_pp_clk,
 			pp_dir = m_core->i_pp_dir;
@@ -166,18 +160,15 @@
 @INT.UARTTXF.PIC= buspic
 @MAIN.DEFNS=
 	// Console definitions
-	wire	w_console_rx_stb, w_console_tx_stb, w_console_busy;
+	wire		w_console_rx_stb, w_console_tx_stb, w_console_busy;
 	wire	[6:0]	w_console_rx_data, w_console_tx_data;
 @MAIN.INSERT=
-	/* verilator lint_off PINMISSING */
 	console @$(PREFIX)i(@$(SLAVE.BUS.CLOCK.WIRE), 1'b0,
- 			wb_cyc, (wb_stb)&&(@$(PREFIX)_sel), wb_we,
-				wb_addr[1:0], wb_data,
- 			@$(PREFIX)_ack, @$(PREFIX)_stall, @$(PREFIX)_data,
+			@$(SLAVE.PORTLIST),
 			w_console_tx_stb, w_console_tx_data, w_console_busy,
 			w_console_rx_stb, w_console_rx_data,
-			uartrx_int, uarttx_int, uartrxf_int, uarttxf_int);
-	/* verilator lint_off PINMISSING */
+			uartrx_int, uarttx_int, uartrxf_int, uarttxf_int,
+			console_dbg);
 @MAIN.ALT=
 	assign	w_console_tx_stb  = 1'b0;
 	assign	w_console_tx_data = 7'h7f;
@@ -207,3 +198,21 @@ typedef struct  CONSOLE_S {
 @RTL.MAKE.GROUP= PPORT
 @RTL.MAKE.SUBD=../pport
 @RTL.MAKE.FILES= ppio.v pport.v ufifo.v
+
+@PREFIX=hbarb
+@MASTER.BUS=wb
+@MASTER.TYPE=ARBITER
+@SLAVE.BUS=hb
+@SLAVE.TYPE=OTHER
+@ERROR.WIRE=@$(SLAVE.PREFIX)_err
+@MAIN.INSERT=
+	assign	@$(MASTER.PREFIX)_cyc  = @$(SLAVE.PREFIX)_cyc;
+	assign	@$(MASTER.PREFIX)_stb  = @$(SLAVE.PREFIX)_stb;
+	assign	@$(MASTER.PREFIX)_we   = @$(SLAVE.PREFIX)_we;
+	assign	@$(MASTER.PREFIX)_addr = @$(SLAVE.PREFIX)_addr[@$(MASTER.BUS.AWID)-1:0];
+	assign	@$(MASTER.PREFIX)_data = @$(SLAVE.PREFIX)_data;
+	assign	@$(MASTER.PREFIX)_sel  = @$(SLAVE.PREFIX)_sel;
+	assign	@$(SLAVE.PREFIX)_stall = @$(MASTER.PREFIX)_stall;
+	assign	@$(SLAVE.PREFIX)_ack   = @$(MASTER.PREFIX)_ack;
+	assign	@$(SLAVE.PREFIX)_idata = @$(MASTER.PREFIX)_idata;
+	assign	@$(SLAVE.PREFIX)_err   = @$(MASTER.PREFIX)_err;

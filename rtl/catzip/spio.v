@@ -2,7 +2,7 @@
 //
 // Filename: 	spio.v
 //
-// Project:	CMod S6 System on a Chip, ZipCPU demonstration project
+// Project:	ICO Zip, iCE40 ZipCPU demonstration project
 //
 // Purpose:	
 //
@@ -13,7 +13,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 //
-// Copyright (C) 2015-2016, Gisselquist Technology, LLC
+// Copyright (C) 2015-2020, Gisselquist Technology, LLC
 //
 // This program is free software (firmware): you can redistribute it and/or
 // modify it under the terms of  the GNU General Public License as published
@@ -26,7 +26,7 @@
 // for more details.
 //
 // You should have received a copy of the GNU General Public License along
-// with this program.  (It's in the $(ROOT)/doc directory, run make with no
+// with this program.  (It's in the $(ROOT)/doc directory.  Run make with no
 // target there if the PDF file isn't present.)  If not, see
 // <http://www.gnu.org/licenses/> for a copy.
 //
@@ -38,14 +38,16 @@
 //
 //
 
-module	spio(i_clk, i_wb_cyc, i_wb_stb, i_wb_we, i_wb_data, o_wb_data,
-		i_btn, i_led, o_led);
+module	spio(i_clk, i_wb_cyc, i_wb_stb, i_wb_we, i_wb_data, i_wb_sel,
+		o_wb_stall, o_wb_ack, o_wb_data, i_btn, i_led, o_led);
 	parameter	NLED = 2, NBTN = 2;
 	//
 	input			i_clk;
 	//
 	input			i_wb_cyc, i_wb_stb, i_wb_we;
 	input		[31:0]	i_wb_data;
+	input		[3:0]	i_wb_sel;
+	output	wire		o_wb_stall, o_wb_ack;
 	output	wire	[31:0]	o_wb_data;
 	//
 	input		[(NBTN-1):0]	i_btn;
@@ -62,7 +64,13 @@ module	spio(i_clk, i_wb_cyc, i_wb_stb, i_wb_we, i_wb_data, o_wb_data,
 				o_led[k] <= (i_wb_data[k+8])?i_wb_data[k]:o_led[k];
 	endgenerate
 
+	assign	o_wb_stall = 1'b0;
+	assign	o_wb_ack   = 1'b0;
 	assign	o_wb_data = { 24'h00, {(4-NBTN){1'b0}}, i_btn,
 				{(3-NLED){1'b0}}, i_led, o_led};
 
+	// Verilator lint_off UNUSED
+	wire	unused;
+	assign	unused = &{ 1'b0, i_wb_sel };
+	// Verilator lint_on  UNUSED
 endmodule

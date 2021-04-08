@@ -1,0 +1,129 @@
+sim/verilated/main_tb.cpp
+-       m_sdram = new SDRAMSIM(0x01000000);
++       //m_sdram = new SDRAMSIM(0x01000000);
+
+Need to chg line 164 sdramdev.txt SDRAMSIM(0x01000000)
+
+rtl/icozip/main.v
++        /* verilator lint_off WIDTH */
+        wire    [23:0]  wb_sdram_addr;
++        /* verilator lint_off WIDTH */
+
+
+git clone git@github.com:develone/catzip-icozip.git
+
+cd catzip-icozip
+
+. ../catzip/myenv-a.sh
+
+make
+ 
+cd rtl/icozip
+
+make
+
+verilator -O3 -Mdir ./obj-arm -Wno-TIMESCALEMOD -trace -cc -y cpu -y ../pport -y ../hexbus main.v
+%Warning-WIDTH: main.v:870:17: Input port connection 'i_wb_addr' expects 23 bits on the pin connection, but pin connection's SEL generates 22 bits.
+                             : ... In instance main
+  870 |    wb_sdram_addr[22-1:0],
+      |                 ^
+                ... Use "/* verilator lint_off WIDTH */" and lint_on around source to disable this message.
+%Error: Exiting due to 1 warning(s)
+make[2]: *** [Makefile:73: obj-arm/Vmain.h] Error 1
+make[1]: *** [Makefile:63: icozip] Error 2
+make: *** [Makefile:158: rtl] Error 2
+
+make
+
+icepack icozip.asc icozip.bin
+icetime -d hx8k -c 40 icozip.asc
+// Reading input .asc file..
+// Reading 8k chipdb file..
+// Creating timing netlist..
+// Timing estimate: 16.33 ns (61.24 MHz)
+// Checking 25.00 ns (40.00 MHz) clock constraint: PASSED.
+
+
+38.2.1. Analyzing design hierarchy..
+Top module:  \toplevel
+Used module:     \ppio
+Used module:     \main
+Used module:         \zipbones
+Used module:             \zipcpu
+Used module:                 \wbdblpriarb
+Used module:                 \memops
+Used module:                 \div
+Used module:                 \cpuops
+Used module:                     \mpyop
+Used module:                 \idecode
+Used module:                 \dblfetch
+Used module:         \ziptimer
+Used module:         \hbconsole
+Used module:             \hbnewline
+Used module:             \hbgenhex
+Used module:             \hbdeword
+Used module:             \hbidle
+Used module:             \hbints
+Used module:             \hbexec
+Used module:             \hbpack
+Used module:             \hbdechex
+Used module:         \pport
+Used module:         \console
+Used module:         \sdramdev
+Used module:         \wbgpio
+Used module:         \memdev
+Used module:         \icontrol
+Used module:         \wbxbar
+Used module:             \addrdecode
+Used module:             \skidbuffer
+Parameter \W = 16
+=== toplevel ===
+
+   Number of wires:               3952
+   Number of wire bits:          19598
+   Number of public wires:        3952
+   Number of public wire bits:   19598
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:               8148
+     SB_CARRY                      679
+     SB_DFF                        792
+     SB_DFFE                      1231
+     SB_DFFESR                     387
+     SB_DFFESS                      67
+     SB_DFFSR                      337
+     SB_DFFSS                       13
+     SB_IO                          24
+     SB_LUT4                      4595
+     SB_PLL40_CORE                   1
+     SB_RAM40_4K                    22
+     
+     
+ 
+
+-rw-r--r-- 1 devel devel 5898519 Apr  2 16:48 icozip.asc
+-rw-r--r-- 1 devel devel  135100 Apr  2 16:48 icozip.bin
+-rw-r--r-- 1 devel devel 8024666 Apr  2 16:42 icozip.json
+-rw-r--r-- 1 devel devel    7974 Apr  2 16:40 icozip.pcf
+
+cd ../../sw/zlib/
+libicozip.a
+ls obj-zip/
+crt0.o  syscalls.o  udiv.o  umod.o
+
+cd ../board/
+cputest hello 
+
+ls obj-zip
+cputest.map  cputest.o  depends.txt  hello.o
+
+cd ../host/
+
+make
+
+ls arm*
+arm-flashid  arm-wbregs
+ls arm*
+arm-flashid  arm-wbregs
+

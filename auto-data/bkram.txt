@@ -12,7 +12,7 @@
 ##
 ################################################################################
 ##
-## Copyright (C) 2017-2018, Gisselquist Technology, LLC
+## Copyright (C) 2017-2020, Gisselquist Technology, LLC
 ##
 ## This program is free software (firmware): you can redistribute it and/or
 ## modify it under the terms of  the GNU General Public License as published
@@ -38,7 +38,6 @@
 ##
 @PREFIX=bkram
 @DEVID=BKRAM
-# @$LGMEMSZ=13
 @$LGMEMSZ=13
 @LGMEMSZ.FORMAT=%d
 @$NADDR=(1<<(@$THIS.LGMEMSZ-2))
@@ -51,30 +50,36 @@
 @MAIN.INSERT=
 	memdev #(.LGMEMSZ(@$THIS.LGMEMSZ), .EXTRACLOCK(1))
 		@$(PREFIX)i(i_clk, 1'b0,
-			(wb_cyc), (wb_stb)&&(@$(PREFIX)_sel), wb_we,
-				wb_addr[(@$THIS.LGMEMSZ-3):0], wb_data, wb_sel,
-				@$(PREFIX)_ack, @$(PREFIX)_stall, @$(PREFIX)_data);
+		wb_bkram_cyc, wb_bkram_stb,wb_bkram_we,
+		wb_bkram_addr[11-1:0],
+		wb_bkram_data, // 32 bits wide
+		wb_bkram_sel,  // 32/8 bits wide
+		wb_bkram_ack, wb_bkram_stall, wb_bkram_idata);
 @REGS.N=1
 @REGS.0= 0 R_@$(DEVID) RAM
 @REGDEFS.H.DEFNS=
-#define	@$(DEVID)BASE	@$(BASEHX)
+#define	@$(DEVID)BASE	@$[0x%08x](REGBASE)
 #define	@$(DEVID)LEN	@$NBYTES
 @BDEF.OSDEF=_BOARD_HAS_@$(DEVID)
 @MEM.NAME= @$(PREFIX)
 @BDEF.OSVAL=extern char	_@$(MEM.NAME)[@$NBYTES];
-@LDSCRIPT.PSTR=	wx
-@LDSCRIPT.PTR=	@$(MEM.NAME)
-@LDSCRIPT.DEF=
-_@$(MEM.NAME) = ORIGIN(@$(MEM.NAME))
+@LD.PERM=	wx
+@LD.NAME=	@$(MEM.NAME)
 @RTL.MAKE.GROUP= @$(DEVID)
 @RTL.MAKE.FILES= memdev.v
-@$BASEHX = @$REGBASE
-@BASEHX.FORMAT= 0x%08x
 @$NADDRHX = @$NADDR
 @NADDRHX.FORMAT= 0x%x
 @SIM.INCLUDE=
 #include "byteswap.h"
 @SIM.DEFINES=
+#ifndef VVAR
+#ifdef  NEW_VERILATOR
+#define VVAR(A) main__DOT_ ## A
+#else
+#define VVAR(A) v__DOT_ ## A
+#endif
+#endif
+
 #define	block_ram	VVAR(_@$(PREFIX)i__DOT__mem)
 @SIM.LOAD=
 			start = start & (-4);

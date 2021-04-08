@@ -13,7 +13,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 //
-// Copyright (C) 2015-2018, Gisselquist Technology, LLC
+// Copyright (C) 2015-2020, Gisselquist Technology, LLC
 //
 // This program is free software (firmware): you can redistribute it and/or
 // modify it under the terms of  the GNU General Public License as published
@@ -188,100 +188,6 @@ module	cpuops(i_clk,i_reset, i_stb, i_op, i_a, i_b, o_c, o_f, o_valid,
 		o_valid <=((i_stb)&&(!this_is_a_multiply_op))||(mpydone);
 
 `ifdef	FORMAL
-	initial	assume(i_reset);
-	reg	f_past_valid;
-
-	initial	f_past_valid = 1'b0;
-	always @(posedge i_clk)
-		f_past_valid = 1'b1;
-
-`define	ASSERT	assert
-`ifdef	CPUOPS
-`define	ASSUME	assume
-`else
-`define	ASSUME	assert
-`endif
-
-	// No request should be given us if/while we are busy
-	always @(posedge i_clk)
-	if (o_busy)
-		`ASSUME(!i_stb);
-
-	// Following any request other than a multiply request, we should
-	// respond in the next cycle
-	always @(posedge i_clk)
-	if ((f_past_valid)&&(!$past(o_busy))&&(!$past(this_is_a_multiply_op)))
-		`ASSERT(!o_busy);
-
-	// Valid and busy can never both be asserted
-	always @(posedge i_clk)
-		`ASSERT((!o_valid)||(!r_busy));
-
-	// Following any busy, we should always become valid
-	always @(posedge i_clk)
-	if ((f_past_valid)&&($past(o_busy))&&(!o_busy))
-		`ASSERT($past(i_reset) || o_valid);
-
-	// Check the shift values
-	always @(posedge i_clk)
-	if ((f_past_valid)&&($past(i_stb)))
-	begin
-		if (($past(|i_b[31:6]))||($past(i_b[5:0])>6'd32))
-		begin
-			assert(($past(i_op)!=4'h5)
-					||({o_c,c}=={(33){1'b0}}));
-			assert(($past(i_op)!=4'h6)
-					||({c,o_c}=={(33){1'b0}}));
-			assert(($past(i_op)!=4'h7)
-					||({o_c,c}=={(33){$past(i_a[31])}}));
-		end else if ($past(i_b[5:0]==6'd32))
-		begin
-			assert(($past(i_op)!=4'h5)
-				||(o_c=={(32){1'b0}}));
-			assert(($past(i_op)!=4'h6)
-				||(o_c=={(32){1'b0}}));
-			assert(($past(i_op)!=4'h7)
-				||(o_c=={(32){$past(i_a[31])}}));
-		end if ($past(i_b)==0)
-		begin
-			assert(($past(i_op)!=4'h5)
-				||({o_c,c}=={$past(i_a), 1'b0}));
-			assert(($past(i_op)!=4'h6)
-				||({c,o_c}=={1'b0, $past(i_a)}));
-			assert(($past(i_op)!=4'h7)
-				||({o_c,c}=={$past(i_a), 1'b0}));
-		end if ($past(i_b)==1)
-		begin
-			assert(($past(i_op)!=4'h5)
-				||({o_c,c}=={1'b0, $past(i_a)}));
-			assert(($past(i_op)!=4'h6)
-				||({c,o_c}=={$past(i_a),1'b0}));
-			assert(($past(i_op)!=4'h7)
-				||({o_c,c}=={$past(i_a[31]),$past(i_a)}));
-		end if ($past(i_b)==2)
-		begin
-			assert(($past(i_op)!=4'h5)
-				||({o_c,c}=={2'b0, $past(i_a[31:1])}));
-			assert(($past(i_op)!=4'h6)
-				||({c,o_c}=={$past(i_a[30:0]),2'b0}));
-			assert(($past(i_op)!=4'h7)
-				||({o_c,c}=={{(2){$past(i_a[31])}},$past(i_a[31:1])}));
-		end if ($past(i_b)==31)
-		begin
-			assert(($past(i_op)!=4'h5)
-				||({o_c,c}=={31'b0, $past(i_a[31:30])}));
-			assert(($past(i_op)!=4'h6)
-				||({c,o_c}=={$past(i_a[1:0]),31'b0}));
-			assert(($past(i_op)!=4'h7)
-				||({o_c,c}=={{(31){$past(i_a[31])}},$past(i_a[31:30])}));
-		end
-	end
+// Formal properties for this module are maintained elsewhere
 `endif
 endmodule
-//
-// iCE40	NoMPY,w/Shift	NoMPY,w/o Shift
-//  SB_CARRY		 64		 64
-//  SB_DFFE		  3		  3
-//  SB_DFFESR		  1		  1
-//  SB_DFFSR		 33		 33
-//  SB_LUT4		748		323

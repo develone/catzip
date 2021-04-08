@@ -1,0 +1,379 @@
+03/28/21 04/01/21 mypi3-16
+FPGA Tools
+yosys -V
+Yosys 0.9+4052 (git sha1 0ccc7229, gcc 8.3.0-6+rpi1 -fPIC -Os)
+
+nextpnr-ice40 -V
+nextpnr-ice40 -- Next Generation Place and Route (Version 4419c36d)
+
+commit 5b57538081d60a04cd32aeba2436816062cb0141 (HEAD -> master, upstream/master, upstream/dev)
+Author: ZipCPU <dgisselq@ieee.org>
+Date:   Fri Aug 14 07:55:55 2020 -0400
+
+verilator -V
+Verilator 4.100 2020-09-07 rev v4.100-10-g39eea781
+
+commit c495861c19bd0976c88d4964f912abe76f3901c3 (HEAD -> master, upstream/master)
+Author: gatecat <gatecat@ds0.me>
+Date:   Tue Mar 9 09:51:12 2021 +0000
+
+    Use --recursive for nextpnr clone
+    
+    Signed-off-by: gatecat <gatecat@ds0.me>
+
+Change where the reset will be since the icozip uses a reset in flash.
+
+The catzip only has bkram and sdram.
+icozip was at 50MHz catzip is at 40MHz This will require a PLL.
+
+The following needs to be added to toplevel.v
+
+`ifdef	VERILATOR
+	assign	s_clk = i_clk;
+`else
+	wire	clk_40mhz, pll_locked;
+	SB_PLL40_CORE #(
+		.FEEDBACK_PATH("SIMPLE"),
+		.DELAY_ADJUSTMENT_MODE_FEEDBACK("FIXED"),
+		.DELAY_ADJUSTMENT_MODE_RELATIVE("FIXED"),
+		.PLLOUT_SELECT("GENCLK"),
+		.FDA_FEEDBACK(4'b1111),
+		.FDA_RELATIVE(4'b1111),
+		.DIVR(4'b0100),		// DIVR =  4
+		.DIVQ(7'b0011111),		// DIVQ =  31
+		.DIVF(3'b100),		// DIVF =  4
+		.FILTER_RANGE(3'b010)	// FILTER_RANGE = 2
+	) plli (
+		.REFERENCECLK     (i_clk        ),
+		.PLLOUTCORE     (clk_40mhz    ),
+		.LOCK           (pll_locked  ),
+		.BYPASS         (1'b0         ),
+		.RESETB         (1'b1         )
+	);
+       	//SB_GB global_buffer(clk_40mhz, s_clk);
+	assign	s_clk = clk_40mhz;
+ 
+    devel@mypiq3-16:~/testbuilds/catzip-icozip/auto-data $ git diff global.txt
+    diff --git a/auto-data/global.txt b/auto-data/global.txt
+    index 17c71f6..006e96c 100644
+    --- a/auto-data/global.txt
+    +++ b/auto-data/global.txt
+    @@ -41,7 +41,7 @@
+     #
+     @KEYS.INTLIST= BUS_ADDRESS_WIDTH NADDR NPIC NSCOPES PIC.MAX REGS.N ID
+     @DEFAULT.BUS=wb
+    -@$RESET_ADDRESS=@$flash.BASE+131072
+    +@$RESET_ADDRESS=@$bkram.REGBASE
+     @VERILATOR_PREFIX=v
+     @REGDEFS.H.INSERT=
+     typedef        struct {
+    devel@mypi3-16:~/testbuilds/catzip-icozip/auto-data $ git diff zipbones.txt
+    diff --git a/auto-data/zipbones.txt b/auto-data/zipbones.txt
+    index 99faddd..9f9f7a9 100644
+    --- a/auto-data/zipbones.txt
+    +++ b/auto-data/zipbones.txt
+    @@ -53,7 +53,7 @@
+     @BUS.NAME=wb
+     @BUS.WIDTH=32
+     @BUS.CLOCK=clk
+    -@$RESET_ADDRESS=@$flash.REGBASE+131072
+    +@$RESET_ADDRESS=@$bkram.REGBASE
+     @SCOPE.TRIGGER=zip_trigger
+     @SCOPE.DATA=zip_debug
+
+localparam      RESET_ADDRESS = 12582912; now in main.v
+
+
+Memory map of icozip 
+
+        wbxbar #(
+                .NM(2), .NS(8), .AW(23), .DW(32),
+                .SLAVE_ADDR({
+                        // Address width    = 23
+                        // Address LSBs     = 2
+                        // Slave name width = 8
+
+
+                        { 23'h400000 }, //    flash: 0x1000000
+                        { 23'h380000 }, //     sram: 0x0e00000
+                        { 23'h300000 }, //    bkram: 0x0c00000
+                        { 23'h280000 }, //   wb_sio: 0x0a00000
+                        { 23'h200000 }, //  console: 0x0800000
+                        { 23'h180000 }, // watchdog: 0x0600000
+                        { 23'h100000 }, // flashcfg: 0x0400000
+                        { 23'h080000 }  // bustimer: 0x0200000
+
+The following command adds zipcpu to the path.
+
+. testbuilds/catzip/myenv-a.sh 
+
+
+cd catzip-icozip/
+
+make
+
+When it get error
+
+cd sim/verilated/
+
+make
+/home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/bin/ld: address 0xc00134 of hello section `.rocode' is not within region `flash'
+/home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/bin/ld: hello section `.ramcode' will not fit in region `flash'
+/home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/bin/ld: address 0xc00134 of hello section `.rocode' is not within region `flash'
+/home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/bin/ld: region `flash' overflowed by -20952612 bytes
+collect2: error: ld returned 1 exit status
+make[1]: *** [Makefile:102: hello] Error 1
+make: *** [Makefile:189: sw-board] Error 2
+
+ls sw/board/cputest
+
+ls sw/host/arm*
+sw/host/arm-dbgscope   sw/host/arm-spixscope  sw/host/arm-zipload
+sw/host/arm-dumpflash  sw/host/arm-sramscope  sw/host/arm-zipstate
+sw/host/arm-flashid    sw/host/arm-wbregs
+sw/host/arm-netpport   sw/host/arm-zipdbg
+
+Manually need to create the simulator.
+
+devel@mypi3-16:~/testbuilds/catzip-icozip/sim/verilated $ make
+devel@mypi3-16:~/testbuilds/catzip-icozip/sim/verilated $ ./arm-main_tb
+
+devel@mypi3-16:~/testbuilds/catzip-icozip/sim/verilated $ make
+devel@mypi3-16:~/testbuilds/catzip-icozip/sim/verilated $ ./arm-main_tb
+
+devel@mypi3-16:~/testbuilds/catzip-icozip/sim/verilated $ ./arm-main_tb
+Listening on port 8363
+Listening on port 8364
+> T
+
+> K00000000
+< W
+> K00000000
+< W
+> K00000000
+< W
+> K00000000
+< W
+> K00000000
+< W
+> K00000000
+< W
+> K00000000
+< W
+> K00000000
+< W
+> K00000000
+< W
+> K00000000
+< W
+> K00000000
+< W
+> K00000000
+< W
+> K00000000
+< A00a00015R
+> A00a00015R20210331
+< A02000001W400
+> A02000001K00000000
+< A02000005W
+> A02000005
+
+
+devel@mypi3-16:~/testbuilds/catzip-icozip/sw/host $ ./arm-wbregs version
+00a00014 ( VERSION) : [.!.1] 20210331
+
+devel@mypi3-16:~/testbuilds/catzip-icozip/sw/host $ ./arm-zipload -v ../board/cputest
+Halting the CPU
+Memory regions:
+	Block RAM: 00c00000 - 00c02000
+	Flash (ROM): 01000000 - 02000000
+	SRAM       : 00e00000 - 00e20000
+Loading: ../board/cputest
+Section 0: 00e00000 - 00e03ddc
+Writing to MEM: 00e00000-00e03ddc
+Clearing the CPUs registers
+
+devel@mypi3-16:~/testbuilds/catzip-icozip/sim/verilated $ ./arm-main_tb 
+Listening on port 8363
+Listening on port 8364
+> T
+Accepted CMD connection
+< A00a00015R
+> A00a00015R20210401
+<  [CLOSED]
+
+devel@mypi3-16:~/testbuilds/catzip-icozip/sw/host $ ./arm-wbregs version
+00a00014 ( VERSION) : [.!..] 20210401
+
+
+devel@mypi3-16:~/testbuilds/catzip-icozip/sw/host $ ./arm-zipload -v ../board/cputest
+Halting the CPU
+Memory regions:
+	Block RAM: 00c00000 - 00c02000
+	Flash (ROM): 01000000 - 02000000
+	SRAM       : 00e00000 - 00e20000
+Loading: ../board/cputest
+Section 0: 00e00000 - 00e03ddc
+Writing to MEM: 00e00000-00e03ddc
+Clearing the CPUs registers
+
+41.2.1. Analyzing design hierarchy..
+Top module:  \toplevel
+Used module:     \ppio
+Used module:     \oclkddr
+Used module:     \main
+Used module:         \zipbones
+Used module:             \zipcpu
+Used module:                 \wbdblpriarb
+Used module:                 \memops
+Used module:                 \div
+Used module:                 \cpuops
+Used module:                     \mpyop
+Used module:                 \idecode
+Used module:                 \dblfetch
+Used module:         \ziptimer
+Used module:         \hbconsole
+Used module:             \hbnewline
+Used module:             \hbgenhex
+Used module:             \hbdeword
+Used module:             \hbidle
+Used module:             \hbints
+Used module:             \hbexec
+Used module:             \hbpack
+Used module:             \hbdechex
+Used module:         \pport
+Used module:         \console
+Used module:         \sramdev
+Used module:         \spixpress
+Used module:             \wbarbiter
+Used module:         \wbgpio
+Used module:         \memdev
+Used module:         \icontrol
+Used module:         \wbxbar
+Used module:             \addrdecode
+Used module:             \skidbuffer
+
+
+=== toplevel ===
+
+   Number of wires:               3964
+   Number of wire bits:          20188
+   Number of public wires:        3964
+   Number of public wire bits:   20188
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:               7976
+     SB_CARRY                      670
+     SB_DFF                        732
+     SB_DFFE                      1215
+     SB_DFFESR                     406
+     SB_DFFESS                      64
+     SB_DFFSR                      335
+     SB_DFFSS                       16
+     SB_IO                          25
+     SB_LUT4                      4490
+     SB_PLL40_CORE                   1
+     SB_RAM40_4K                    22
+
+/auto-data/Makefile
+-DATA := clock50.txt $(BASE) $(AUX) $(IO) $(MEMORY) $(DBGBUS) $(CPU) $(SCOPES) $(BONUS) $(LDSCRIPT)
++DATA := clockpll40.txt $(BASE) $(AUX) $(IO) $(MEMORY) $(DBGBUS) $(CPU) $(SCOPES) $(BONUS) $(LDSCRIPT)
+
+
+
+Removing flash related.
+
+yosys & nextpnr still create bin & asc files. 
+
+-rw-r--r-- 1 devel devel 5151351 Apr  1 07:46 icozip.asc
+-rw-r--r-- 1 devel devel  135100 Apr  1 07:46 icozip.bin
+-rw-r--r-- 1 devel devel 7246332 Apr  1 07:42 icozip.json
+
+yosys & nextpnr still create 
+
+icepack icozip.asc icozip.bin
+icetime -d hx8k -c 40 icozip.asc
+// Reading input .asc file..
+// Reading 8k chipdb file..
+// Creating timing netlist..
+// Timing estimate: 16.61 ns (60.21 MHz)
+// Checking 25.00 ns (40.00 MHz) clock constraint: PASSED.
+
+sw fails
+sim/veritlator still builds but manually.
+
+
+-rwxr-xr-x 1 devel devel 2003088 Apr  1 09:24 arm-main_tb
+
+-MEMORY  := spixpress.txt sramdev.txt bkram.txt
++MEMORY  := sramdev.txt bkram.txt # spixpress.txt
+
+-LDSCRIPT:= mem_flash_bkram.txt mem_bkram_only.txt mem_flash_sram.txt mem_sram_only.txt
++#LDSCRIPT:= mem_flash_bkram.txt mem_bkram_only.txt mem_flash_sram.txt mem_sram_only.txt
+
+-DATA := clockpll40.txt $(BASE) $(AUX) $(IO) $(MEMORY) $(DBGBUS) $(CPU) $(SCOPES) $(BONUS) $(LDSCRIPT)
++DATA := clock50.txt $(BASE) $(AUX) $(IO) $(MEMORY) $(DBGBUS) $(CPU) $(SCOPES) $(BONUS) $(LDSCRIPT)
+
+-rwxr-xr-x 1 devel devel 2003088 Apr  1 09:24 arm-main_tb
+
+rtl/icozip/Makefile
+
+-       icetime -d hx8k -c 50 icozip.asc
++       icetime -d hx8k -c 40 icozip.asc
+
+
+41.2.1. Analyzing design hierarchy..
+Top module:  \toplevel
+Used module:     \ppio
+Used module:     \main
+Used module:         \ziptimer
+Used module:         \icontrol
+Used module:         \memdev
+Used module:         \wbgpio
+Used module:         \sramdev
+Used module:         \console
+Used module:         \hbconsole
+Used module:             \hbnewline
+Used module:             \hbgenhex
+Used module:             \hbdeword
+Used module:             \hbidle
+Used module:             \hbints
+Used module:             \hbexec
+Used module:             \hbpack
+Used module:             \hbdechex
+Used module:         \pport
+Used module:         \zipbones
+Used module:             \zipcpu
+Used module:                 \wbdblpriarb
+Used module:                 \memops
+Used module:                 \div
+Used module:                 \cpuops
+Used module:                     \mpyop
+Used module:                 \idecode
+Used module:                 \dblfetch
+Used module:         \wbxbar
+Used module:             \addrdecode
+Used module:             \skidbuffer
+
+=== toplevel ===
+
+   Number of wires:               3587
+   Number of wire bits:          17909
+   Number of public wires:        3587
+   Number of public wire bits:   17909
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:               7259
+     SB_CARRY                      610
+     SB_DFF                        687
+     SB_DFFE                      1083
+     SB_DFFESR                     354
+     SB_DFFESS                      61
+     SB_DFFSR                      329
+     SB_DFFSS                       13
+     SB_GB                           1
+     SB_IO                          24
+     SB_LUT4                      4075
+     SB_RAM40_4K                    22

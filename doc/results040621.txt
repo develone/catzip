@@ -1,0 +1,90 @@
+git log
+commit 8cb6e2269fcc4f31855f8dce6279dde113b3d717 (HEAD -> newautofpga, origin/newautofpga)
+Author: Ed Vidal Jr <devel@mypi3-16.attlocal.net>
+Date:   Tue Apr 6 19:30:09 2021 -0600
+
+    -                       wb_sdram_cyc, wb_sdram_stb, wb_sdram_we,
+    +                       wb_sdram_cyc,
+    +                       /* verilator lint_off WIDTH */
+    +                       ((wb_sdram_stb)&&(wb_sdram_sel)),
+    +                       /* verilator lint_off WIDTH */
+    +                       wb_sdram_we,
+                            wb_sdram_addr[(@$LGMEMSZ-1):0],
+                            wb_sdram_data, // 32 bits wide
+                            wb_sdram_sel,  // 32/8 bits
+    ./arm-wbregs 16777216 0x55
+    ./arm-wbregs 16777220 0xaa
+    ./arm-wbregs 16777224 0x01
+    ./arm-wbregs 16777228 0x02
+    ./arm-wbregs 16777232 0x00010000
+    ./arm-wbregs 16777236 0x00020000
+    ./arm-wbregs 16777216
+    ./arm-wbregs 16777220
+    ./arm-wbregs 16777224
+    ./arm-wbregs 16777228
+    ./arm-wbregs 16777232
+    ./arm-wbregs 16777236
+
+auto-data/sdramdev.txt
+@MAIN.INSERT=
+	sdramdev 
+	
+		@$(PREFIX)i(i_clk,
+			wb_sdram_cyc,
+			/* verilator lint_off WIDTH */ 
+			((wb_sdram_stb)&&(wb_sdram_sel)),
+			/* verilator lint_off WIDTH */
+			wb_sdram_we,
+			wb_sdram_addr[(@$LGMEMSZ-1):0],
+			wb_sdram_data, // 32 bits wide
+			wb_sdram_sel,  // 32/8 bits wide
+			wb_sdram_ack, wb_sdram_stall, wb_sdram_idata,
+
+
+		o_ram_cs_n, o_ram_cke, o_ram_ras_n, o_ram_cas_n, o_ram_we_n,
+		o_ram_bs, o_ram_addr,
+		o_ram_drive_data, i_ram_data, o_ram_data, o_ram_dqm,
+		o_debug);	
+
+
+main.v 
+SDRAM_ACCESS
+	sdramdev 
+	
+		sdrami(i_clk,
+			wb_sdram_cyc,
+			/* verilator lint_off WIDTH */ 
+			((wb_sdram_stb)&&(wb_sdram_sel)),
+			/* verilator lint_off WIDTH */
+			wb_sdram_we,
+			wb_sdram_addr[(23-1):0],
+			wb_sdram_data, // 32 bits wide
+			wb_sdram_sel,  // 32/8 bits wide
+			wb_sdram_ack, wb_sdram_stall, wb_sdram_idata,
+
+
+		o_ram_cs_n, o_ram_cke, o_ram_ras_n, o_ram_cas_n, o_ram_we_n,
+		o_ram_bs, o_ram_addr,
+		o_ram_drive_data, i_ram_data, o_ram_data, o_ram_dqm,
+		o_debug);
+
+Testing on HX8K iCE40 catboard
+
+devel@mypi3-16:~/testbuilds/catzip-newautofpga/catzip/sw/host $ ./arm-wbregs -n mypi3-21 -p 8363 version
+00800014 ( VERSION) : [.!..] 20210406
+
+devel@mypi3-21:~/catzip-newautofpga/catzip/sw/host $ ./arm-wbregs version
+00800014 ( VERSION) : [.!..] 20210406
+devel@mypi3-21:~/catzip-newautofpga/catzip/sw/host $ ./wr.sh 
+01000000 (   SDRAM)-> 00000055
+01000004 (        )-> 000000aa
+01000008 (        )-> 00000001
+0100000c (        )-> 00000002
+01000010 (        )-> 00010000
+01000014 (        )-> 00020000
+01000000 (   SDRAM) : [...U] 00000055
+01000004 (        ) : [....] 000000aa
+01000008 (        ) : [....] 00000001
+0100000c (        ) : [....] 00000002
+01000010 (        ) : [....] 00010000
+01000014 (        ) : [....] 00020000

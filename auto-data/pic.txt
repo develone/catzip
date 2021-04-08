@@ -11,7 +11,7 @@
 ##
 ################################################################################
 ##
-## Copyright (C) 2017, Gisselquist Technology, LLC
+## Copyright (C) 2017-2020, Gisselquist Technology, LLC
 ##
 ## This program is free software (firmware): you can redistribute it and/or
 ## modify it under the terms of  the GNU General Public License as published
@@ -52,15 +52,16 @@
 	//
 	// The BUS Interrupt controller
 	//
-	icontrol #(15)	@$(PREFIX)i(i_clk, 1'b0, (wb_stb)&&(@$(PREFIX)_sel),
-			wb_data, @$(PREFIX)_data, bus_int_vector, w_bus_int);
+	icontrol #(15)	@$(PREFIX)i(@$(SLAVE.BUS.CLOCK.WIRE), 1'b0,
+			@$(SLAVE.PORTLIST),
+			bus_int_vector, w_bus_int);
 @MAIN.ALT=
 @REGS.N=1
 @REGS.0= 0 R_PIC PIC
 @BDEF.IONAME= _@$(PREFIX)
 @BDEF.IOTYPE= unsigned
 @BDEF.OSDEF= _BOARD_HAS_@$(DEVID)
-@BDEF.OSVAL= static volatile @$BDEF.IOTYPE *const @$BDEF.IONAME = ((@$BDEF.IOTYPE *)@$REGBASE);
-@RTL.MAKE.GROUP=PIC
-@RTL.MAKE.SUBD=cpu
+@BDEF.OSVAL= static volatile @$BDEF.IOTYPE *const @$BDEF.IONAME = ((@$BDEF.IOTYPE *)@$[0x%08x](REGBASE));
+@RTL.MAKE.GROUP= BUSPIC
+@RTL.MAKE.SUBD= cpu
 @RTL.MAKE.FILES=icontrol.v

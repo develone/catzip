@@ -1,0 +1,11 @@
+git clone git@github.com:develone/catzip.git
+
+cd catzip/
+
+git checkout newautofpga
+
+commit 1b7f027c390099f0656845c1b615231f55b4a4ee (HEAD -> newautofpga, origin/newautofpga)
+Author: Ed Vidal Jr <devel@mypi3-16.attlocal.net>
+Date:   Sat Apr 3 10:51:53 2021 -0600
+
+    new doc on steps to 040321

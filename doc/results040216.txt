@@ -1,0 +1,52 @@
+git clone git@github.com:develone/catzip-icozip.git
+
+commit 58c66dee8a
+
+cd catzip-icozip
+
+. ../catzip/myenv-a.sh
+
+make
+ 
+cd rtl/icozip
+
+make
+verilator -O3 -Mdir ./obj-arm -Wno-TIMESCALEMOD -trace -cc -y cpu -y ../pport -y ../hexbus main.v
+%Warning-WIDTH: main.v:870:17: Input port connection 'i_wb_addr' expects 23 bits on the pin connection, but pin connection's SEL generates 22 bits.
+                             : ... In instance main
+  870 |    wb_sdram_addr[22-1:0],
+      |                 ^
+                ... Use "/* verilator lint_off WIDTH */" and lint_on around source to disable this message.
+modified main.v
+
+-       //m_sdram = new SDRAMSIM(0x01000000);
+-       m_sdram = new SDRAMSIM() 
+modified sim/verilated/main_tb.cpp  
+make clean
+make
+arm-main_tb
+./arm-main_tb -trace
+Listening on port 8363
+Listening on port 8364
+> T
+Accepted CMD connection
+< A01000015R
+> A01000015R20210402
+<  [CLOSED]
+
+./arm-wbregs version
+01000014 ( VERSION) : [.!..] 20210402          
+cd rtl/icozip/
+make  yosys & nextpnr finish
+
+cd ../../sim/verilated
+make
+
+ls
+bkram.ld  board.ld     cputest    flashram.ld  hello.c   obj-zip
+board.h   boardram.ld  cputest.c  hello        Makefile
+
+
+
+
+

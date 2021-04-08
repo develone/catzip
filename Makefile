@@ -2,7 +2,7 @@
 ##
 ## Filename:	Makefile
 ##
-## Project:	CAT Zip, iCE40 ZipCPU demonsrtation project
+## Project:	cat Zip, iCE40 ZipCPU demonstration project
 ##
 ## Purpose:	A master project makefile.  It tries to build all targets
 ##		within the project, mostly by directing subdirectory makes.
@@ -13,7 +13,7 @@
 ##
 ################################################################################
 ##
-## Copyright (C) 2016-2017, Gisselquist Technology, LLC
+## Copyright (C) 2016-2020, Gisselquist Technology, LLC
 ##
 ## This program is free software (firmware): you can redistribute it and/or
 ## modify it under the terms of  the GNU General Public License as published
@@ -38,7 +38,7 @@
 ##
 ##
 .PHONY: all
-all:	check-install archive datestamp autodata rtl sw sim # verilated bench
+all:	check-install archive datestamp autodata rtl sw sim # bench
 #
 # Could also depend upon load, if desired, but not necessary
 SIM   := `find sim -name Makefile` `find sim -name "*.cpp"` `find sim -name "*.h"` `find sim -name "*.c"`
@@ -88,9 +88,9 @@ check-gpp:
 check-yosys:
 	$(call checkif-installed,yosys,-h,yosys)
 
-#.PHONY: check-arachnepnr
-#check-arachnepnr:
-#	$(call checkif-installed,arachne-pnr,-v,arachne-pnr)
+.PHONY: check-arachnepnr
+check-arachnepnr:
+	$(call checkif-installed,arachne-pnr,-v,arachne-pnr)
 
 .PHONY: check-icetime
 check-icetime:
@@ -138,7 +138,10 @@ autodata: check-autofpga
 	$(call copyif-changed,auto-data/regdefs.h,sw/host/regdefs.h)
 	$(call copyif-changed,auto-data/regdefs.cpp,sw/host/regdefs.cpp)
 	$(call copyif-changed,auto-data/board.h,sw/board/board.h)
-	$(call copyif-changed,auto-data/board.ld,sw/board/board.ld)
+	$(call copyif-changed,auto-data/board.h,sw/zlib/board.h)
+	$(call copyif-changed,auto-data/sdram.ld,sw/board/board.ld)
+	$(call copyif-changed,auto-data/flashram.ld,sw/board/flashram.ld)
+	$(call copyif-changed,auto-data/sdram_only.ld,sw/board/boardram.ld)
 	$(call copyif-changed,auto-data/rtl.make.inc,rtl/catzip/auto.mk)
 	$(call copyif-changed,auto-data/main_tb.cpp,sim/verilated/main_tb.cpp)
 	$(call copyif-changed,auto-data/testb.h,sim/verilated/testb.h)
@@ -151,8 +154,7 @@ doc:
 verilated: rtl
 
 .PHONY: rtl
-#rtl: check-yosys check-arachnepnr check-icepack check-icetime datestamp autodata
-rtl: check-yosys  check-icepack check-icetime datestamp autodata
+rtl: check-yosys check-arachnepnr check-icepack check-icetime datestamp autodata
 	$(SUBMAKE) rtl
 
 #

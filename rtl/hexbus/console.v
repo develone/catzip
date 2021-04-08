@@ -4,14 +4,15 @@
 //
 // Project:	ZBasic, a generic toplevel impl using the full ZipCPU
 //
-// Purpose:	
+// Purpose:	This core implements a device to control the console channel
+//		of the debugging bus.
 //
 // Creator:	Dan Gisselquist, Ph.D.
 //		Gisselquist Technology, LLC
 //
 ////////////////////////////////////////////////////////////////////////////////
 //
-// Copyright (C) 2015-2017, Gisselquist Technology, LLC
+// Copyright (C) 2015-2020, Gisselquist Technology, LLC
 //
 // This program is free software (firmware): you can redistribute it and/or
 // modify it under the terms of  the GNU General Public License as published
@@ -43,8 +44,8 @@
 `define	CONSOLE_TXREG	2'b11
 module	console(i_clk, i_reset,
 		//
-		i_wb_cyc, i_wb_stb, i_wb_we, i_wb_addr, i_wb_data,
-			o_wb_ack, o_wb_stall, o_wb_data,
+		i_wb_cyc, i_wb_stb, i_wb_we, i_wb_addr, i_wb_data, i_wb_sel,
+			o_wb_stall, o_wb_ack, o_wb_data,
 		//
 		o_console_stb, o_console_data, i_console_busy,
 		i_console_stb, i_console_data,
@@ -53,6 +54,7 @@ module	console(i_clk, i_reset,
 		o_console_rxfifo_int, o_console_txfifo_int,
 		o_dbg);
 	parameter [3:0]	LGFLEN = 0;
+	parameter [0:0]	HARDWARE_FLOW_CONTROL_PRESENT = 1'b1;
 	// Perform a simple/quick bounds check on the log FIFO length, to make
 	// sure its within the bounds we can support with our current
 	// interface.
@@ -65,6 +67,7 @@ module	console(i_clk, i_reset,
 	input	wire		i_wb_cyc, i_wb_stb, i_wb_we;
 	input	wire	[1:0]	i_wb_addr;
 	input	wire	[31:0]	i_wb_data;
+	input	wire	[3:0]	i_wb_sel;
 	output	reg		o_wb_ack;
 	output	wire		o_wb_stall;
 	output	reg	[31:0]	o_wb_data;
@@ -266,23 +269,22 @@ module	console(i_clk, i_reset,
 			else
 				tx_console_reset <= 1'b0;
 	end else begin : TX_NOFIFO
-		reg	[6:0]	r_txf_wb_data;
-		reg		r_txf_err, r_txf_wb_write;
+		reg		r_txf_err;
 
-		initial	r_txf_wb_write = 1'b0;
+		initial	txf_wb_write = 1'b0;
 		always @(posedge i_clk)
 		begin
 			if (i_reset)
-				r_txf_wb_write <= 1'b0;
+				txf_wb_write <= 1'b0;
 			else if ((i_wb_stb)&&(i_wb_we)
 					&&(i_wb_addr == `CONSOLE_TXREG))
-				r_txf_wb_write <= 1'b1;
+				txf_wb_write <= 1'b1;
 			else if (!i_console_busy)
-				r_txf_wb_write <= 1'b0;
+				txf_wb_write <= 1'b0;
 
 			if((i_wb_stb)&&(i_wb_we)&&(!o_console_stb)
 					&&(i_wb_addr == `CONSOLE_TXREG))
-				r_txf_wb_data  <= i_wb_data[6:0];
+				txf_wb_data  <= i_wb_data[6:0];
 		end
 
 		initial	r_txf_err = 1'b0;
@@ -298,15 +300,14 @@ module	console(i_clk, i_reset,
 				&&(o_console_stb)&&(i_console_busy))
 				r_txf_err <= 1'b1;
 
-		assign	txf_wb_write = r_txf_wb_write;
-		assign	txf_wb_data  = r_txf_wb_data;
 		assign	txf_err = r_txf_err;
 		assign	o_console_txfifo_int = !txf_wb_write;
 		assign	o_console_tx_int     = !txf_wb_write;
 		assign	o_console_stb  = txf_wb_write;
 		assign	o_console_data = txf_wb_data;
 		assign	tx_empty_n     = o_console_stb;
-		assign	txf_status     = { 13'h0, {(3){txf_wb_write}} };
+		assign	txf_status     = { 13'h0, {(2){txf_wb_write}},
+				!txf_wb_write };
 	end endgenerate
 
 	// Now that we are done with the chain, pick some wires for the user
@@ -323,8 +324,8 @@ module	console(i_clk, i_reset,
 	assign	wb_tx_data = { 16'h00,
 				1'b0, txf_status[1:0], txf_err,
 				1'b0, o_console_stb, 1'b0,
-				tx_empty_n,
-				1'b0,(tx_empty_n)?txf_wb_data:7'h0};
+				(i_console_busy|tx_empty_n),
+				1'b0,(i_console_busy|tx_empty_n)?txf_wb_data:7'h0};
 
 	// Each of the FIFO's returns a 16 bit status value.  This value tells
 	// us both how big the FIFO is, as well as how much of the FIFO is in
@@ -376,8 +377,8 @@ module	console(i_clk, i_reset,
 
 	// Make verilator happy
 	// verilator lint_off UNUSED
-	wire	[19+5-1:0]	unused;
-	assign	unused = { i_wb_data[31:13], i_wb_data[11:7] };
+	wire	unused;
+	assign	unused = &{ 1'b0, i_wb_data[31:13], i_wb_data[11:7], i_wb_sel };
 	// verilator lint_on UNUSED
 `ifdef	FORMAL
 	reg	f_past_valid;

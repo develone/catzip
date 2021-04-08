@@ -1,3 +1,68 @@
+devel@mypi3-16:~/testbuilds/catzip-newautofpga/catzip $ git diff auto-data/bkram.txt
+diff --git a/auto-data/bkram.txt b/auto-data/bkram.txt
+index 4ca2ec7..f055c46 100644
+--- a/auto-data/bkram.txt
++++ b/auto-data/bkram.txt
+@@ -50,7 +50,11 @@
+ @MAIN.INSERT=
+        memdev #(.LGMEMSZ(@$THIS.LGMEMSZ), .EXTRACLOCK(1))
+                @$(PREFIX)i(i_clk, 1'b0,
+-                       @$(SLAVE.PORTLIST));
++               wb_bkram_cyc, wb_bkram_stb,wb_bkram_we,
++               wb_bkram_addr[11-1:0],
++               wb_bkram_data, // 32 bits wide
++               wb_bkram_sel,  // 32/8 bits wide
++               wb_bkram_ack, wb_bkram_stall, wb_bkram_idata);
+
+devel@mypi3-16:~/testbuilds/catzip-newautofpga/catzip $ git diff rtl/catzip/main.v
+diff --git a/rtl/catzip/main.v b/rtl/catzip/main.v
+index 9e3aa8f..57badee 100644
+--- a/rtl/catzip/main.v
++++ b/rtl/catzip/main.v
+@@ -826,11 +826,11 @@ parameter RDLY = 6;
+ `ifdef BKRAM_ACCESS
+        memdev #(.LGMEMSZ(13), .EXTRACLOCK(1))
+                bkrami(i_clk, 1'b0,
+-                       wb_bkram_cyc, wb_bkram_stb, wb_bkram_we,
+-                       wb_bkram_addr[11-1:0],
+-                       wb_bkram_data, // 32 bits wide
+-                       wb_bkram_sel,  // 32/8 bits wide
+-               wb_bkram_stall, wb_bkram_ack, wb_bkram_idata);
++               wb_bkram_cyc, wb_bkram_stb,wb_bkram_we,
++               wb_bkram_addr[11-1:0],
++               wb_bkram_data, // 32 bits wide
++               wb_bkram_sel,  // 32/8 bits wide
++               wb_bkram_ack, wb_bkram_stall, wb_bkram_idata);
+
+Testing write/read blkram using simulator.
+
+devel@mypi3-16:~/testbuilds/catzip-newautofpga/catzip/sw/host $ ./wr1.sh
+00a00000 (     RAM)-> 00000055
+00a00004 (        )-> 000000aa
+00a00008 (        )-> 00000001
+00a0000c (        )-> 00000002
+00a00010 (        )-> 00010000
+00a00008 (        )-> 00020000
+00a00000 (     RAM) : [...U] 00000055
+00a00004 (        ) : [....] 000000aa
+00a00008 (        ) : [....] 00020000
+00a0000c (        ) : [....] 00000002
+00a00010 (        ) : [....] 00010000
+00a00008 (        ) : [....] 00020000
+
+devel@mypi3-21:~/catzip-newautofpga/catzip/sw/host $ ./wr1.sh 
+00a00000 (     RAM)-> 00000055
+00a00004 (        )-> 000000aa
+00a00008 (        )-> 00000001
+00a0000c (        )-> 00000002
+00a00010 (        )-> 00010000
+00a00008 (        )-> 00020000
+00a00000 (     RAM) : [...U] 00000055
+00a00004 (        ) : [....] 000000aa
+00a00008 (        ) : [....] 00020000
+00a0000c (        ) : [....] 00000002
+00a00010 (        ) : [....] 00010000
+00a00008 (        ) : [....] 00020000
 diff --git a/auto-data/sdramdev.txt b/auto-data/sdramdev.txt
 index 60fc2a7..ec7f3ac 100644
 --- a/auto-data/sdramdev.txt

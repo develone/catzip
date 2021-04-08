@@ -113,7 +113,7 @@ static volatile unsigned *const _gpio = ((unsigned *)8388620);
 #endif	// GPIO_ACCESS
 #ifdef	SDRAM_ACCESS
 #define	_BOARD_HAS_SDRAM
-extern char	_sdram[0x00800000];
+extern char	_sdram[0x01000000];
 #endif	// SDRAM_ACCESS
 #ifdef	PWRCOUNT_ACCESS
 static volatile unsigned *const _pwrcount = ((unsigned *)0x00800010);

@@ -1,0 +1,109 @@
+diff --git a/auto-data/sdramdev.txt b/auto-data/sdramdev.txt
+index 60fc2a7..ec7f3ac 100644
+--- a/auto-data/sdramdev.txt
++++ b/auto-data/sdramdev.txt
+@@ -39,9 +39,9 @@
+ ## This is 24 to SDRAM
+ @PREFIX=sdram
+ @DEVID=SDRAM
+-@$LGMEMSZ=23
++@$LGMEMSZ=24
+ @LGMEMSZ.FORMAT=%d
+-@$NADDR=(1<<(@$THIS.LGMEMSZ-2))
++@$NADDR=(1<<(@$THIS.LGMEMSZ-3))
+ @$NBYTES=(1<<(@$THIS.LGMEMSZ))
+ @NBYTES.FORMAT=0x%08x
+ @ACCESS=@$(DEVID)_ACCESS
+@@ -135,7 +135,7 @@ parameter	RDLY = 6;
+ 			((wb_sdram_stb)&&(wb_sdram_sel)),
+ 			/* verilator lint_off WIDTH */
+ 			wb_sdram_we,
+-			wb_sdram_addr[(@$LGMEMSZ-1):0],
++			wb_sdram_addr[(@$LGMEMSZ-2):0],
+ 			wb_sdram_data, // 32 bits wide
+ 			wb_sdram_sel,  // 32/8 bits wide
+ 			wb_sdram_ack, wb_sdram_stall, wb_sdram_idata,
+diff --git a/rtl/catzip/builddate.v b/rtl/catzip/builddate.v
+index 3acf340..7d7f037 100644
+--- a/rtl/catzip/builddate.v
++++ b/rtl/catzip/builddate.v
+@@ -39,7 +39,7 @@
+ //
+ //
+ `ifndef	DATESTAMP
+-`define DATESTAMP 32'h20210406
+-`define BUILDTIME 32'h00175205
++`define DATESTAMP 32'h20210408
++`define BUILDTIME 32'h00100406
+ `endif
+ //
+diff --git a/rtl/catzip/main.v b/rtl/catzip/main.v
+index 95983ac..9e3aa8f 100644
+--- a/rtl/catzip/main.v
++++ b/rtl/catzip/main.v
+@@ -871,7 +871,7 @@ parameter	RDLY = 6;
+ 			((wb_sdram_stb)&&(wb_sdram_sel)),
+ 			/* verilator lint_off WIDTH */
+ 			wb_sdram_we,
+-			wb_sdram_addr[(23-1):0],
++			wb_sdram_addr[(24-2):0],
+ 			wb_sdram_data, // 32 bits wide
+ 			wb_sdram_sel,  // 32/8 bits wide
+ 			wb_sdram_ack, wb_sdram_stall, wb_sdram_idata,
+diff --git a/sw/board/board.h b/sw/board/board.h
+index 9f61115..44321ae 100644
+--- a/sw/board/board.h
++++ b/sw/board/board.h
+@@ -113,7 +113,7 @@ static volatile unsigned *const _gpio = ((unsigned *)8388620);
+ #endif	// GPIO_ACCESS
+ #ifdef	SDRAM_ACCESS
+ #define	_BOARD_HAS_SDRAM
+-extern char	_sdram[0x00800000];
++extern char	_sdram[0x01000000];
+ #endif	// SDRAM_ACCESS
+ #ifdef	PWRCOUNT_ACCESS
+ static volatile unsigned *const _pwrcount = ((unsigned *)0x00800010);
+diff --git a/sw/host/regdefs.h b/sw/host/regdefs.h
+index eb24750..d8034f4 100644
+--- a/sw/host/regdefs.h
++++ b/sw/host/regdefs.h
+@@ -87,7 +87,7 @@
+ #define	BKRAMBASE	0x00a00000
+ #define	BKRAMLEN	0x00002000
+ #define	SDRAMBASE	0x01000000
+-#define	SDRAMLEN	0x00800000
++#define	SDRAMLEN	0x01000000
+ // @REGDEFS.H.DEFNS at the top level
+ // End of definitions from REGDEFS.H.DEFNS
+ //
+diff --git a/sw/host/wr_test.sh b/sw/host/wr_test.sh
+index 86e7f04..d165c69 100755
+--- a/sw/host/wr_test.sh
++++ b/sw/host/wr_test.sh
+@@ -1,11 +1,11 @@
+ #!/bin/bash 
+ #10485760	BLKRAM
+ #16777216	SDRAM
+-         COUNTER=2000
++         COUNTER=16777216
+ 	ADDRESS=16777216
+          until [  $COUNTER -lt 1 ]; do
+              echo COUNTER $COUNTER
+              let COUNTER-=1
+ 	     let ADDRESS+=4
+-	     ./arm-wbregs 0x$ADDRESS 0x$COUNTER
++	     ./arm-wbregs $ADDRESS 0x$COUNTER
+          done
+diff --git a/sw/zlib/board.h b/sw/zlib/board.h
+index 9f61115..44321ae 100644
+--- a/sw/zlib/board.h
++++ b/sw/zlib/board.h
+@@ -113,7 +113,7 @@ static volatile unsigned *const _gpio = ((unsigned *)8388620);
+ #endif	// GPIO_ACCESS
+ #ifdef	SDRAM_ACCESS
+ #define	_BOARD_HAS_SDRAM
+-extern char	_sdram[0x00800000];
++extern char	_sdram[0x01000000];
+ #endif	// SDRAM_ACCESS
+ #ifdef	PWRCOUNT_ACCESS
+ static volatile unsigned *const _pwrcount = ((unsigned *)0x00800010);

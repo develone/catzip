@@ -1,0 +1,121 @@
+				0x	02000000	_top_of_stack = ORIGIN(sdram) + LENGTH(sdram);
+
+sdram 			0x	01000000
+				
+				0x	00A02000	
+				
+bkram			0x 	00a00000
+
+`ifndef DATESTAMP
+`define DATESTAMP 32'h20210408
+`define BUILDTIME 32'h00131528
+`endif
+
+devel@mypi3-16:~/testbuilds/catzip-newautofpga/catzip/sw/host $ ./arm-wbregs BUILDTIME
+00800000 (BUILDTIME) : [...(] 00131528
+
+devel@mypi3-16:~/testbuilds/catzip-newautofpga/catzip/sw/board $ cat  obj-zip/cputest.map 
+
+Allocating common symbols
+Common symbol       size              file
+
+testlist            0x80              obj-zip/cputest.o
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+bkram            0x00a00000         0x00002000         xw
+sdram            0x01000000         0x00800000         xw
+*default*        0x00000000         0xffffffff
+
+Linker script and memory map
+
+LOAD obj-zip/cputest.o
+LOAD /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a
+                0x00a00000                _bkram = ORIGIN (bkram)
+                0x01000000                _sdram = ORIGIN (sdram)
+                0x00a00000                _kram = ORIGIN (bkram)
+                0x01000000                _ram = ORIGIN (sdram)
+                0x00000000                _rom = 0x0
+                0x01800000                _top_of_stack = (ORIGIN (sdram) + LENGTH (sdram))
+
+.rocode         0x01000000     0x3e94
+                0x01000000                _boot_address = .
+ *(.start)
+ .start         0x01000000       0x50 obj-zip/cputest.o
+                0x01000000                _start
+ *(.boot)
+                0x01000050                _kram_start = .
+ *(.kernel)
+                0x01000050                _kram_end = .
+                0x01000050                _ram_image_start = .
+ *(.text.startup)
+ *(.text*)
+ .text          0x01000050     0x39e0 obj-zip/cputest.o
+                0x01000050                run_test
+                0x010000a4                idle_test
+                0x01000108                break_one
+                0x01000118                break_two
+                0x01000124                break_three
+                0x01000128                early_branch_test
+                0x010001b4                trap_test_and
+                0x010001c4                trap_test_clr
+                0x010001d4                overflow_test
+                0x01000228                carry_test
+                0x01000274                loop_test
+                0x010002f4                shift_test
+                0x010003d4                sw_brev
+                0x01000414                pipeline_stack_test
+                0x0100049c                pipeline_stack_test_component
+                0x01000544                mpy_test
+                0x010005a4                hard_mpyuhi
+                0x010005ac                hard_mpyshi
+                0x010005b4                div_test
+                0x010005f0                pipeline_test
+                0x0100066c                mempipe_test
+                0x010006d4                cexec_test
+                0x010006fc                nowaitpipe_test
+                0x010007cc                bcmem_test
+                0x0100082c                ill_test
+                0x01000834                sim_test
+                0x0100083c                cis_test
+                0x01000844                cmpeq_test
+                0x01000854                cmpneq_test
+                0x01000868                ccreg_test
+                0x010008c0                soft_mpyuhi
+                0x01000eb4                soft_mpyshi
+                0x01000f44                multiarg_subroutine
+                0x01000fd8                multiarg_test
+                0x01001020                wait
+                0x010010b4                txchr
+                0x0100110c                wait_for_uart_idle
+                0x01001120                txstr
+                0x01001164                txhex
+                0x010011c4                debugmpy
+                0x01001294                mpyhi_test
+                0x01001da8                tx4hex
+                0x01001e18                txreg
+                0x01001e64                save_context
+                0x01001ef8                test_fails
+                0x01002144                testid
+                0x010021d4                entry
+ *(.rodata*)
+ .rodata.str1.4
+                0x01003a30      0x3e4 obj-zip/cputest.o
+                                0x3fa (size before relaxing)
+ *(.strings)
+ *(.data)
+ .data          0x01003e14        0x0 obj-zip/cputest.o
+ *(COMMON)
+ COMMON         0x01003e14       0x80 obj-zip/cputest.o
+                0x01003e14                testlist
+                0x01003e94                _ram_image_end = .
+ *(.bss)
+ .bss           0x01003e94        0x0 obj-zip/cputest.o
+                0x01003e94                _bss_image_end = .
+                0x01003e94                _top_of_heap = .
+OUTPUT(cputest elf32-zip)
+
+.comment        0x00000000       0x1c
+ .comment       0x00000000       0x1c obj-zip/cputest.o
+                                 0x1d (size before relaxing)

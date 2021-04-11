@@ -51,8 +51,8 @@ MEMORY
 	* are given by the @LD.PERM tag.  If no permission tag exists, a
 	* permission of 'r' will be assumed.
 	*/
-	   bkram(wx) : ORIGIN = 0x00a00000, LENGTH = 0x00002000
-	   sdram(wx) : ORIGIN = 0x01000000, LENGTH = 0x00800000
+	   bkram(wx) : ORIGIN = 0x01400000, LENGTH = 0x00002000
+	   sdram(wx) : ORIGIN = 0x02000000, LENGTH = 0x01000000
 }
 
 /* For each defined memory peripheral, we also define a pointer to that

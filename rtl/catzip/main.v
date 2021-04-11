@@ -103,10 +103,10 @@ module	main(i_clk, i_reset,
 	//
 	// A 32-bit address indicating where the ZipCPU should start running
 	// from
-	localparam	RESET_ADDRESS = 10485760;
+	localparam	RESET_ADDRESS = 20971520;
 	//
 	// The number of valid bits on the bus
-	localparam	ZIP_ADDRESS_WIDTH = 23; // Zip-CPU address width
+	localparam	ZIP_ADDRESS_WIDTH = 24; // Zip-CPU address width
 	//
 	// ZIP_START_HALTED
 	//
@@ -194,7 +194,7 @@ parameter	RDLY = 6;
 	wire	[7:0]	pp_rx_data, pp_tx_data;
 	wire	[31:0]	console_dbg;
 	reg	cpu_reset;
-	reg	[24-1:0]	r_buserr_addr;
+	reg	[25-1:0]	r_buserr_addr;
 	// ZipSystem/ZipCPU connection definitions
 	// All we define here is a set of scope wires
 	wire	[31:0]	zip_debug;
@@ -220,7 +220,7 @@ parameter	RDLY = 6;
 	// Wishbone definitions for bus wb, component hbarb
 	// Verilator lint_off UNUSED
 	wire		wb_hbarb_cyc, wb_hbarb_stb, wb_hbarb_we;
-	wire	[22:0]	wb_hbarb_addr;
+	wire	[23:0]	wb_hbarb_addr;
 	wire	[31:0]	wb_hbarb_data;
 	wire	[3:0]	wb_hbarb_sel;
 	wire		wb_hbarb_stall, wb_hbarb_ack, wb_hbarb_err;
@@ -229,7 +229,7 @@ parameter	RDLY = 6;
 	// Wishbone definitions for bus wb, component zip
 	// Verilator lint_off UNUSED
 	wire		wb_zip_cyc, wb_zip_stb, wb_zip_we;
-	wire	[22:0]	wb_zip_addr;
+	wire	[23:0]	wb_zip_addr;
 	wire	[31:0]	wb_zip_data;
 	wire	[3:0]	wb_zip_sel;
 	wire		wb_zip_stall, wb_zip_ack, wb_zip_err;
@@ -238,7 +238,7 @@ parameter	RDLY = 6;
 	// Wishbone definitions for bus wb(SIO), component buildtime
 	// Verilator lint_off UNUSED
 	wire		wb_buildtime_cyc, wb_buildtime_stb, wb_buildtime_we;
-	wire	[22:0]	wb_buildtime_addr;
+	wire	[23:0]	wb_buildtime_addr;
 	wire	[31:0]	wb_buildtime_data;
 	wire	[3:0]	wb_buildtime_sel;
 	wire		wb_buildtime_stall, wb_buildtime_ack, wb_buildtime_err;
@@ -247,7 +247,7 @@ parameter	RDLY = 6;
 	// Wishbone definitions for bus wb(SIO), component buserr
 	// Verilator lint_off UNUSED
 	wire		wb_buserr_cyc, wb_buserr_stb, wb_buserr_we;
-	wire	[22:0]	wb_buserr_addr;
+	wire	[23:0]	wb_buserr_addr;
 	wire	[31:0]	wb_buserr_data;
 	wire	[3:0]	wb_buserr_sel;
 	wire		wb_buserr_stall, wb_buserr_ack, wb_buserr_err;
@@ -256,7 +256,7 @@ parameter	RDLY = 6;
 	// Wishbone definitions for bus wb(SIO), component buspic
 	// Verilator lint_off UNUSED
 	wire		wb_buspic_cyc, wb_buspic_stb, wb_buspic_we;
-	wire	[22:0]	wb_buspic_addr;
+	wire	[23:0]	wb_buspic_addr;
 	wire	[31:0]	wb_buspic_data;
 	wire	[3:0]	wb_buspic_sel;
 	wire		wb_buspic_stall, wb_buspic_ack, wb_buspic_err;
@@ -265,7 +265,7 @@ parameter	RDLY = 6;
 	// Wishbone definitions for bus wb(SIO), component gpio
 	// Verilator lint_off UNUSED
 	wire		wb_gpio_cyc, wb_gpio_stb, wb_gpio_we;
-	wire	[22:0]	wb_gpio_addr;
+	wire	[23:0]	wb_gpio_addr;
 	wire	[31:0]	wb_gpio_data;
 	wire	[3:0]	wb_gpio_sel;
 	wire		wb_gpio_stall, wb_gpio_ack, wb_gpio_err;
@@ -274,7 +274,7 @@ parameter	RDLY = 6;
 	// Wishbone definitions for bus wb(SIO), component pwrcount
 	// Verilator lint_off UNUSED
 	wire		wb_pwrcount_cyc, wb_pwrcount_stb, wb_pwrcount_we;
-	wire	[22:0]	wb_pwrcount_addr;
+	wire	[23:0]	wb_pwrcount_addr;
 	wire	[31:0]	wb_pwrcount_data;
 	wire	[3:0]	wb_pwrcount_sel;
 	wire		wb_pwrcount_stall, wb_pwrcount_ack, wb_pwrcount_err;
@@ -283,7 +283,7 @@ parameter	RDLY = 6;
 	// Wishbone definitions for bus wb(SIO), component version
 	// Verilator lint_off UNUSED
 	wire		wb_version_cyc, wb_version_stb, wb_version_we;
-	wire	[22:0]	wb_version_addr;
+	wire	[23:0]	wb_version_addr;
 	wire	[31:0]	wb_version_data;
 	wire	[3:0]	wb_version_sel;
 	wire		wb_version_stall, wb_version_ack, wb_version_err;
@@ -292,7 +292,7 @@ parameter	RDLY = 6;
 	// Wishbone definitions for bus wb, component bustimer
 	// Verilator lint_off UNUSED
 	wire		wb_bustimer_cyc, wb_bustimer_stb, wb_bustimer_we;
-	wire	[22:0]	wb_bustimer_addr;
+	wire	[23:0]	wb_bustimer_addr;
 	wire	[31:0]	wb_bustimer_data;
 	wire	[3:0]	wb_bustimer_sel;
 	wire		wb_bustimer_stall, wb_bustimer_ack, wb_bustimer_err;
@@ -301,7 +301,7 @@ parameter	RDLY = 6;
 	// Wishbone definitions for bus wb, component watchdog
 	// Verilator lint_off UNUSED
 	wire		wb_watchdog_cyc, wb_watchdog_stb, wb_watchdog_we;
-	wire	[22:0]	wb_watchdog_addr;
+	wire	[23:0]	wb_watchdog_addr;
 	wire	[31:0]	wb_watchdog_data;
 	wire	[3:0]	wb_watchdog_sel;
 	wire		wb_watchdog_stall, wb_watchdog_ack, wb_watchdog_err;
@@ -310,7 +310,7 @@ parameter	RDLY = 6;
 	// Wishbone definitions for bus wb, component console
 	// Verilator lint_off UNUSED
 	wire		wb_console_cyc, wb_console_stb, wb_console_we;
-	wire	[22:0]	wb_console_addr;
+	wire	[23:0]	wb_console_addr;
 	wire	[31:0]	wb_console_data;
 	wire	[3:0]	wb_console_sel;
 	wire		wb_console_stall, wb_console_ack, wb_console_err;
@@ -319,7 +319,7 @@ parameter	RDLY = 6;
 	// Wishbone definitions for bus wb, component wb_sio
 	// Verilator lint_off UNUSED
 	wire		wb_sio_cyc, wb_sio_stb, wb_sio_we;
-	wire	[22:0]	wb_sio_addr;
+	wire	[23:0]	wb_sio_addr;
 	wire	[31:0]	wb_sio_data;
 	wire	[3:0]	wb_sio_sel;
 	wire		wb_sio_stall, wb_sio_ack, wb_sio_err;
@@ -328,7 +328,7 @@ parameter	RDLY = 6;
 	// Wishbone definitions for bus wb, component bkram
 	// Verilator lint_off UNUSED
 	wire		wb_bkram_cyc, wb_bkram_stb, wb_bkram_we;
-	wire	[22:0]	wb_bkram_addr;
+	wire	[23:0]	wb_bkram_addr;
 	wire	[31:0]	wb_bkram_data;
 	wire	[3:0]	wb_bkram_sel;
 	wire		wb_bkram_stall, wb_bkram_ack, wb_bkram_err;
@@ -337,7 +337,7 @@ parameter	RDLY = 6;
 	// Wishbone definitions for bus wb, component sdram
 	// Verilator lint_off UNUSED
 	wire		wb_sdram_cyc, wb_sdram_stb, wb_sdram_we;
-	wire	[22:0]	wb_sdram_addr;
+	wire	[23:0]	wb_sdram_addr;
 	wire	[31:0]	wb_sdram_data;
 	wire	[3:0]	wb_sdram_sel;
 	wire		wb_sdram_stall, wb_sdram_ack, wb_sdram_err;
@@ -347,7 +347,7 @@ parameter	RDLY = 6;
 	// Wishbone definitions for bus hb, component hb
 	// Verilator lint_off UNUSED
 	wire		hb_hb_cyc, hb_hb_stb, hb_hb_we;
-	wire	[23:0]	hb_hb_addr;
+	wire	[24:0]	hb_hb_addr;
 	wire	[31:0]	hb_hb_data;
 	wire	[3:0]	hb_hb_sel;
 	wire		hb_hb_stall, hb_hb_ack, hb_hb_err;
@@ -356,7 +356,7 @@ parameter	RDLY = 6;
 	// Wishbone definitions for bus hb, component hbarb
 	// Verilator lint_off UNUSED
 	wire		hb_hbarb_cyc, hb_hbarb_stb, hb_hbarb_we;
-	wire	[23:0]	hb_hbarb_addr;
+	wire	[24:0]	hb_hbarb_addr;
 	wire	[31:0]	hb_hbarb_data;
 	wire	[3:0]	hb_hbarb_sel;
 	wire		hb_hbarb_stall, hb_hbarb_ack, hb_hbarb_err;
@@ -365,7 +365,7 @@ parameter	RDLY = 6;
 	// Wishbone definitions for bus hb, component zip
 	// Verilator lint_off UNUSED
 	wire		hb_zip_cyc, hb_zip_stb, hb_zip_we;
-	wire	[23:0]	hb_zip_addr;
+	wire	[24:0]	hb_zip_addr;
 	wire	[31:0]	hb_zip_data;
 	wire	[3:0]	hb_zip_sel;
 	wire		hb_zip_stall, hb_zip_ack, hb_zip_err;
@@ -457,28 +457,28 @@ parameter	RDLY = 6;
 	//
 	//
 	wbxbar #(
-		.NM(2), .NS(6), .AW(23), .DW(32),
+		.NM(2), .NS(6), .AW(24), .DW(32),
 		.SLAVE_ADDR({
-			// Address width    = 23
+			// Address width    = 24
 			// Address LSBs     = 2
 			// Slave name width = 8
-			{ 23'h400000 }, //    sdram: 0x1000000
-			{ 23'h280000 }, //    bkram: 0x0a00000
-			{ 23'h200000 }, //   wb_sio: 0x0800000
-			{ 23'h180000 }, //  console: 0x0600000
-			{ 23'h100000 }, // watchdog: 0x0400000
-			{ 23'h080000 }  // bustimer: 0x0200000
+			{ 24'h800000 }, //    sdram: 0x2000000
+			{ 24'h500000 }, //    bkram: 0x1400000
+			{ 24'h400000 }, //   wb_sio: 0x1000000
+			{ 24'h300000 }, //  console: 0x0c00000
+			{ 24'h200000 }, // watchdog: 0x0800000
+			{ 24'h100000 }  // bustimer: 0x0400000
 		}),
 		.SLAVE_MASK({
-			// Address width    = 23
+			// Address width    = 24
 			// Address LSBs     = 2
 			// Slave name width = 8
-			{ 23'h600000 }, //    sdram
-			{ 23'h780000 }, //    bkram
-			{ 23'h780000 }, //   wb_sio
-			{ 23'h780000 }, //  console
-			{ 23'h780000 }, // watchdog
-			{ 23'h780000 }  // bustimer
+			{ 24'hc00000 }, //    sdram
+			{ 24'hf00000 }, //    bkram
+			{ 24'hf00000 }, //   wb_sio
+			{ 24'hf00000 }, //  console
+			{ 24'hf00000 }, // watchdog
+			{ 24'hf00000 }  // bustimer
 		}),
 		.OPT_DBLBUFFER(1'b1))
 	wb_xbar(
@@ -624,20 +624,20 @@ parameter	RDLY = 6;
 	//
 	//
 	wbxbar #(
-		.NM(1), .NS(2), .AW(24), .DW(32),
+		.NM(1), .NS(2), .AW(25), .DW(32),
 		.SLAVE_ADDR({
-			// Address width    = 24
+			// Address width    = 25
 			// Address LSBs     = 2
 			// Slave name width = 5
-			{ 24'h800000 }, //   zip: 0x2000000
-			{ 24'h000000 }  // hbarb: 0x0000000
+			{ 25'h1000000 }, //   zip: 0x4000000
+			{ 25'h0000000 }  // hbarb: 0x0000000
 		}),
 		.SLAVE_MASK({
-			// Address width    = 24
+			// Address width    = 25
 			// Address LSBs     = 2
 			// Slave name width = 5
-			{ 24'h800000 }, //   zip
-			{ 24'h800000 }  // hbarb
+			{ 25'h1000000 }, //   zip
+			{ 25'h1000000 }  // hbarb
 		}),
 		.OPT_DBLBUFFER(1'b1))
 	hb_xbar(
@@ -781,7 +781,7 @@ parameter	RDLY = 6;
 	assign	wb_hbarb_cyc  = hb_hbarb_cyc;
 	assign	wb_hbarb_stb  = hb_hbarb_stb;
 	assign	wb_hbarb_we   = hb_hbarb_we;
-	assign	wb_hbarb_addr = hb_hbarb_addr[23-1:0];
+	assign	wb_hbarb_addr = hb_hbarb_addr[24-1:0];
 	assign	wb_hbarb_data = hb_hbarb_data;
 	assign	wb_hbarb_sel  = hb_hbarb_sel;
 	assign	hb_hbarb_stall = wb_hbarb_stall;
@@ -957,7 +957,7 @@ parameter	RDLY = 6;
 			//
 			w_console_tx_stb, w_console_tx_data, w_console_busy,
 			w_console_rx_stb, w_console_rx_data);
-	assign	hb_hb_addr= hb_tmp_addr[(24-1):0];
+	assign	hb_hb_addr= hb_tmp_addr[(25-1):0];
 `else	// WBUBUS_MASTER
 `endif	// WBUBUS_MASTER
 
@@ -967,15 +967,15 @@ parameter	RDLY = 6;
 	if (wb_zip_err)
 	begin
 		r_buserr_addr <= 0;
-		r_buserr_addr[23-1:0] <= wb_zip_addr[23-1:0];
+		r_buserr_addr[24-1:0] <= wb_zip_addr[24-1:0];
 	end else if (hb_hb_err)
 	begin
 		r_buserr_addr <= 0;
-		r_buserr_addr[24-1:0] <= hb_hb_addr[24-1:0];
+		r_buserr_addr[25-1:0] <= hb_hb_addr[25-1:0];
 	end
 	assign	wb_buserr_stall= 1'b0;
 	assign	wb_buserr_ack  = wb_buserr_stb;
-	assign	wb_buserr_idata = { {(30-24){1'b0}},
+	assign	wb_buserr_idata = { {(30-25){1'b0}},
 			r_buserr_addr, 2'b00 };
 `ifdef	WATCHDOG_ACCESS
 	ziptimer #(.VW(16), .RELOADABLE(0))
@@ -1012,7 +1012,7 @@ parameter	RDLY = 6;
 		swic(i_clk, (cpu_reset),
 			// Zippys wishbone interface
 			wb_zip_cyc, wb_zip_stb, wb_zip_we,
-			wb_zip_addr[23-1:0],
+			wb_zip_addr[24-1:0],
 			wb_zip_data, // 32 bits wide
 			wb_zip_sel,  // 32/8 bits wide
 		wb_zip_stall, wb_zip_ack, wb_zip_idata,wb_zip_err,

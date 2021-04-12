@@ -826,11 +826,11 @@ parameter	RDLY = 6;
 `ifdef	BKRAM_ACCESS
 	memdev #(.LGMEMSZ(13), .EXTRACLOCK(1))
 		bkrami(i_clk, 1'b0,
-		wb_bkram_cyc, wb_bkram_stb,wb_bkram_we,
-		wb_bkram_addr[11-1:0],
-		wb_bkram_data, // 32 bits wide
-		wb_bkram_sel,  // 32/8 bits wide
-		wb_bkram_ack, wb_bkram_stall, wb_bkram_idata);
+		wb_bkram_cyc, wb_bkram_stb, wb_bkram_we,
+			wb_bkram_addr[11-1:0],
+			wb_bkram_data, // 32 bits wide
+			wb_bkram_sel,  // 32/8 bits wide
+		wb_bkram_stall, wb_bkram_ack, wb_bkram_idata);
 `else	// BKRAM_ACCESS
 
 	//

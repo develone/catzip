@@ -53,10 +53,10 @@
 FPGA	*m_fpga;
 
 //#define	DUMPMEM		SDRAMBASE
-#define	DUMPMEM 	0x0100f120
+#define	DUMPMEM 	0x0200f120
 //#define	DUMPWORDS	(FLASHLEN>>2)	// 16MB Flash
 //#define	DUMPWORDS (4000>>2)
-#define	DUMPWORDS 	65535
+#define	DUMPWORDS 	65536
 void	usage(void) {
 	printf("USAGE:\tdumpflash [-n host] [-p port] filename.bin\n"
 "\n"

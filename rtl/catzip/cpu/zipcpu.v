@@ -254,7 +254,10 @@ module	zipcpu(i_clk, i_reset, i_interrupt,
 	wire	[15:0]	w_uflags, w_iflags;
 	reg		break_en, step, sleep, r_halted;
 	wire		break_pending, trap, gie, ubreak, pending_interrupt;
-	wire		w_clear_icache, w_clear_dcache, ill_err_u;
+	wire		w_clear_icache,  ill_err_u;
+	/* verilator lint_off UNUSED */
+	wire w_clear_dcache;
+	/* verilator lint_off UNUSED */
 	reg		ill_err_i;
 	reg		ibus_err_flag;
 	wire		ubus_err_flag;
@@ -2741,7 +2744,9 @@ module	zipcpu(i_clk, i_reset, i_interrupt,
 	begin
 		dbgsrc = 0;
 		if ((i_halt)||(!master_ce)||(debug_trigger)||(o_break))
+		/* verilator lint_off BLKSEQ */
 			dbgsrc = 3'b000;
+		/* verilator lint_off BLKSEQ */
 		else if ((mem_valid)||((!clear_pipeline)&&(!alu_illegal)
 					&&(((alu_wR)&&(alu_valid))
 						||(div_valid)||(fpu_valid))))

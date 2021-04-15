@@ -140,8 +140,9 @@ parameter	RDLY = 6;
 	output	wire	[15:0]	o_ram_data;
 	output	wire	[1:0]	o_ram_dqm;
 	output	wire	[31:0]	o_debug;
- 
+	/* verilator lint_off UNUSED */
 	wire	[15:0]	ram_data;
+	/* verilator lint_off UNUSED */
 	output	wire		o_ram_drive_data; 
 	
 	input	wire		i_pp_clk, i_pp_dir;
@@ -948,7 +949,10 @@ parameter	RDLY = 6;
 	wire	w_bus_int;
 	assign	w_bus_int = 1'b0;
 `endif
+	/* verilator lint_off UNUSED */
 	wire	[29:0]	hb_tmp_addr;
+	/* verilator lint_off UNUSED */
+	
 	hbconsole genbus(i_clk, pp_rx_stb, pp_rx_data,
 			hb_hb_cyc, hb_hb_stb, hb_hb_we, hb_tmp_addr, hb_hb_data, hb_hb_sel,
 			hb_hb_stall, hb_hb_ack, hb_hb_err, hb_hb_idata,

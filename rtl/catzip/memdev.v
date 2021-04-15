@@ -46,7 +46,7 @@
 //
 module	memdev(i_clk, i_reset,
 		i_wb_cyc, i_wb_stb, i_wb_we, i_wb_addr, i_wb_data, i_wb_sel,
-		o_wb_ack, o_wb_stall, o_wb_data);
+		o_wb_stall, o_wb_ack, o_wb_data);
 	parameter	LGMEMSZ=15, DW=32, EXTRACLOCK= 1;
 	parameter	HEXFILE="";
 	parameter [0:0]	OPT_ROM = 1'b0;

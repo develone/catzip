@@ -80,7 +80,9 @@ module	ziptimer(i_clk, i_reset, i_ce,
 	// Wishbone inputs
 	input	wire			i_wb_cyc, i_wb_stb, i_wb_we;
 	input	wire [(BW-1):0]		i_wb_data;
+	/* verilator lint_off UNUSED */
 	input	wire [(BW/8-1):0]	i_wb_sel;
+	/* verilator lint_off UNUSED */
 	// Wishbone outputs
 	output	wire			o_wb_stall;
 	output	reg			o_wb_ack;

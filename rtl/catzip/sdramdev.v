@@ -57,7 +57,7 @@
 //
 module	sdramdev(i_clk,
 		i_wb_cyc, i_wb_stb, i_wb_we, i_wb_addr, i_wb_data, i_wb_sel,
-			o_wb_ack, o_wb_stall, o_wb_data,
+			o_wb_stall, o_wb_ack, o_wb_data,
 		o_ram_cs_n, o_ram_cke, o_ram_ras_n, o_ram_cas_n, o_ram_we_n,
 			o_ram_bs, o_ram_addr,
 			o_ram_dmod, i_ram_data, o_ram_data, o_ram_dqm,

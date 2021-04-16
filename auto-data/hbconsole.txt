@@ -110,7 +110,10 @@
 	wire	w_bus_int;
 	assign	w_bus_int = 1'b0;
 `endif
+	/* verilator lint_off UNUSED */
 	wire	[29:0]	@$(PREFIX)_tmp_addr;
+	/* verilator lint_off UNUSED */
+	
 	hbconsole genbus(@$(CLOCK.WIRE), pp_rx_stb, pp_rx_data,
 			@$(MASTER.PREFIX)_cyc, @$(MASTER.PREFIX)_stb, @$(MASTER.PREFIX)_we, @$(PREFIX)_tmp_addr, @$(MASTER.PREFIX)_data, @$(MASTER.PREFIX)_sel,
 			@$(MASTER.PREFIX)_stall, @$(MASTER.PREFIX)_ack, @$(MASTER.PREFIX)_err, @$(MASTER.PREFIX)_idata,

@@ -49,7 +49,7 @@ VOBJ := obj-$(ARCH)
 include auto.mk
 PCFFILE := catzip.pcf
 VERILATOR := verilator
-VFLAGS := -O3 -Mdir $(VDIRFB) -Wno-TIMESCALEMOD -trace -cc $(AUTOVDIRS)
+VFLAGS := -O3 -Mdir $(VDIRFB) -Wall -Wno-TIMESCALEMOD -trace -cc $(AUTOVDIRS)
 # VERILATOR := VERILATOR_ROOT=/home/dan/tmp/verilator.git /home/dan/tmp/verilator.git/bin/verilator
 # toplevel.v rxuart.v txuart.v
 # rtcdate.v wbubus.v

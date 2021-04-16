@@ -122,8 +122,9 @@ parameter	RDLY = 6;
 	output	wire	[15:0]	o_ram_data;
 	output	wire	[1:0]	o_ram_dqm;
 	output	wire	[31:0]	o_debug;
- 
+	/* verilator lint_off UNUSED */
 	wire	[15:0]	ram_data;
+	/* verilator lint_off UNUSED */
 	output	wire		o_ram_drive_data; 
 	
 @MAIN.INSERT=

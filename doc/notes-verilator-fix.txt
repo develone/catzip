@@ -1,63 +1,201 @@
-rtl/catzip/Makefile to get errors in verilator
+sdram simulates ok in branch catzip-newautofpga and fails in branch tst.
+./arm-main_tb 
+Listening on port 8363
+Listening on port 8364
+> T
+CMD: Only sent 0 bytes of 3!
+
+./arm-wrsdram rgb_pack.bin 
+The size of the buffer is 0x010000 or 65536 words
+
+READ-COMPLETE
+
+./arm-rdsdram rdtest.bin
+
+Write-COMPLETE
+The size of the buffer is 0x010000 or 65536 words
+
+hexedit ../../sw/host/rgb_pack.bin
+
+
+verilator -O3 -Mdir ./obj-arm -Wall -Wno-TIMESCALEMOD -trace -cc -y cpu -y ../pport -y ../hexbus main.v
+%Warning-UNUSED: main.v:144:14: Signal is not driven, nor used: 'ram_data'
+                              : ... In instance main
+  144 |  wire [15:0] ram_data;
+      |              ^~~~~~~~
+                 ... Use "/* verilator lint_off UNUSED */" and lint_on around source to disable this message.
+%Warning-UNUSED: main.v:951:14: Bits of signal are not used: 'hb_tmp_addr'[29:25]
+                              : ... In instance main
+  951 |  wire [29:0] hb_tmp_addr;
+      |              ^~~~~~~~~~~
+%Warning-UNUSED: cpu/ziptimer.v:83:26: Signal is not used: 'i_wb_sel'
+                                     : ... In instance main.watchdogi
+   83 |  input wire [(BW/8-1):0] i_wb_sel;
+      |                          ^~~~~~~~
+                 main.v:795:1: ... note: In file included from main.v
+%Warning-UNUSED: cpu/zipcpu.v:257:24: Signal is not used: 'w_clear_dcache'
+                                    : ... In instance main.swic.thecpu
+  257 |  wire  w_clear_icache, w_clear_dcache, ill_err_u;
+      |                        ^~~~~~~~~~~~~~
+                 cpu/zipbones.v:218:1: ... note: In file included from zipbones.v
+                 main.v:1014:1: ... note: In file included from main.v
+%Warning-BLKSEQ: cpu/zipcpu.v:2744:11: Blocking assignments (=) in sequential (flop or latch) block
+                                     : ... Suggest delayed assignments (<=)
+ 2744 |    dbgsrc = 3'b000;
+      |           ^
+                 cpu/zipbones.v:218:1: ... note: In file included from zipbones.v
+                 main.v:1014:1: ... note: In file included from main.v
+%Error: Exiting due to 5 warning(s)
+make[2]: *** [Makefile:76: obj-arm/Vmain.h] Error 1
+make[1]: *** [Makefile:68: catzip] Error 2
+make: *** [Makefile:158: rtl] Error 2
+diff --git a/auto-data/hbconsole.txt b/auto-data/hbconsole.txt
+index 75c2db0..537bfec 100644
+--- a/auto-data/hbconsole.txt
++++ b/auto-data/hbconsole.txt
+@@ -110,7 +110,10 @@
+ 	wire	w_bus_int;
+ 	assign	w_bus_int = 1'b0;
+ `endif
++	/* verilator lint_off UNUSED */
+ 	wire	[29:0]	@$(PREFIX)_tmp_addr;
++	/* verilator lint_off UNUSED */
++	
+ 	hbconsole genbus(@$(CLOCK.WIRE), pp_rx_stb, pp_rx_data,
+ 			@$(MASTER.PREFIX)_cyc, @$(MASTER.PREFIX)_stb, @$(MASTER.PREFIX)_we, @$(PREFIX)_tmp_addr, @$(MASTER.PREFIX)_data, @$(MASTER.PREFIX)_sel,
+ 			@$(MASTER.PREFIX)_stall, @$(MASTER.PREFIX)_ack, @$(MASTER.PREFIX)_err, @$(MASTER.PREFIX)_idata,
+diff --git a/auto-data/sdramdev.txt b/auto-data/sdramdev.txt
+index f171906..a20e91e 100644
+--- a/auto-data/sdramdev.txt
++++ b/auto-data/sdramdev.txt
+@@ -122,8 +122,9 @@ parameter	RDLY = 6;
+ 	output	wire	[15:0]	o_ram_data;
+ 	output	wire	[1:0]	o_ram_dqm;
+ 	output	wire	[31:0]	o_debug;
+- 
++	/* verilator lint_off UNUSED */
+ 	wire	[15:0]	ram_data;
++	/* verilator lint_off UNUSED */
+ 	output	wire		o_ram_drive_data; 
+ 	
+ @MAIN.INSERT=
+@@ -188,3 +189,9 @@ parameter	RDLY = 6;
+ 	m_@$(MEM.NAME)->load(start, &buf[offset], wlen);
+ 	
+ #endif // @$(ACCESS)
++
++%Warning-UNUSED: main.v:144:14: Signal is not driven, nor used: 'ram_data'
++                              : ... In instance main
++  144 |  wire [15:0] ram_data;
++      |              ^~~~~~~~
++                 ... Use "/* verilator lint_off UNUSED */" and lint_on around so
+diff --git a/rtl/catzip/Makefile b/rtl/catzip/Makefile
+index f7989f9..629a1f3 100644
+--- a/rtl/catzip/Makefile
++++ b/rtl/catzip/Makefile
+@@ -49,7 +49,7 @@ VOBJ := obj-$(ARCH)
+ include auto.mk
+ PCFFILE := catzip.pcf
+ VERILATOR := verilator
 -VFLAGS := -O3 -Mdir $(VDIRFB) -Wno-TIMESCALEMOD -trace -cc $(AUTOVDIRS)
 +VFLAGS := -O3 -Mdir $(VDIRFB) -Wall -Wno-TIMESCALEMOD -trace -cc $(AUTOVDIRS)
-
-An error in main.v line 143
-sdramdev.txt
-+       /* verilator lint_off UNUSED */
-        wire    [15:0]  ram_data;
-+       /* verilator lint_off UNUSED */
-main,v
-	/* verilator lint_off UNUSED */
-	wire	[15:0]	ram_data;
-	/* verilator lint_off UNUSED */
-
-An error in main.v line 952
-hbconsole.txt
-+       /* verilator lint_off UNUSED */
-        wire    [29:0]  @$(PREFIX)_tmp_addr;
-+       /* verilator lint_off UNUSED */
-+       
-	/* verilator lint_off UNUSED */
-	wire	[29:0]	hb_tmp_addr;
-	/* verilator lint_off UNUSED */
-
-rtl/catzip/cpu/ziptimer.v	
-+       /* verilator lint_off UNUSED */
-        input   wire [(BW/8-1):0]       i_wb_sel;
-+       /* verilator lint_off UNUSED */
-
-rtl/catzip/cpu/zipcpu.v
-  257 |  wire  w_clear_icache, w_clear_dcache, ill_err_u;
-
--       wire            w_clear_icache, w_clear_dcache, ill_err_u;
-+       wire            w_clear_icache,  ill_err_u;
-+       /* verilator lint_off UNUSED */
-+       wire w_clear_dcache;
-+       /* verilator lint_off UNUSED */
-
-%Warning-BLKSEQ: cpu/zipcpu.v:2747:11: Blocking assignments (=) in sequential (flop or latch) block
-                                     : ... Suggest delayed assignments (<=)
- 2747 |    dbgsrc = 3'b000;
-
-+               /* verilator lint_off BLKSEQ */
-                        dbgsrc = 3'b000;
-+               /* verilator lint_off BLKSEQ */
-
-devel@mypi3-16:~/testbuilds/catzip-tst/catzip/sw/host $ ./arm-zipload -v ../board/cputest
-Halting the CPU
-Memory regions:
-	Block RAM: 01400000 - 01402000
-	SDRAM       : 02000000 - 03000000
-Loading: ../board/cputest
-Section 0: 02000000 - 02003e94
-Writing to MEM: 02000000-02003e94
-Clearing the CPUs registers
-Setting PC to 02000000
-The CPU should be fully loaded, you may now
-start it (from reset/reboot) with:
-> wbregs cpu 0x0f
-
-CPU Status is: 0000040f
-devel@mypi3-16:~/testbuilds/catzip-tst/catzip/sw/host $ ./arm-wbregs cpu 0x0f
-04000000 (     CPU)-> 0000000f
+ # VERILATOR := VERILATOR_ROOT=/home/dan/tmp/verilator.git /home/dan/tmp/verilator.git/bin/verilator
+ # toplevel.v rxuart.v txuart.v
+ # rtcdate.v wbubus.v
+diff --git a/rtl/catzip/builddate.v b/rtl/catzip/builddate.v
+index 38190be..2bbfeac 100644
+--- a/rtl/catzip/builddate.v
++++ b/rtl/catzip/builddate.v
+@@ -39,7 +39,7 @@
+ //
+ //
+ `ifndef	DATESTAMP
+-`define DATESTAMP 32'h20210412
+-`define BUILDTIME 32'h00055303
++`define DATESTAMP 32'h20210416
++`define BUILDTIME 32'h00043510
+ `endif
+ //
+diff --git a/rtl/catzip/cpu/zipcpu.v b/rtl/catzip/cpu/zipcpu.v
+index 6dea0c9..4b76742 100644
+--- a/rtl/catzip/cpu/zipcpu.v
++++ b/rtl/catzip/cpu/zipcpu.v
+@@ -254,7 +254,10 @@ module	zipcpu(i_clk, i_reset, i_interrupt,
+ 	wire	[15:0]	w_uflags, w_iflags;
+ 	reg		break_en, step, sleep, r_halted;
+ 	wire		break_pending, trap, gie, ubreak, pending_interrupt;
+-	wire		w_clear_icache, w_clear_dcache, ill_err_u;
++	wire		w_clear_icache,  ill_err_u;
++	/* verilator lint_off UNUSED */
++	wire w_clear_dcache;
++	/* verilator lint_off UNUSED */
+ 	reg		ill_err_i;
+ 	reg		ibus_err_flag;
+ 	wire		ubus_err_flag;
+@@ -2741,7 +2744,9 @@ module	zipcpu(i_clk, i_reset, i_interrupt,
+ 	begin
+ 		dbgsrc = 0;
+ 		if ((i_halt)||(!master_ce)||(debug_trigger)||(o_break))
++		/* verilator lint_off BLKSEQ */
+ 			dbgsrc = 3'b000;
++		/* verilator lint_off BLKSEQ */
+ 		else if ((mem_valid)||((!clear_pipeline)&&(!alu_illegal)
+ 					&&(((alu_wR)&&(alu_valid))
+ 						||(div_valid)||(fpu_valid))))
+diff --git a/rtl/catzip/cpu/ziptimer.v b/rtl/catzip/cpu/ziptimer.v
+index f8b3e29..666c133 100644
+--- a/rtl/catzip/cpu/ziptimer.v
++++ b/rtl/catzip/cpu/ziptimer.v
+@@ -80,7 +80,9 @@ module	ziptimer(i_clk, i_reset, i_ce,
+ 	// Wishbone inputs
+ 	input	wire			i_wb_cyc, i_wb_stb, i_wb_we;
+ 	input	wire [(BW-1):0]		i_wb_data;
++	/* verilator lint_off UNUSED */
+ 	input	wire [(BW/8-1):0]	i_wb_sel;
++	/* verilator lint_off UNUSED */
+ 	// Wishbone outputs
+ 	output	wire			o_wb_stall;
+ 	output	reg			o_wb_ack;
+diff --git a/rtl/catzip/main.v b/rtl/catzip/main.v
+index f8dc01e..8b753d9 100644
+--- a/rtl/catzip/main.v
++++ b/rtl/catzip/main.v
+@@ -140,8 +140,9 @@ parameter	RDLY = 6;
+ 	output	wire	[15:0]	o_ram_data;
+ 	output	wire	[1:0]	o_ram_dqm;
+ 	output	wire	[31:0]	o_debug;
+- 
++	/* verilator lint_off UNUSED */
+ 	wire	[15:0]	ram_data;
++	/* verilator lint_off UNUSED */
+ 	output	wire		o_ram_drive_data; 
+ 	
+ 	input	wire		i_pp_clk, i_pp_dir;
+@@ -948,7 +949,10 @@ parameter	RDLY = 6;
+ 	wire	w_bus_int;
+ 	assign	w_bus_int = 1'b0;
+ `endif
++	/* verilator lint_off UNUSED */
+ 	wire	[29:0]	hb_tmp_addr;
++	/* verilator lint_off UNUSED */
++	
+ 	hbconsole genbus(i_clk, pp_rx_stb, pp_rx_data,
+ 			hb_hb_cyc, hb_hb_stb, hb_hb_we, hb_tmp_addr, hb_hb_data, hb_hb_sel,
+ 			hb_hb_stall, hb_hb_ack, hb_hb_err, hb_hb_idata,
+diff --git a/sim/verilated/main_tb.cpp b/sim/verilated/main_tb.cpp
+index d233eaf..c6a34a7 100644
+--- a/sim/verilated/main_tb.cpp
++++ b/sim/verilated/main_tb.cpp
+@@ -290,6 +290,12 @@ public:
+ 	m_sdram->load(start, &buf[offset], wlen);
+ 	
+ #endif // SDRAM_ACCESS
++
++%Warning-UNUSED: main.v:144:14: Signal is not driven, nor used: 'ram_data'
++                              : ... In instance main
++  144 |  wire [15:0] ram_data;
++      |              ^~~~~~~~
++                 ... Use "/* verilator lint_off UNUSED */" and lint_on around so
+ 			// AUTOFPGA::Now clean up anything else
+ 			// Was there more to write than we wrote?
+ 			if (addr + len > base + adrln)

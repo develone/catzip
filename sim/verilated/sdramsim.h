@@ -51,7 +51,7 @@
 #define	MAX_REFRESH_TIME	((int)(.064 * CLK_RATE_HZ))
 #define	SDRAM_QSZ		16
 
-#define	LGSDRAMSZB	25
+#define	LGSDRAMSZB	24
 #define	SDRAMSZB	(1<<LGSDRAMSZB)
 
 class	SDRAMSIM {

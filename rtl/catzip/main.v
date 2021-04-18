@@ -868,10 +868,8 @@ parameter	RDLY = 6;
 	
 		sdrami(i_clk,
 			wb_sdram_cyc,
-			/* verilator lint_off WIDTH */ 
-			((wb_sdram_stb)&&(wb_sdram_sel)),
-			/* verilator lint_off WIDTH */
-			wb_sdram_we,
+			 
+			wb_sdram_stb,wb_sdram_we,
 			wb_sdram_addr[(24-2):0],
 			wb_sdram_data, // 32 bits wide
 			wb_sdram_sel,  // 32/8 bits wide

@@ -1,0 +1,238 @@
+testing catzip master branch.
+
+Upgrading zipcpu current 006f4c6 04/01/19 to  3c0c9c6 11/11/20.
+
+cd zipcpu
+
+git remote add upstream https://github.com/ZipCPU/zipcpu.git
+
+git fetch upstream
+
+git merge upstream/master
+
+. ../testbuilds/catzip/myenv-a.sh
+
+make 
+/usr/bin/ld: ../../rtl/obj_dir/Vzipsystem__ALL.a(Vzipsystem__ALLsup.o):Vzipsystem__ALLsup.cpp:(.text+0x13908): more undefined references to `VerilatedVcd::declBit(unsigned int, char const*, int)' follow
+/usr/bin/ld: ../../rtl/obj_dir/Vzipsystem__ALL.a(Vzipsystem__ALLsup.o): in function `Vzipsystem::traceInitThis__1(Vzipsystem__Syms*, VerilatedVcd*, unsigned int)':
+Vzipsystem__ALLsup.cpp:(.text+0x13974): undefined reference to `VerilatedVcd::declBus(unsigned int, char const*, int, int, int)'
+/usr/bin/ld: Vzipsystem__ALLsup.cpp:(.text+0x139a0): undefined reference to `VerilatedVcd::declBus(unsigned int, char const*, int, int, int)'
+/usr/bin/ld: Vzipsystem__ALLsup.cpp:(.text+0x139cc): undefined reference to `VerilatedVcd::declBus(unsigned int, char const*, int, int, int)'
+/usr/bin/ld: Vzipsystem__ALLsup.cpp:(.text+0x139e8): undefined reference to `VerilatedVcd::declBit(unsigned int, char const*, int)'
+/usr/bin/ld: Vzipsystem__ALLsup.cpp:(.text+0x13a08): undefined reference to `VerilatedVcd::declBit(unsigned int, char const*, int)'
+/usr/bin/ld: Vzipsystem__ALLsup.cpp:(.text+0x13a28): undefined reference to `VerilatedVcd::declBit(unsigned int, char const*, int)'
+/usr/bin/ld: Vzipsystem__ALLsup.cpp:(.text+0x13a44): undefined reference to `VerilatedVcd::declBit(unsigned int, char const*, int)'
+/usr/bin/ld: Vzipsystem__ALLsup.cpp:(.text+0x13a60): undefined reference to `VerilatedVcd::declBit(unsigned int, char const*, int)'
+/usr/bin/ld: ../../rtl/obj_dir/Vzipsystem__ALL.a(Vzipsystem__ALLsup.o):Vzipsystem__ALLsup.cpp:(.text+0x13a7c): more undefined references to `VerilatedVcd::declBit(unsigned int, char const*, int)' follow
+/usr/bin/ld: ../../rtl/obj_dir/Vzipsystem__ALL.a(Vzipsystem__ALLsup.o): in function `Vzipsystem::traceInitThis__1(Vzipsystem__Syms*, VerilatedVcd*, unsigned int)':
+Vzipsystem__ALLsup.cpp:(.text+0x13ae0): undefined reference to `VerilatedVcd::declBus(unsigned int, char const*, int, int, int)'
+/usr/bin/ld: Vzipsystem__ALLsup.cpp:(.text+0x13b0c): undefined reference to `VerilatedVcd::declBus(unsigned int, char const*, int, int, int)'
+/usr/bin/ld: Vzipsystem__ALLsup.cpp:(.text+0x13b38): undefined reference to `VerilatedVcd::declBus(unsigned int, char const*, int, int, int)'
+/usr/bin/ld: Vzipsystem__ALLsup.cpp:(.text+0x13b58): undefined reference to `VerilatedVcd::declBit(unsigned int, char const*, int)'
+/usr/bin/ld: Vzipsystem__ALLsup.cpp:(.text+0x13b78): undefined reference to `VerilatedVcd::declBit(unsigned int, char const*, int)'
+/usr/bin/ld: Vzipsystem__ALLsup.cpp:(.text+0x13b98): undefined reference to `VerilatedVcd::declBit(unsigned int, char const*, int)'
+/usr/bin/ld: Vzipsystem__ALLsup.cpp:(.text+0x13bb8): undefined reference to `VerilatedVcd::declBit(unsigned int, char const*, int)'
+/usr/bin/ld: Vzipsystem__ALLsup.cpp:(.text+0x13be8): undefined reference to `VerilatedVcd::declBus(unsigned int, char const*, int, int, int)'
+/usr/bin/ld: Vzipsystem__ALLsup.cpp:(.text+0x13c18): undefined reference to `VerilatedVcd::declBus(unsigned int, char const*, int, int, int)'
+/usr/bin/ld: Vzipsystem__ALLsup.cpp:(.text+0x13c48): undefined reference to `VerilatedVcd::declBus(unsigned int, char const*, int, int, int)'
+/usr/bin/ld: Vzipsystem__ALLsup.cpp:(.text+0x13c68): undefined reference to `VerilatedVcd::declBit(unsigned int, char const*, int)'
+/usr/bin/ld: Vzipsystem__ALLsup.cpp:(.text+0x13c84): undefined reference to `VerilatedVcd::declBit(unsigned int, char const*, int)'
+/usr/bin/ld: Vzipsystem__ALLsup.cpp:(.text+0x13ca0): undefined reference to `VerilatedVcd::declBit(unsigned int, char const*, int)'
+/usr/bin/ld: Vzipsystem__ALLsup.cpp:(.text+0x13cbc): undefined reference to `VerilatedVcd::declBit(unsigned int, char const*, int)'
+/usr/bin/ld: Vzipsystem__ALLsup.cpp:(.text+0x13ce8): undefined reference to `VerilatedVcd::declBus(unsigned int, char const*, int, int, int)'
+/usr/bin/ld: Vzipsystem__ALLsup.cpp:(.text+0x13d14): undefined reference to `VerilatedVcd::declBus(unsigned int, char const*, int, int, int)'
+/usr/bin/ld: Vzipsystem__ALLsup.cpp:(.text+0x13d40): undefined reference to `VerilatedVcd::declBus(unsigned int, char const*, int, int, int)'
+/usr/bin/ld: Vzipsystem__ALLsup.cpp:(.text+0x13d5c): undefined reference to `VerilatedVcd::declBit(unsigned int, char const*, int)'
+/usr/bin/ld: Vzipsystem__ALLsup.cpp:(.text+0x13d7c): undefined reference to `VerilatedVcd::declBit(unsigned int, char const*, int)'
+/usr/bin/ld: Vzipsystem__ALLsup.cpp:(.text+0x13d9c): undefined reference to `VerilatedVcd::declBit(unsigned int, char const*, int)'
+/usr/bin/ld: Vzipsystem__ALLsup.cpp:(.text+0x13db8): undefined reference to `VerilatedVcd::declBit(unsigned int, char const*, int)'
+/usr/bin/ld: Vzipsystem__ALLsup.cpp:(.text+0x13dd4): undefined reference to `VerilatedVcd::declBit(unsigned int, char const*, int)'
+/usr/bin/ld: ../../rtl/obj_dir/Vzipsystem__ALL.a(Vzipsystem__ALLsup.o):Vzipsystem__ALLsup.cpp:(.text+0x13df0): more undefined references to `VerilatedVcd::declBit(unsigned int, char const*, int)' follow
+/usr/bin/ld: ../../rtl/obj_dir/Vzipsystem__ALL.a(Vzipsystem__ALLsup.o): in function `Vzipsystem::traceInitThis__1(Vzipsystem__Syms*, VerilatedVcd*, unsigned int)':
+Vzipsystem__ALLsup.cpp:(.text+0x13e20): undefined reference to `VerilatedVcd::declBus(unsigned int, char const*, int, int, int)'
+/usr/bin/ld: Vzipsystem__ALLsup.cpp:(.text+0x13e50): undefined reference to `VerilatedVcd::declBus(unsigned int, char const*, int, int, int)'
+/usr/bin/ld: Vzipsystem__ALLsup.cpp:(.text+0x13e7c): undefined reference to `VerilatedVcd::declBus(unsigned int, char const*, int, int, int)'
+/usr/bin/ld: Vzipsystem__ALLsup.cpp:(.text+0x13e9c): undefined reference to `VerilatedVcd::declBit(unsigned int, char const*, int)'
+/usr/bin/ld: Vzipsystem__ALLsup.cpp:(.text+0x13ebc): undefined reference to `VerilatedVcd::declBit(unsigned int, char const*, int)'
+/usr/bin/ld: Vzipsystem__ALLsup.cpp:(.text+0x13edc): undefined reference to `VerilatedVcd::declBit(unsigned int, char const*, int)'
+/usr/bin/ld: Vzipsystem__ALLsup.cpp:(.text+0x13ef8): undefined reference to `VerilatedVcd::declBit(unsigned int, char const*, int)'
+/usr/bin/ld: Vzipsystem__ALLsup.cpp:(.text+0x13f14): undefined reference to `VerilatedVcd::declBit(unsigned int, char const*, int)'
+/usr/bin/ld: ../../rtl/obj_dir/Vzipsystem__ALL.a(Vzipsystem__ALLsup.o):Vzipsystem__ALLsup.cpp:(.text+0x13f30): more undefined references to `VerilatedVcd::declBit(unsigned int, char const*, int)' follow
+/usr/bin/ld: ../../rtl/obj_dir/Vzipsystem__ALL.a(Vzipsystem__ALLsup.o): in function `Vzipsystem::traceInitThis__1(Vzipsystem__Syms*, VerilatedVcd*, unsigned int)':
+Vzipsystem__ALLsup.cpp:(.text+0x13f5c): undefined reference to `VerilatedVcd::declBus(unsigned int, char const*, int, int, int)'
+/usr/bin/ld: Vzipsystem__ALLsup.cpp:(.text+0x13f88): undefined reference to `VerilatedVcd::declBus(unsigned int, char const*, int, int, int)'
+/usr/bin/ld: Vzipsystem__ALLsup.cpp:(.text+0x13fb4): undefined reference to `VerilatedVcd::declBus(unsigned int, char const*, int, int, int)'
+/usr/bin/ld: Vzipsystem__ALLsup.cpp:(.text+0x13fd4): undefined reference to `VerilatedVcd::declBit(unsigned int, char const*, int)'
+/usr/bin/ld: Vzipsystem__ALLsup.cpp:(.text+0x13ff4): undefined reference to `VerilatedVcd::declBit(unsigned int, char const*, int)'
+/usr/bin/ld: Vzipsystem__ALLsup.cpp:(.text+0x14014): undefined reference to `VerilatedVcd::declBit(unsigned int, char const*, int)'
+/usr/bin/ld: Vzipsystem__ALLsup.cpp:(.text+0x14034): undefined reference to `VerilatedVcd::declBit(unsigned int, char const*, int)'
+/usr/bin/ld: Vzipsystem__ALLsup.cpp:(.text+0x14064): undefined reference to `VerilatedVcd::declBus(unsigned int, char const*, int, int, int)'
+/usr/bin/ld: Vzipsystem__ALLsup.cpp:(.text+0x14094): undefined reference to `VerilatedVcd::declBus(unsigned int, char const*, int, int, int)'
+/usr/bin/ld: Vzipsystem__ALLsup.cpp:(.text+0x140b4): undefined reference to `VerilatedVcd::declBit(unsigned int, char const*, int)'
+/usr/bin/ld: Vzipsystem__ALLsup.cpp:(.text+0x140d0): undefined reference to `VerilatedVcd::declBit(unsigned int, char const*, int)'
+/usr/bin/ld: Vzipsystem__ALLsup.cpp:(.text+0x140ec): undefined reference to `VerilatedVcd::declBit(unsigned int, char const*, int)'
+/usr/bin/ld: Vzipsystem__ALLsup.cpp:(.text+0x14108): undefined reference to `VerilatedVcd::declBit(unsigned int, char const*, int)'
+/usr/bin/ld: Vzipsystem__ALLsup.cpp:(.text+0x14134): undefined reference to `VerilatedVcd::declBus(unsigned int, char const*, int, int, int)'
+/usr/bin/ld: Vzipsystem__ALLsup.cpp:(.text+0x14150): undefined reference to `VerilatedVcd::declBit(unsigned int, char const*, int)'
+/usr/bin/ld: Vzipsystem__ALLsup.cpp:(.text+0x14170): undefined reference to `VerilatedVcd::declBit(unsigned int, char const*, int)'
+/usr/bin/ld: Vzipsystem__ALLsup.cpp:(.text+0x1419c): undefined reference to `VerilatedVcd::declBus(unsigned int, char const*, int, int, int)'
+/usr/bin/ld: Vzipsystem__ALLsup.cpp:(.text+0x141c8): undefined reference to `VerilatedVcd::declBus(unsigned int, char const*, int, int, int)'
+/usr/bin/ld: Vzipsystem__ALLsup.cpp:(.text+0x141e4): undefined reference to `VerilatedVcd::declBit(unsigned int, char const*, int)'
+/usr/bin/ld: Vzipsystem__ALLsup.cpp:(.text+0x14214): undefined reference to `VerilatedVcd::declBus(unsigned int, char const*, int, int, int)'
+/usr/bin/ld: Vzipsystem__ALLsup.cpp:(.text+0x14244): undefined reference to `VerilatedVcd::declBus(unsigned int, char const*, int, int, int)'
+/usr/bin/ld: Vzipsystem__ALLsup.cpp:(.text+0x14264): undefined reference to `VerilatedVcd::declBit(unsigned int, char const*, int)'
+/usr/bin/ld: Vzipsystem__ALLsup.cpp:(.text+0x14280): undefined reference to `VerilatedVcd::declBit(unsigned int, char const*, int)'
+/usr/bin/ld: Vzipsystem__ALLsup.cpp:(.text+0x142a0): undefined reference to `VerilatedVcd::declBit(unsigned int, char const*, int)'
+/usr/bin/ld: Vzipsystem__ALLsup.cpp:(.text+0x142c0): undefined reference to `VerilatedVcd::declBit(unsigned int, char const*, int)'
+/usr/bin/ld: Vzipsystem__ALLsup.cpp:(.text+0x142e0): undefined reference to `VerilatedVcd::declBit(unsigned int, char const*, int)'
+/usr/bin/ld: Vzipsystem__ALLsup.cpp:(.text+0x1430c): undefined reference to `VerilatedVcd::declBus(unsigned int, char const*, int, int, int)'
+/usr/bin/ld: Vzipsystem__ALLsup.cpp:(.text+0x1433c): undefined reference to `VerilatedVcd::declBus(unsigned int, char const*, int, int, int)'
+/usr/bin/ld: Vzipsystem__ALLsup.cpp:(.text+0x1436c): undefined reference to `VerilatedVcd::declBus(unsigned int, char const*, int, int, int)'
+/usr/bin/ld: Vzipsystem__ALLsup.cpp:(.text+0x1438c): undefined reference to `VerilatedVcd::declBit(unsigned int, char const*, int)'
+/usr/bin/ld: Vzipsystem__ALLsup.cpp:(.text+0x143a8): undefined reference to `VerilatedVcd::declBit(unsigned int, char const*, int)'
+/usr/bin/ld: Vzipsystem__ALLsup.cpp:(.text+0x143c4): undefined reference to `VerilatedVcd::declBit(unsigned int, char const*, int)'
+/usr/bin/ld: Vzipsystem__ALLsup.cpp:(.text+0x143e0): undefined reference to `VerilatedVcd::declBit(unsigned int, char const*, int)'
+/usr/bin/ld: Vzipsystem__ALLsup.cpp:(.text+0x1440c): undefined reference to `VerilatedVcd::declBus(unsigned int, char const*, int, int, int)'
+/usr/bin/ld: Vzipsystem__ALLsup.cpp:(.text+0x14428): undefined reference to `VerilatedVcd::declBit(unsigned int, char const*, int)'
+/usr/bin/ld: Vzipsystem__ALLsup.cpp:(.text+0x14448): undefined reference to `VerilatedVcd::declBit(unsigned int, char const*, int)'
+/usr/bin/ld: Vzipsystem__ALLsup.cpp:(.text+0x14474): undefined reference to `VerilatedVcd::declBus(unsigned int, char const*, int, int, int)'
+/usr/bin/ld: Vzipsystem__ALLsup.cpp:(.text+0x144a4): undefined reference to `VerilatedVcd::declBus(unsigned int, char const*, int, int, int)'
+/usr/bin/ld: Vzipsystem__ALLsup.cpp:(.text+0x144c0): undefined reference to `VerilatedVcd::declBit(unsigned int, char const*, int)'
+/usr/bin/ld: Vzipsystem__ALLsup.cpp:(.text+0x144f0): undefined reference to `VerilatedVcd::declBus(unsigned int, char const*, int, int, int)'
+/usr/bin/ld: Vzipsystem__ALLsup.cpp:(.text+0x14520): undefined reference to `VerilatedVcd::declBus(unsigned int, char const*, int, int, int)'
+/usr/bin/ld: Vzipsystem__ALLsup.cpp:(.text+0x14540): undefined reference to `VerilatedVcd::declBit(unsigned int, char const*, int)'
+/usr/bin/ld: Vzipsystem__ALLsup.cpp:(.text+0x1455c): undefined reference to `VerilatedVcd::declBit(unsigned int, char const*, int)'
+/usr/bin/ld: Vzipsystem__ALLsup.cpp:(.text+0x1457c): undefined reference to `VerilatedVcd::declBit(unsigned int, char const*, int)'
+/usr/bin/ld: Vzipsystem__ALLsup.cpp:(.text+0x1459c): undefined reference to `VerilatedVcd::declBit(unsigned int, char const*, int)'
+/usr/bin/ld: Vzipsystem__ALLsup.cpp:(.text+0x145bc): undefined reference to `VerilatedVcd::declBit(unsigned int, char const*, int)'
+/usr/bin/ld: Vzipsystem__ALLsup.cpp:(.text+0x145e8): undefined reference to `VerilatedVcd::declBus(unsigned int, char const*, int, int, int)'
+collect2: error: ld returned 1 exit status
+make[1]: *** [Makefile:190: zipsys_tb] Error 1
+make: *** [Makefile:87: vsim] Error 2
+devel@mypi3-20:~/zipcpu $ 
+devel@mypi3-20:~/zipcpu $ ls -la sw/install/cross-tools/bin/
+total 85696
+drwxr-xr-x 2 devel devel    4096 Apr 19 07:29 .
+drwxr-xr-x 8 devel devel    4096 Feb  9  2020 ..
+-rwxr-xr-x 1 devel devel 3808712 Apr 19 06:13 zip-addr2line
+-rwxr-xr-x 2 devel devel 4022900 Apr 19 06:13 zip-ar
+-rwxr-xr-x 2 devel devel 5693912 Apr 19 06:13 zip-as
+-rwxr-xr-x 2 devel devel 3787384 Apr 19 07:28 zip-c++
+lrwxrwxrwx 1 devel devel       7 Feb  9  2020 zip-cc -> zip-gcc
+-rwxr-xr-x 1 devel devel 3762492 Apr 19 06:13 zip-c++filt
+-rwxr-xr-x 1 devel devel 3784396 Apr 19 07:29 zip-cpp
+-rwxr-xr-x 1 devel devel  225476 Apr 19 06:13 zip-elfedit
+-rwxr-xr-x 2 devel devel 3787384 Apr 19 07:28 zip-g++
+-rwxr-xr-x 2 devel devel 3773364 Apr 19 07:29 zip-gcc
+-rwxr-xr-x 2 devel devel 3773364 Apr 19 07:29 zip-gcc-6.2.0
+-rwxr-xr-x 1 devel devel  149892 Apr 19 07:29 zip-gcc-ar
+-rwxr-xr-x 1 devel devel  149752 Apr 19 07:29 zip-gcc-nm
+-rwxr-xr-x 1 devel devel  149764 Apr 19 07:29 zip-gcc-ranlib
+-rwxr-xr-x 1 devel devel 2579880 Apr 19 07:29 zip-gcov
+-rwxr-xr-x 1 devel devel 2544824 Apr 19 07:29 zip-gcov-tool
+-rwxr-xr-x 1 devel devel 3788660 Apr 19 07:28 zip-gfortran
+-rwxr-xr-x 4 devel devel 5065564 Apr 19 06:13 zip-ld
+-rwxr-xr-x 4 devel devel 5065564 Apr 19 06:13 zip-ld.bfd
+-rwxr-xr-x 2 devel devel 3845424 Apr 19 06:13 zip-nm
+-rwxr-xr-x 2 devel devel 4777908 Apr 19 06:13 zip-objcopy
+-rwxr-xr-x 2 devel devel 5341908 Apr 19 06:13 zip-objdump
+-rwxr-xr-x 2 devel devel 4022900 Apr 19 06:13 zip-ranlib
+-rwxr-xr-x 2 devel devel 1415052 Apr 19 06:13 zip-readelf
+-rwxr-xr-x 1 devel devel 3801516 Apr 19 06:13 zip-size
+-rwxr-xr-x 1 devel devel 3796564 Apr 19 06:13 zip-strings
+-rwxr-xr-x 2 devel devel 4777908 Apr 19 06:13 zip-strip
+
+
+devel@mypi3-21:~/testbuilds/tb3-20/catzip/sw/host $ sudo ./arm-netpport 
+[sudo] password for devel: 
+Listening on port 8363
+Listening on port 8364
+
+. 
+. Running CPU self-test
+. -----------------------------------
+. SIM Instructions                Pass
+. CIS Instructions                Supported
+. Break test #1                   Pass
+. Break test #2                   Pass
+. Break test #3                   Pass
+. Early Branch test               Pass
+. Trap test/AND                   Pass
+. Trap test/CLR                   Pass
+. Overflow test                   Pass
+. Carry test                      Pass
+. Loop test                       Pass
+. Shift test                      Pass
+. Pipeline test                   Pass
+. Mem-Pipeline test               Pass
+. Conditional Execution test      Pass
+. No-waiting pipeline test        Pass
+. Conditional Branching test      Pass
+. Ill Instruction test, NULL PC   Pass
+. Ill Instruction test, two       Pass
+. Comparison test, ==             Pass
+. Comparison test, !=             Pass
+. CC Register test                Pass
+. Multi-Arg test                  Pass
+. Multiply test                   Pass
+. Multiply HI-word test           Pass
+. Divide test                     Pass
+. 
+. -----------------------------------
+. All tests passed.  Halting CPU.
+. 
+
+
+. ptrs.inpbuf = 0x100f144 buf_red = 0xdd20c80
+. fwd_inv = 0xdda0c88
+. x = 0xde22c76 sp = 0x76 z = 0x76
+. x = 0xdf2006a sp = 0x6a z = 0x6a
+. x = 0xde20c69 sp = 0x69 z = 0x69
+. x = 0xdb2106f sp = 0x6f z = 0x6f
+. x = 0x0 sp = 0x0 z = 0x0
+. x = 0x0 sp = 0x0 z = 0x0
+. spliting blue sub band
+. fwd lifting step only
+. w = 0x100 wptr = 0xdd20c80 alt =  0xdd60c80 fwd_inverse =  0xdda0c88 fwd_inver.  =  0x1 
+. starting red dwt
+. in singlelift 
+. in singlelift 
+. in singlelift 
+. in singlelift 
+. in singlelift 
+. in singlelift 
+. testing test_fwd 
+. finished ted dwt
+
+devel@mypi3-21:~/testbuilds/tb3-20/catzip/sw/host $ ./arm-zipload -v ../board/cputest
+
+devel@mypi3-21:~/testbuilds/tb3-20/catzip/sw/host $ ./arm-wbregs cpu 0x0f
+02000000 (        )-> 0000000f
+
+devel@mypi3-21:~/testbuilds/tb3-20/catzip/sw/host $ ./runjpeg.sh 
+devel@mypi3-21:~/testbuilds/tb3-20/catzip/sw/host $ ./runjpeg.sh 
+00a01000 (        )-> 00000002
+FPGA was interrupted
+00a01004 (        )-> 00000001
+Halting the CPU
+Memory regions:
+	Block RAM: 00a00000 - 00a02000
+	SDRAM       : 01000000 - 02000000
+Loading: ../board/jpeg
+Section 0: 01000000 - 0104f1b4
+Writing to MEM: 01000000-0104f1b4
+Clearing the CPUs registers
+Setting PC to 01000000
+The CPU should be fully loaded, you may now
+start it (from reset/reboot) with:
+> wbregs cpu 0x0f
+
+CPU Status is: 0000060f
+The size of the buffer is 0x00ffff or 65535 words
+
+READ-COMPLETE
+02000000 (        )-> 0000000f
+
+Write-COMPLETE
+The size of the buffer is 0x00ffff or 65535 words
+

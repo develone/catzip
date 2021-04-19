@@ -1,6 +1,32 @@
-catzip/rtl/pptest Makefile still using arachne-pnr
-pptest does not get built from top Makefile.
-
+catzip/rtl/pptest Makefile still using arachne-pnr fixed using icozip/rtl/pptest/Makefile
+pptest does not get built from top Makefile. fixed 
+devel@mypi3-16:~/testbuilds/catzip-tst/catzip $ git diff
+diff --git a/rtl/Makefile b/rtl/Makefile
+index dbd1576..6e4a450 100644
+--- a/rtl/Makefile
++++ b/rtl/Makefile
+@@ -39,7 +39,7 @@
+ ##
+ .PHONY: all
+ #all:  basic uart catzip  leddigits switch_leds pptest
+-all:   basic uart catzip  leddigits switch_leds
++all:   basic uart catzip  leddigits switch_leds pptest
+ # all: verilated sw bench bit
+ SUBMAKE := $(MAKE) --no-print-directory -C
+ #
+ 
+./rtl/uart/speechfifo.bin
+./rtl/uart/helloworld.bin
+./rtl/switch_leds/switch_leds.bin
+./rtl/leddigits/leddigits.bin
+./rtl/pptest/linepp.bin
+./rtl/pptest/hellopp.bin
+./rtl/pptest/speechpp.bin
+./rtl/catzip/catzip.bin
+./rtl/basic/dimmer.bin
+./rtl/basic/pmodtest.bin
+./rtl/basic/blinky.bin
+./rtl/basic/clktest.bin
 devel@mypi3-16:~/testbuilds/catzip-tst/catzip $ git diff auto-data/sdramdev.txt
 diff --git a/auto-data/sdramdev.txt b/auto-data/sdramdev.txt
 index bcd258f..3270953 100644

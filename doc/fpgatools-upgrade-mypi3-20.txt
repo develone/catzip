@@ -1,0 +1,152 @@
+cd ~/testbuilds/tb3-20/catzip/sw/host
+
+devel@mypi3-21:~/testbuilds/tb3-20/catzip/sw/host $ sudo config_cat ../../rtl/catzip/catzip.bin
+
+devel@mypi3-21:~/testbuilds/tb3-20/catzip/sw/host $ sudo ./arm-netpport
+Listening on port 8363
+Listening on port 8364
+# 
+
+devel@mypi3-21:~/testbuilds/tb3-20/catzip/sw/host $ ./arm-wbregs version
+00800010 ( VERSION) : [.!..] 20210419
+
+devel@mypi3-21:~/testbuilds/tb3-20/catzip/sw/host $ ./arm-zipload -v ../board/cputest
+Halting the CPU
+Memory regions:
+	Block RAM: 00a00000 - 00a02000
+	SDRAM       : 01000000 - 02000000
+Loading: ../board/cputest
+Section 0: 01000000 - 01003e94
+Writing to MEM: 01000000-01003e94
+Clearing the CPUs registers
+Setting PC to 01000000
+The CPU should be fully loaded, you may now
+start it (from reset/reboot) with:
+> wbregs cpu 0x0f
+
+CPU Status is: 0000060f
+
+devel@mypi3-21:~/testbuilds/tb3-20/catzip/sw/host $ ./arm-wbregs cpu 0x0f
+02000000 (        )-> 0000000f
+
+. Running CPU self-test
+. -----------------------------------
+. SIM Instructions                Pass
+. CIS Instructions                Supported
+. Break test #1                   Pass
+. Break test #2                   Pass
+. Break test #3                   Pass
+. Early Branch test               Pass
+. Trap test/AND                   Pass
+. Trap test/CLR                   Pass
+. Overflow test                   Pass
+. Carry test                      Pass
+. Loop test                       Pass
+. Shift test                      Pass
+. Pipeline test                   Pass
+. Mem-Pipeline test               Pass
+. Conditional Execution test      Pass
+. No-waiting pipeline test        Pass
+. Conditional Branching test      Pass
+. Ill Instruction test, NULL PC   Pass
+. Ill Instruction test, two       Pass
+. Comparison test, ==             Pass
+. Comparison test, !=             Pass
+. CC Register test                Pass
+. Multi-Arg test                  Pass
+. Multiply test                   Pass
+. Multiply HI-word test           Pass
+. Divide test                     Pass
+. 
+. -----------------------------------
+. All tests passed.  Halting CPU.
+
+devel@mypi3-21:~/testbuilds/tb3-20/catzip/sw/host $ ./runjpeg.sh
+00a01000 (        )-> 00000002
+FPGA was interrupted
+00a01004 (        )-> 00000001
+Halting the CPU
+Memory regions:
+	Block RAM: 00a00000 - 00a02000
+	SDRAM       : 01000000 - 02000000
+Loading: ../board/jpeg
+Section 0: 01000000 - 0104f1b4
+Writing to MEM: 01000000-0104f1b4
+Clearing the CPUs registers
+Setting PC to 01000000
+The CPU should be fully loaded, you may now
+start it (from reset/reboot) with:
+> wbregs cpu 0x0f
+
+CPU Status is: 0000060f
+The size of the buffer is 0x010000 or 65536 words
+
+READ-COMPLETE
+02000000 (        )-> 0000000f
+
+Write-COMPLETE
+The size of the buffer is 0x010000 or 65536 words
+
+
+
+Command port disconnect
+. ptrs.inpbuf = 0x100f144 buf_red = 0xdd20c80
+. fwd_inv = 0xdda0c88
+. x = 0xde22c76 sp = 0x76 z = 0x76
+. x = 0xdf2006a sp = 0x6a z = 0x6a
+. x = 0xde20c69 sp = 0x69 z = 0x69
+. x = 0xdb2106f sp = 0x6f z = 0x6f
+. x = 0x0 sp = 0x0 z = 0x0
+. x = 0x0 sp = 0x0 z = 0x0
+. spliting blue sub band
+. fwd lifting step only
+. w = 0x100 wptr = 0xdd20c80 alt =  0xdd60c80 fwd_inverse =  0xdda0c88 fwd_inver.  =  0x1 
+. starting red dwt
+. in singlelift 
+. in singlelift 
+. in singlelift 
+. in singlelift 
+. in singlelift 
+. in singlelift 
+. testing test_fwd 
+. finished ted dwt
+
+
+devel@mypi3-21:~/testbuilds/tb3-20/catzip/sw/host $ octave
+libEGL warning: DRI3: failed to query the version
+libEGL warning: DRI2: failed to authenticate
+GNU Octave, version 4.4.1
+Copyright (C) 2018 John W. Eaton and others.
+This is free software; see the source code for copying conditions.
+There is ABSOLUTELY NO WARRANTY; not even for MERCHANTABILITY or
+FITNESS FOR A PARTICULAR PURPOSE.  For details, type 'warranty'.
+
+Octave was configured for "arm-unknown-linux-gnueabihf".
+
+Additional information about Octave is available at https://www.octave.org.
+
+Please contribute if you find this software useful.
+For more information, visit https://www.octave.org/get-involved.html
+
+Read https://www.octave.org/bugs.html to learn how to submit bug reports.
+For information about changes from previous versions, type 'news'.
+
+octave:1> rgb
+
+octave:2> im4(1:10,1:1)
+ans =
+
+   237118588
+   232923267
+   237114485
+   238166139
+   236071034
+   237115516
+   235018352
+   233970337
+   230821997
+           0
+octave:3> im4(1:10,1:1)=0;
+octave:4> imagesc(im4);
+
+dwt ok split upper right & lower left

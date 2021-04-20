@@ -1,0 +1,79 @@
+autofpga
+commit 95df250da1d829d9ec0ad67822ebe7e85bac00eb (HEAD -> master, origin/master, origin/HEAD)
+Author: ZipCPU <dgisselq@ieee.org>
+Date:   Wed Jan 1 11:38:32 2020 -0500
+
+commit 7cc9d487ff806f91fa09815243d4d8091671b88b (HEAD -> master, upstream/master, origin/master, origin/HEAD)
+Merge: 2e8d6ec0 161eba25
+Author: whitequark <whitequark@whitequark.org>
+Date:   Sun Feb 9 20:29:16 2020 +0000
+
+    Merge pull request #1695 from whitequark/manual-explain-wire-upto-offset
+    
+    manual: explain RTLIL::Wire::{upto,offset}
+
+mv yosys yosys041921
+ 
+devel@mypi3-18:~ $ scp mypi3-16:/media/devel/1b763776-4e1d-499c-9f24-a116a58c161f/fpgatools/testing03021/yosys033021_0ccc722.img .
+
+sudo unsquashfs -d /home/devel/yosys yosys033021_0ccc722.img
+
+cd yosys
+
+sudo make install
+
+devel@mypi3-18:~/yosys $ yosys -V
+Yosys 0.9+4052 (git sha1 0ccc7229, gcc 8.3.0-6+rpi1 -fPIC -Os)
+This ver does not work with catzip master
+
+devel@mypi3-18:~ $ yosys -V
+Yosys 0.9+1706 (git sha1 7cc9d487, clang 7.0.1-8+rpi3+deb10u2 -fPIC -Os)
+
+devel@mypi3-18:~ $ scp mypi3-16:/media/devel/1b763776-4e1d-499c-9f24-a116a58c161f/fpgatools/testing03021/nextpnr*.img .
+
+devel@mypi3-18:~ $ sudo unsquashfs -d nextpnr nextpnr032621_4419c36.img
+
+
+
+devel@mypi3-18:~ $ rm -f yosys033021_0ccc722.img 
+
+devel@mypi3-18:~ $ cd nextpnr/
+
+commit b4d029a55cd67bafcc9c364d609208a818227204 (HEAD -> master, origin/master, origin/HEAD)
+Merge: aed93a9 f1dbb0c
+Author: David Shah <dave@ds0.me>
+Date:   Mon Feb 3 13:55:07 2020 +0000
+
+    Merge pull request #385 from YosysHQ/router1-arc-fixes
+    
+    Fixes for partial reconfig demo
+
+devel@mypi3-18:~ $ mv nextpnr/ nextpnr041921
+
+devel@mypi3-18:~ $ sudo unsquashfs -d nextpnr nextpnr032621_4419c36.img
+
+devel@mypi3-18:~ $ cd nextpnr
+
+devel@mypi3-18:~ $ sudo make install
+
+devel@mypi3-18:~ $ nextpnr-ice40 -V
+nextpnr-ice40 -- Next Generation Place and Route (Version 4419c36d)
+
+icestorm
+
+commit c495861c19bd0976c88d4964f912abe76f3901c3 (HEAD -> master, upstream/master)
+Author: gatecat <gatecat@ds0.me>
+Date:   Tue Mar 9 09:51:12 2021 +0000
+
+    Use --recursive for nextpnr clone
+    
+    Signed-off-by: gatecat <gatecat@ds0.me>
+
+191964241
+im4(256,256)=70;
+
+mv zipcpu zipcpu040119
+
+devel@mypi3-18:~ $ scp mypi3-16:/media/devel/1b763776-4e1d-499c-9f24-a116a58c161f/fpgatools/testing03021/zipcpu111120-3c0c9c.img .
+
+devel@mypi3-18:~ $ sudo unsquashfs -d zipcpu zipcpu111120-3c0c9c.img

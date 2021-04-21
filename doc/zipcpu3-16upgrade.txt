@@ -1,0 +1,142 @@
+upgrading zipcpu on mypi3-16
+
+devel@mypi3-16:~ $ mv zipcpu/ zipcpu-pre
+
+devel@mypi3-20:/media/devel/1b763776-4e1d-499c-9f24-a116a58c161f/fpgatools/testing03021 $ scp zipcpu111120-3c0c9c.img mypi3-16:~/
+
+devel@mypi3-16:~ $ sudo unsquashfs -d zipcpu zipcpu111120-3c0c9c.img
+
+commit 3c0c9c6b017ca54ca8d90eba862149321cd13a4d (HEAD -> master, upstream/master)
+Merge: f7f800b 3e4aa81
+Author: Dan Gisselquist <dan.gisselquist@gmail.com>
+Date:   Wed Nov 11 18:23:14 2020 -0500
+
+devel@mypi3-21:~/testbuilds $ mkdir tb3-16-tst
+
+devel@mypi3-16:~ $ cd testbuilds/catzip-tst/catzip/
+
+devel@mypi3-16:~/testbuilds/catzip-tst/catzip $ . myenv-a.sh 
+/home/devel/zipcpu/sw/install/cross-tools/bin:/home/devel/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/games:/usr/games
+
+devel@mypi3-16:~/testbuilds/catzip-tst/catzip $ make clean; make
+
+Info: [ 10385,  11017) |************************************************************ 
+Info: [ 11017,  11649) |***************************************+
+Info: [ 11649,  12281) |***************************+
+0 warnings, 1 error
+
+Info: Program finished normally.
+make[2]: *** [Makefile:50: speechpp.asc] Error 1
+rm hellopp.asc speechpp.asc
+make[1]: *** [Makefile:64: pptest] Error 2
+make: *** [Makefile:158: rtl] Error 2
+
+
+devel@mypi3-16:~/testbuilds/catzip-tst/catzip $ cd sw/zlib/
+devel@mypi3-16:~/testbuilds/catzip-tst/catzip/sw/zlib $ make
+zip-gcc -O3 -I. -I../../rtl/catzip -c udiv.c -o obj-zip/udiv.o
+zip-gcc -O3 -I. -I../../rtl/catzip -c umod.c -o obj-zip/umod.o
+zip-gcc -O3 -I. -I../../rtl/catzip -c syscalls.c -o obj-zip/syscalls.o
+zip-gcc -O3 -I. -I../../rtl/catzip -ffreestanding -c crt0.c -o obj-zip/crt0.o
+zip-ar -cru libcatzip.a obj-zip/udiv.o obj-zip/umod.o obj-zip/syscalls.o obj-zip/crt0.o
+devel@mypi3-16:~/testbuilds/catzip-tst/catzip/sw/zlib $ cd ../board/
+devel@mypi3-16:~/testbuilds/catzip-tst/catzip/sw/board $ make
+Building dependency file(s)
+zip-gcc -O3 -I../zlib -I../../rtl/catzip -I. -c -Wa,-nocis -fno-builtin cputest.c -o obj-zip/cputest.o
+zip-gcc -O3 -I../zlib -I../../rtl/catzip -I. -T boardram.ld -fno-builtin -Wl,-Map=obj-zip/cputest.map obj-zip/cputest.o -o cputest
+zip-gcc -O3 -c  hello.c -o obj-zip/hello.o
+zip-gcc -O3 -I../zlib -I../../rtl/catzip -I. -Tboardram.ld -L../zlib -Wl,-Map=obj-zip/hello.map obj-zip/hello.o -lc -lcatzip -o hello
+zip-gcc -O3 -I../zlib -I../../rtl/catzip -I. -c  jpeg.c -o obj-zip/jpeg.o
+zip-gcc -O3 -c  lifting.c -o obj-zip/lifting.o
+zip-gcc -O3 -I../zlib -I../../rtl/catzip -I. -Tboardram.ld -L../zlib obj-zip/lifting.o  -Wl,-Map=obj-zip/jpeg.map obj-zip/jpeg.o -lc -lcatzip -o jpeg
+ -lgcc
+ 
+ devel@mypi3-16:~/testbuilds/catzip-tst/catzip/sw/board $ cd ../host/
+devel@mypi3-16:~/testbuilds/catzip-tst/catzip/sw/host $ make
+g++ -g -Wall -I. -I../../rtl/catzip -c wbregs.cpp -o obj-arm/wbregs.o
+g++ -g -Wall -I. -I../../rtl/catzip -c hexbus.cpp -o obj-arm/hexbus.o
+g++ -g -Wall -I. -I../../rtl/catzip -c llcomms.cpp -o obj-arm/llcomms.o
+g++ -g -Wall -I. -I../../rtl/catzip -c regdefs.cpp -o obj-arm/regdefs.o
+g++ -g -Wall -I. -I../../rtl/catzip -c byteswap.cpp -o obj-arm/byteswap.o
+g++ -g -Wall -I. -I../../rtl/catzip obj-arm/wbregs.o obj-arm/hexbus.o obj-arm/llcomms.o obj-arm/regdefs.o obj-arm/byteswap.o  -o arm-wbregs
+g++ -g -Wall -I. -I../../rtl/catzip -c sdramscope.cpp -o obj-arm/sdramscope.o
+g++ -g -Wall -I. -I../../rtl/catzip -c scopecls.cpp -o obj-arm/scopecls.o
+g++ -g obj-arm/sdramscope.o obj-arm/scopecls.o obj-arm/hexbus.o obj-arm/llcomms.o obj-arm/regdefs.o obj-arm/byteswap.o -o arm-sdramscope
+g++ -g -Wall -I. -I../../rtl/catzip -c zipelf.cpp -o obj-arm/zipelf.o
+zipelf.cpp: In function ‘void elfread(const char*, unsigned int&, ELFSECTION**&)’:
+zipelf.cpp:222:20: warning: format ‘%lx’ expects argument of type ‘long unsigned int’, but argument 3 has type ‘Elf64_Off’ {aka ‘long long unsigned int’} [-Wformat=]
+    fprintf(stderr, "Could not seek to file position %08lx\n", phdr.p_offset);
+                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  ~~~~~~~~~~~~~
+g++ -g -Wall -I. -I../../rtl/catzip -c zipload.cpp -o obj-arm/zipload.o
+zipload.cpp: In function ‘int main(int, char**)’:
+zipload.cpp:280:12: warning: unused variable ‘startaddr’ [-Wunused-variable]
+   unsigned startaddr = RESET_ADDRESS, codelen = 0;
+            ^~~~~~~~~
+zipload.cpp:280:39: warning: unused variable ‘codelen’ [-Wunused-variable]
+   unsigned startaddr = RESET_ADDRESS, codelen = 0;
+                                       ^~~~~~~
+g++ -g obj-arm/hexbus.o obj-arm/llcomms.o obj-arm/regdefs.o obj-arm/byteswap.o obj-arm/zipelf.o obj-arm/zipload.o -lelf -o arm-zipload
+g++ -g -Wall -I. -I../../rtl/catzip -c zipstate.cpp -o obj-arm/zipstate.o
+g++ -g obj-arm/zipstate.o obj-arm/hexbus.o obj-arm/llcomms.o obj-arm/regdefs.o obj-arm/byteswap.o -o arm-zipstate
+g++ -g -Wall -I. -I../../rtl/catzip -c zipdbg.cpp -o obj-arm/zipdbg.o
+g++ -g -Wall -I. -I../../rtl/catzip -c zopcodes.cpp -o obj-arm/zopcodes.o
+zopcodes.cpp: In function ‘void zipi_to_halfstring(uint32_t, ZIPI, char*, const ZOPCODE*)’:
+zopcodes.cpp:524:11: warning: passing argument 1 to restrict-qualified parameter aliases with argument 3 [-Wrestrict]
+   sprintf(line, "%-11s", line);
+           ^~~~           ~~~~
+zopcodes.cpp:525:11: warning: passing argument 1 to restrict-qualified parameter aliases with argument 3 [-Wrestrict]
+   sprintf(line, "%s0x%08x", line, ref);
+           ^~~~              ~~~~
+zopcodes.cpp:526:11: warning: passing argument 1 to restrict-qualified parameter aliases with argument 3 [-Wrestrict]
+   sprintf(line, "%s,%s", line, zip_regstr[dv]);
+           ^~~~           ~~~~
+zopcodes.cpp:554:14: warning: passing argument 1 to restrict-qualified parameter aliases with argument 3 [-Wrestrict]
+    } sprintf(line, "%-11s", line); // Pad it to 11 chars
+              ^~~~           ~~~~
+g++ -g -Wall -I. -I../../rtl/catzip -c twoc.cpp -o obj-arm/twoc.o
+g++ -g obj-arm/zipdbg.o obj-arm/hexbus.o obj-arm/llcomms.o obj-arm/regdefs.o obj-arm/byteswap.o obj-arm/zopcodes.o obj-arm/twoc.o -lcurses -o arm-zipdbg
+g++ -g -Wall -I. -I../../rtl/catzip -c wrsdram.cpp -o obj-arm/wrsdram.o
+g++ -g obj-arm/hexbus.o obj-arm/llcomms.o obj-arm/regdefs.o obj-arm/byteswap.o obj-arm/zipelf.o obj-arm/wrsdram.o -lelf -o arm-wrsdram
+g++ -g -Wall -I. -I../../rtl/catzip -c rdsdram.cpp -o obj-arm/rdsdram.o
+g++ -g obj-arm/hexbus.o obj-arm/llcomms.o obj-arm/regdefs.o obj-arm/byteswap.o obj-arm/zipelf.o obj-arm/rdsdram.o -lelf -o arm-rdsdram	 
+g++ -g -Wall -I. -I../../rtl/catzip -c netpport.cpp -o obj-arm/netpport.o
+g++ -g -Wall -I. -I../../rtl/catzip obj-arm/netpport.o -lwiringPi -o arm-netpport
+
+devel@mypi3-16:~/testbuilds/catzip-tst $ rsync -avl --delete catzip mypi3-21:~/testbuilds/tb3-16-tst/
+
+devel@mypi3-21:~/testbuilds/tb3-20b/catzip/sw/host $ cd ~/testbuilds/tb3-16-tst/catzip/sw/host/
+
+devel@mypi3-21:~/testbuilds/tb3-16-tst/catzip/sw/host $ sudo config_cat ../../rtl/catzip/catzip.bin
+
+devel@mypi3-21:~/testbuilds/tb3-16-tst/catzip/sw/host $ sudo ./arm-netpport
+
+devel@mypi3-21:~/testbuilds/tb3-16-tst/catzip/sw/host $ ./arm-wbregs version
+01000014 ( VERSION) : [.!..] 20210420
+
+devel@mypi3-21:~/testbuilds/tb3-16-tst/catzip/sw/host $ ./arm-zipload -v ../board/cputest
+Halting the CPU
+Memory regions:
+	Block RAM: 01400000 - 01402000
+	SDRAM       : 02000000 - 03000000
+Loading: ../board/cputest
+Section 0: 02000000 - 02003e94
+Writing to MEM: 02000000-02003e94
+Clearing the CPUs registers
+Setting PC to 02000000
+The CPU should be fully loaded, you may now
+start it (from reset/reboot) with:
+> wbregs cpu 0x0f
+
+CPU Status is: 0000060f
+
+devel@mypi3-21:~/testbuilds/tb3-16-tst/catzip/sw/host $ ./arm-wbregs cpu 0x0f
+04000000 (     CPU)-> 0000000f
+
+fails once more
+devel@mypi3-21:~/testbuilds/tb3-16-tst/catzip/sw/host $ ./arm-wrsdram rgb_pack.bin ; ./arm-rdsdram rdtest.bin ; diff rgb_pack.bin rdtest.bin
+The size of the buffer is 0x010000 or 65536 words
+
+READ-COMPLETE
+
+Write-COMPLETE
+The size of the buffer is 0x010000 or 65536 words

@@ -1,0 +1,1074 @@
+#define	zip_break()		asm("BREAK\n")
+insert line 128 zip_break(); after clrram(i,buf_red);
+
+devel@mypi3-16:~/testbuilds/catzip-tst/catzip/sw/host $ git diff ../board/jpeg.c
+
+diff --git a/sw/board/jpeg.c b/sw/board/jpeg.c
+index 28497a1..7aa0566 100644
+--- a/sw/board/jpeg.c
++++ b/sw/board/jpeg.c
+@@ -8,6 +8,7 @@
+ #define imgsize 256
+ #define DBUG 1
+ #define DBUG1 1
++#define        zip_break()             asm("BREAK\n")
+ /* ./arm-zipload -v ../board/jpeg
+  * ./arm-wbregs 0x00A01000 0x0
+  * ./arm-wbregs 0x00A01004 0x1
+@@ -107,7 +108,7 @@ int main(int argc, char **argv) {
+        red_s_ptr = buf_red;
+        
+        fwd_inv = (int *)malloc(sizeof( int)*1);
+- 
++       zip_break();
+        if(buf_red == NULL) return 2;
+        
+        if(fwd_inv == NULL) return 5;
+@@ -123,7 +124,9 @@ int main(int argc, char **argv) {
+      * packed in bits blu 9-0 
+BOMB : CPU BREAK RECEIVED
+ZIPM--DUMP: Supervisor mode
+
+sR0 : 020000b8 sR1 : 020cf0f8 sR2 : 00000000 sR3 : 00000000
+sR4 : 00000000 sR5 : 0204f0f0 sR6 : 00000000 sR7 : 0200f074
+sR8 : 0204f078 sR9 : 0204f07c sR10: 0204f090 sR11: 0204f094
+sR12: 00000000 sSP : 02ffffc8 sCC : 00000000 sPC : 020000b8
+
+uR0 : 00000000 uR1 : 00000000 uR2 : 00000000 uR3 : 00000000
+uR4 : 00000000 uR5 : 00000000 uR6 : 00000000 uR7 : 00000000
+uR8 : 00000000 uR9 : 00000000 uR10: 00000000 uR11: 00000000
+uR12: 00000000 uSP : 00000000 uCC : 00000020 uPC : 02000030
+
+Nothing was seen 
+devel@mypi3-21:~/testbuilds/tb3-16/catzip/sw/board $ git diff jpeg.c
+diff --git a/sw/board/jpeg.c b/sw/board/jpeg.c
+index 28497a1..28f5a15 100644
+--- a/sw/board/jpeg.c
++++ b/sw/board/jpeg.c
+@@ -8,6 +8,7 @@
+ #define imgsize 256
+ #define DBUG 1
+ #define DBUG1 1
++#define        zip_break()             asm("BREAK\n")
+ /* ./arm-zipload -v ../board/jpeg
+  * ./arm-wbregs 0x00A01000 0x0
+  * ./arm-wbregs 0x00A01004 0x1
+@@ -124,6 +125,7 @@ int main(int argc, char **argv) {
+     */ 
+        i = ptrs.w*ptrs.h*2;
+        clrram(i,buf_red);
++       zip_break();
+        i = 65535;
+         
+                ptrs.flag = ptrs.ptr_blkram_flag[0];
+
+. ptrs.inpbuf = 0x100f124 buf_red = 0x104f1a0
+. fwd_inv = 0x10cf1a8
+
+devel@mypi3-16:~ $ cd /media/devel/1b763776-4e1d-499c-9f24-a116a58c161f/fpgatools/previous-ver-tools/
+
+devel@mypi3-21:~/testbuilds/tb3-16/catzip/sw/host $ . ../../myenv-a.sh 
+/home/devel/zipcpu/sw/install/cross-tools/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/games:/usr/games
+
+
+devel@mypi3-21:~/testbuilds/tb3-16/catzip/sw/host $ rm -f dwt.bin
+
+devel@mypi3-21:~/testbuilds/tb3-16/catzip/sw/host $ cp ../board/jpeg ../board/jpeg.wkg-no-break
+
+devel@mypi3-21:~/testbuilds/tb3-16/catzip/sw/host $ ./arm-wbregs 0x00A01000 0x2
+00a01000 (        )-> 00000002
+devel@mypi3-21:~/testbuilds/tb3-16/catzip/sw/host $ ./arm-wbregs 0x00A01004 0x1
+00a01004 (        )-> 00000001
+
+
+devel@mypi3-21:~/testbuilds/tb3-16/catzip/sw/host $ ./arm-zipload -v ../board/jpeg
+Halting the CPU
+Memory regions:
+	Block RAM: 00a00000 - 00a02000
+	SDRAM       : 01000000 - 02000000
+Loading: ../board/jpeg
+Section 0: 01000000 - 0104f1b4
+Writing to MEM: 01000000-0104f1b4
+Clearing the CPUs registers
+Setting PC to 01000000
+The CPU should be fully loaded, you may now
+start it (from reset/reboot) with:
+> wbregs cpu 0x0f
+
+CPU Status is: 0000060f
+
+devel@mypi3-21:~/testbuilds/tb3-16/catzip/sw/host $ ./arm-wrsdram rgb_pack.bin
+The size of the buffer is 0x00ffff or 65535 words
+
+READ-COMPLETE
+
+devel@mypi3-21:~/testbuilds/tb3-16/catzip/sw/host $ ./arm-zipdbg 
+SUCCESS
+
+devel@mypi3-21:~/testbuilds/tb3-16/catzip/sw/host
+. ptrs.inpbuf = 0x100f144 buf_red = 0xdd20c80
+. fwd_inv = 0xdda0c88
+. x = 0xde22c76 sp = 0x76 z = 0x76
+. x = 0xdf2006a sp = 0x6a z = 0x6a
+. x = 0xde20c69 sp = 0x69 z = 0x69
+. x = 0xdb2106f sp = 0x6f z = 0x6f
+. x = 0x0 sp = 0x0 z = 0x0
+. x = 0x0 sp = 0x0 z = 0x0
+. spliting blue sub band
+. fwd lifting step only
+. w = 0x100 wptr = 0xdd20c80 alt =  0xdd60c80 fwd_inverse =  0xdda0c88 fwd_inver.  =  0x1 
+. starting red dwt
+. in singlelift 
+. in singlelift 
+. in singlelift 
+. in singlelift 
+. in singlelift 
+. in singlelift 
+. testing test_fwd 
+. finished ted dwt
+
+devel@mypi3-21:~/testbuilds/tb3-16/catzip/sw/host $ ./arm-rdsdram dwt.bin
+
+Write-COMPLETE
+The size of the buffer is 0x00ffff or 65535 words
+
+devel@mypi3-21:~/testbuilds/tb3-16/catzip/sw/host $ octave
+libEGL warning: DRI3: failed to query the version
+libEGL warning: DRI2: failed to authenticate
+GNU Octave, version 4.4.1
+Copyright (C) 2018 John W. Eaton and others.
+This is free software; see the source code for copying conditions.
+There is ABSOLUTELY NO WARRANTY; not even for MERCHANTABILITY or
+FITNESS FOR A PARTICULAR PURPOSE.  For details, type 'warranty'.
+
+Octave was configured for "arm-unknown-linux-gnueabihf".
+
+Additional information about Octave is available at https://www.octave.org.
+
+Please contribute if you find this software useful.
+For more information, visit https://www.octave.org/get-involved.html
+
+Read https://www.octave.org/bugs.html to learn how to submit bug reports.
+For information about changes from previous versions, type 'news'.
+
+octave:1> rgb
+octave:2> im4(1:10,1:1)=0;imagesc(im4)
+
+
+devel@mypi3-21:~/testbuilds/tb3-16/catzip/sw/host $ zip-readelf -a ../board/jpegELF Header:
+  Magic:   7f 45 4c 46 01 02 01 00 00 00 00 00 00 00 00 00 
+  Class:                             ELF32
+  Data:                              2's complement, big endian
+  Version:                           1 (current)
+  OS/ABI:                            UNIX - System V
+  ABI Version:                       0
+  Type:                              EXEC (Executable file)
+  Machine:                           Gisselquist Technology ZipCPU
+  Version:                           0x1
+  Entry point address:               0x1000000
+  Start of program headers:          52 (bytes into file)
+  Start of section headers:          334556 (bytes into file)
+  Flags:                             0x0
+  Size of this header:               52 (bytes)
+  Size of program headers:           32 (bytes)
+  Number of program headers:         1
+  Size of section headers:           40 (bytes)
+  Number of section headers:         6
+  Section header string table index: 3
+
+Section Headers:
+  [Nr] Name              Type            Addr     Off    Size   ES Flg Lk Inf Al
+  [ 0]                   NULL            00000000 000000 000000 00      0   0  0
+  [ 1] .ramcode          PROGBITS        01000000 001000 04f1b4 00 WAX  0   0  4
+  [ 2] .comment          PROGBITS        00000000 0501b4 00001c 01  MS  0   0  1
+  [ 3] .shstrtab         STRTAB          00000000 051aad 00002d 00      0   0  1
+  [ 4] .symtab           SYMTAB          00000000 0501d0 000fc0 10      5  80  4
+  [ 5] .strtab           STRTAB          00000000 051190 00091d 00      0   0  1
+Key to Flags:
+  W (write), A (alloc), X (execute), M (merge), S (strings), I (info),
+  L (link order), O (extra OS processing required), G (group), T (TLS),
+  C (compressed), x (unknown), o (OS specific), E (exclude),
+  p (processor specific)
+
+There are no section groups in this file.
+
+Program Headers:
+  Type           Offset   VirtAddr   PhysAddr   FileSiz MemSiz  Flg Align
+  LOAD           0x001000 0x01000000 0x01000000 0x4f1b4 0x4f1b4 RWE 0x1000
+
+ Section to Segment mapping:
+  Segment Sections...
+   00     .ramcode 
+
+There is no dynamic section in this file.
+
+There are no relocations in this file.
+
+The decoding of unwind sections for machine type Gisselquist Technology ZipCPU is not currently supported.
+
+Symbol table '.symtab' contains 252 entries:
+   Num:    Value  Size Type    Bind   Vis      Ndx Name
+     0: 00000000     0 NOTYPE  LOCAL  DEFAULT  UND 
+     1: 01000000     0 SECTION LOCAL  DEFAULT    1 
+     2: 00000000     0 SECTION LOCAL  DEFAULT    2 
+     3: 00000000     0 FILE    LOCAL  DEFAULT  ABS crt0.c
+     4: 01000030     0 NOTYPE  LOCAL  DEFAULT    1 _kernel_is_dead
+     5: 01000038     0 NOTYPE  LOCAL  DEFAULT    1 _argv
+     6: 01000024     0 NOTYPE  LOCAL  DEFAULT    1 _graceful_kernel_exit
+     7: 00000000     0 FILE    LOCAL  DEFAULT  ABS jpeg.c
+     8: 00000000     0 FILE    LOCAL  DEFAULT  ABS lifting.c
+     9: 00000000     0 FILE    LOCAL  DEFAULT  ABS exit.c
+    10: 00000000     0 FILE    LOCAL  DEFAULT  ABS impure.c
+    11: 0100e78c  1072 OBJECT  LOCAL  DEFAULT    1 impure_data
+    12: 00000000     0 FILE    LOCAL  DEFAULT  ABS malloc.c
+    13: 00000000     0 FILE    LOCAL  DEFAULT  ABS mallocr.c
+    14: 00000000     0 FILE    LOCAL  DEFAULT  ABS memcpy.c
+    15: 00000000     0 FILE    LOCAL  DEFAULT  ABS memset.c
+    16: 00000000     0 FILE    LOCAL  DEFAULT  ABS mlock.c
+    17: 00000000     0 FILE    LOCAL  DEFAULT  ABS printf.c
+    18: 00000000     0 FILE    LOCAL  DEFAULT  ABS puts.c
+    19: 00000000     0 FILE    LOCAL  DEFAULT  ABS strlen.c
+    20: 00000000     0 FILE    LOCAL  DEFAULT  ABS vfprintf.c
+    21: 01003ae0   180 FUNC    LOCAL  DEFAULT    1 __sbprintf
+    22: 0100e3fc    16 OBJECT  LOCAL  DEFAULT    1 blanks.4493
+    23: 0100e3ec    16 OBJECT  LOCAL  DEFAULT    1 zeroes.4494
+    24: 00000000     0 FILE    LOCAL  DEFAULT  ABS wsetup.c
+    25: 00000000     0 FILE    LOCAL  DEFAULT  ABS __call_atexit.c
+    26: 00000000     0 FILE    LOCAL  DEFAULT  ABS dtoa.c
+    27: 01003f20   468 FUNC    LOCAL  DEFAULT    1 quorem
+    28: 00000000     0 FILE    LOCAL  DEFAULT  ABS fflush.c
+    29: 00000000     0 FILE    LOCAL  DEFAULT  ABS findfp.c
+    30: 01005ee0     4 FUNC    LOCAL  DEFAULT    1 __fp_unlock
+    31: 01005efc     4 FUNC    LOCAL  DEFAULT    1 __fp_lock
+    32: 00000000     0 FILE    LOCAL  DEFAULT  ABS mallocr.c
+    33: 00000000     0 FILE    LOCAL  DEFAULT  ABS fvwrite.c
+    34: 00000000     0 FILE    LOCAL  DEFAULT  ABS fwalk.c
+    35: 00000000     0 FILE    LOCAL  DEFAULT  ABS localeconv.c
+    36: 00000000     0 FILE    LOCAL  DEFAULT  ABS locale.c
+    37: 00000000     0 FILE    LOCAL  DEFAULT  ABS makebuf.c
+    38: 00000000     0 FILE    LOCAL  DEFAULT  ABS mbtowc_r.c
+    39: 00000000     0 FILE    LOCAL  DEFAULT  ABS memchr.c
+    40: 00000000     0 FILE    LOCAL  DEFAULT  ABS memmove.c
+    41: 00000000     0 FILE    LOCAL  DEFAULT  ABS mprec.c
+    42: 0100e42c    12 OBJECT  LOCAL  DEFAULT    1 p05.3316
+    43: 00000000     0 FILE    LOCAL  DEFAULT  ABS mallocr.c
+    44: 00000000     0 FILE    LOCAL  DEFAULT  ABS stdio.c
+    45: 00000000     0 FILE    LOCAL  DEFAULT  ABS strcmp.c
+    46: 00000000     0 FILE    LOCAL  DEFAULT  ABS vfprintf.c
+    47: 0100b48c   180 FUNC    LOCAL  DEFAULT    1 __sbprintf
+    48: 0100e560    16 OBJECT  LOCAL  DEFAULT    1 blanks.4472
+    49: 0100e550    16 OBJECT  LOCAL  DEFAULT    1 zeroes.4473
+    50: 00000000     0 FILE    LOCAL  DEFAULT  ABS wctomb_r.c
+    51: 00000000     0 FILE    LOCAL  DEFAULT  ABS mallocr.c
+    52: 00000000     0 FILE    LOCAL  DEFAULT  ABS ctype_.c
+    53: 00000000     0 FILE    LOCAL  DEFAULT  ABS fclose.c
+    54: 00000000     0 FILE    LOCAL  DEFAULT  ABS fputwc.c
+    55: 00000000     0 FILE    LOCAL  DEFAULT  ABS wbuf.c
+    56: 00000000     0 FILE    LOCAL  DEFAULT  ABS wcrtomb.c
+    57: 00000000     0 FILE    LOCAL  DEFAULT  ABS udiv.c
+    58: 00000000     0 FILE    LOCAL  DEFAULT  ABS umod.c
+    59: 00000000     0 FILE    LOCAL  DEFAULT  ABS syscalls.c
+    60: 0104f1b0     4 OBJECT  LOCAL  DEFAULT    1 last_was_cr.2993
+    61: 00000000     0 FILE    LOCAL  DEFAULT  ABS fp-bit.c
+    62: 00000000     0 FILE    LOCAL  DEFAULT  ABS fp-bit.c
+    63: 00000000     0 FILE    LOCAL  DEFAULT  ABS fp-bit.c
+    64: 00000000     0 FILE    LOCAL  DEFAULT  ABS fp-bit.c
+    65: 00000000     0 FILE    LOCAL  DEFAULT  ABS fp-bit.c
+    66: 00000000     0 FILE    LOCAL  DEFAULT  ABS fp-bit.c
+    67: 00000000     0 FILE    LOCAL  DEFAULT  ABS fp-bit.c
+    68: 00000000     0 FILE    LOCAL  DEFAULT  ABS fp-bit.c
+    69: 00000000     0 FILE    LOCAL  DEFAULT  ABS fp-bit.c
+    70: 00000000     0 FILE    LOCAL  DEFAULT  ABS fp-bit.c
+    71: 00000000     0 FILE    LOCAL  DEFAULT  ABS fp-bit.c
+    72: 00000000     0 FILE    LOCAL  DEFAULT  ABS fp-bit.c
+    73: 00000000     0 FILE    LOCAL  DEFAULT  ABS fp-bit.c
+    74: 00000000     0 FILE    LOCAL  DEFAULT  ABS libgcc2.c
+    75: 00000000     0 FILE    LOCAL  DEFAULT  ABS fp-bit.c
+    76: 00000000     0 FILE    LOCAL  DEFAULT  ABS fp-bit.c
+    77: 00000000     0 FILE    LOCAL  DEFAULT  ABS fp-bit.c
+    78: 00000000     0 FILE    LOCAL  DEFAULT  ABS libgcc2.c
+    79: 00000000     0 FILE    LOCAL  DEFAULT  ABS errno.c
+    80: 01009178    92 FUNC    GLOBAL DEFAULT    1 _mprec_log10
+    81: 0100924c   260 FUNC    GLOBAL DEFAULT    1 __any_on
+    82: 0100c5fc    12 FUNC    GLOBAL DEFAULT    1 _isatty_r
+    83: 0100e438    40 OBJECT  GLOBAL DEFAULT    1 __mprec_tinytens
+    84: 010017c0   168 FUNC    GLOBAL DEFAULT    1 _puts_r
+    85: 0100c618    12 FUNC    GLOBAL DEFAULT    1 _lseek_r
+    86: 010006fc    44 FUNC    GLOBAL DEFAULT    1 clrram
+    87: 0100c834     8 FUNC    GLOBAL DEFAULT    1 _stat_r
+    88: 0100d6f8   100 FUNC    GLOBAL HIDDEN     1 __eqdf2
+    89: 0100c18c   744 FUNC    GLOBAL DEFAULT    1 __divdi3
+    90: 0100c5f4     8 FUNC    GLOBAL DEFAULT    1 _gettimeofday_r
+    91: 0100c608     8 FUNC    GLOBAL DEFAULT    1 _kill_r
+    92: 01001794    44 FUNC    GLOBAL DEFAULT    1 printf
+    93: 0100bdb8   144 FUNC    GLOBAL DEFAULT    1 _wcrtomb_r
+    94: 010099dc    92 FUNC    GLOBAL DEFAULT    1 __sseek
+    95: 01006228   404 FUNC    GLOBAL DEFAULT    1 __sinit
+    96: 0100bb34   316 FUNC    GLOBAL DEFAULT    1 __swbuf_r
+    97: 01006ef8   144 FUNC    GLOBAL DEFAULT    1 _setlocale_r
+    98: 01005f00    96 FUNC    GLOBAL DEFAULT    1 __sfmoreglue
+    99: 01001770     4 FUNC    GLOBAL DEFAULT    1 __malloc_unlock
+   100: 010074d4   552 FUNC    GLOBAL DEFAULT    1 memmove
+   101: 01006204    36 FUNC    GLOBAL DEFAULT    1 _cleanup
+   102: 01006fb4    36 FUNC    GLOBAL DEFAULT    1 __locale_ctype_ptr
+   103: 010076fc   156 FUNC    GLOBAL DEFAULT    1 _Balloc
+   104: 0100d7c0   100 FUNC    GLOBAL HIDDEN     1 __gtdf2
+   105: 0100e1d4    12 FUNC    GLOBAL DEFAULT    1 __errno
+   106: 01006ea8     8 FUNC    GLOBAL DEFAULT    1 __localeconv_l
+   107: 0100c82c     8 FUNC    GLOBAL DEFAULT    1 _readlink_r
+   108: 0100c5d0    32 FUNC    GLOBAL DEFAULT    1 _fstat_r
+   109: 01009960     4 FUNC    GLOBAL DEFAULT    1 __seofread
+   110: 01000040     4 FUNC    GLOBAL DEFAULT    1 __define_the_top_of_the_s
+   111: 01000000     0 NOTYPE  GLOBAL DEFAULT    1 _sdram
+   112: 01001350   464 FUNC    GLOBAL DEFAULT    1 memcpy
+   113: 0100075c   448 FUNC    GLOBAL DEFAULT    1 split
+   114: 01005ee4    24 FUNC    GLOBAL DEFAULT    1 _cleanup_r
+   115: 0100d940   172 FUNC    GLOBAL HIDDEN     1 __floatsidf
+   116: 0100d824   100 FUNC    GLOBAL HIDDEN     1 __ltdf2
+   117: 01001868   176 FUNC    GLOBAL DEFAULT    1 puts
+   118: 0100c5c8     8 FUNC    GLOBAL DEFAULT    1 _fork_r
+   119: 01008de4   916 FUNC    GLOBAL DEFAULT    1 __ratio
+   120: 01000958    32 FUNC    GLOBAL DEFAULT    1 malloc
+   121: 01001774    32 FUNC    GLOBAL DEFAULT    1 _printf_r
+   122: 0100e488   200 OBJECT  GLOBAL DEFAULT    1 __mprec_tens
+   123: 0104f1a0     8 OBJECT  GLOBAL DEFAULT    1 __malloc_top_pad
+   124: 0100c5f0     4 FUNC    GLOBAL DEFAULT    1 _getpid_r
+   125: 01006eb0    36 FUNC    GLOBAL DEFAULT    1 _localeconv_r
+   126: 01007e44   164 FUNC    GLOBAL DEFAULT    1 __i2b
+   127: 01006904  1164 FUNC    GLOBAL DEFAULT    1 __sfvwrite_r
+   128: 0100c8f4    24 FUNC    GLOBAL DEFAULT    1 _sbrk_r
+   129: 0100c62c   512 FUNC    GLOBAL DEFAULT    1 _read_r
+   130: 0100df24   340 FUNC    GLOBAL HIDDEN     1 __unpack_d
+   131: 0100b620   272 FUNC    GLOBAL DEFAULT    1 _fclose_r
+   132: 01005be0   768 FUNC    GLOBAL DEFAULT    1 fflush
+   133: 0104f198     8 OBJECT  GLOBAL DEFAULT    1 __malloc_max_sbrked_mem
+   134: 0100c928  1020 FUNC    GLOBAL HIDDEN     1 __adddf3
+   135: 010088f0   428 FUNC    GLOBAL DEFAULT    1 __b2d
+   136: 0100c474    88 FUNC    GLOBAL DEFAULT    1 __umoddi3
+   137: 0100e3a0     4 OBJECT  GLOBAL DEFAULT    1 _global_impure_ptr
+   138: 01009350  1448 FUNC    GLOBAL DEFAULT    1 _realloc_r
+   139: 0100bf1c   624 FUNC    GLOBAL DEFAULT    1 __udivdi3
+   140: 0100b91c   248 FUNC    GLOBAL DEFAULT    1 _fputwc_r
+   141: 0100e460    40 OBJECT  GLOBAL DEFAULT    1 __mprec_bigtens
+   142: 0100791c  1004 FUNC    GLOBAL DEFAULT    1 __s2b
+   143: 0100da9c   124 FUNC    GLOBAL HIDDEN     1 __floatunsidf
+   144: 01008590    92 FUNC    GLOBAL DEFAULT    1 __mcmp
+   145: 010063cc    32 FUNC    GLOBAL DEFAULT    1 __fp_lock_all
+   146: 0100c4cc    60 FUNC    GLOBAL DEFAULT    1 _outbyte
+   147: 0100c844    24 FUNC    GLOBAL DEFAULT    1 _times
+   148: 01007d08   132 FUNC    GLOBAL DEFAULT    1 __hi0bits
+   149: 0100d9ec   176 FUNC    GLOBAL HIDDEN     1 __fixdfsi
+   150: 02000000     0 NOTYPE  GLOBAL DEFAULT    1 _top_of_stack
+   151: 0100c83c     8 FUNC    GLOBAL DEFAULT    1 _unlink_r
+   152: 0100f140     4 OBJECT  GLOBAL DEFAULT    1 environ
+   153: 0100d888   100 FUNC    GLOBAL HIDDEN     1 __ledf2
+   154: 01008164   676 FUNC    GLOBAL DEFAULT    1 __pow5mult
+   155: 0100002c     0 NOTYPE  GLOBAL DEFAULT    1 _hw_shutdown
+   156: 0100db18    80 FUNC    GLOBAL HIDDEN     1 __clzsi2
+   157: 010063bc     4 FUNC    GLOBAL DEFAULT    1 __sfp_lock_acquire
+   158: 01007350   388 FUNC    GLOBAL DEFAULT    1 memchr
+   159: 01006588   892 FUNC    GLOBAL DEFAULT    1 _free_r
+   160: 01006f88    36 FUNC    GLOBAL DEFAULT    1 __locale_mb_cur_max
+   161: 01003cfc   548 FUNC    GLOBAL DEFAULT    1 __call_exitprocs
+   162: 0100ebbc     4 OBJECT  GLOBAL DEFAULT    1 __malloc_sbrk_base
+   163: 01000000     0 NOTYPE  GLOBAL DEFAULT    1 _start
+   164: 0100f144 0x40024 OBJECT  GLOBAL DEFAULT    1 ptrs
+   165: 0100c8dc    24 FUNC    GLOBAL DEFAULT    1 _wait
+   166: 01008408   392 FUNC    GLOBAL DEFAULT    1 __lshift
+   167: 0100c624     8 FUNC    GLOBAL DEFAULT    1 _open_r
+   168: 01007ee8   636 FUNC    GLOBAL DEFAULT    1 __multiply
+   169: 0104f168    40 OBJECT  GLOBAL DEFAULT    1 __malloc_current_mallinfo
+   170: 01008a9c   840 FUNC    GLOBAL DEFAULT    1 __d2b
+   171: 0100e078   348 FUNC    GLOBAL HIDDEN     1 __fpcmp_parts_d
+   172: 0100c5b8     8 FUNC    GLOBAL DEFAULT    1 _close_r
+   173: 01003b94   360 FUNC    GLOBAL DEFAULT    1 __swsetup_r
+   174: 0100d4d8   544 FUNC    GLOBAL HIDDEN     1 __divdf3
+   175: 01005f60   676 FUNC    GLOBAL DEFAULT    1 __sfp
+   176: 010091d4   120 FUNC    GLOBAL DEFAULT    1 __copybits
+   177: 0100ebc8  1032 OBJECT  GLOBAL DEFAULT    1 __malloc_av_
+   178: 010063c8     4 FUNC    GLOBAL DEFAULT    1 __sinit_lock_release
+   179: 0100d130   936 FUNC    GLOBAL HIDDEN     1 __muldf3
+   180: 010098f8   104 FUNC    GLOBAL DEFAULT    1 __sread
+   181: 0104f1ac     4 OBJECT  GLOBAL DEFAULT    1 __env
+   182: 0100176c     4 FUNC    GLOBAL DEFAULT    1 __malloc_lock
+   183: 0100c508   176 FUNC    GLOBAL DEFAULT    1 _inbyte
+   184: 0100565c   724 FUNC    GLOBAL DEFAULT    1 _fflush_r
+   185: 0100b584   156 FUNC    GLOBAL DEFAULT    1 _calloc_r
+   186: 01001520   588 FUNC    GLOBAL DEFAULT    1 memset
+   187: 01000044   672 FUNC    GLOBAL DEFAULT    1 main
+   188: 0104f190     8 OBJECT  GLOBAL DEFAULT    1 __malloc_max_total_mem
+   189: 0100bc70   328 FUNC    GLOBAL DEFAULT    1 __swbuf
+   190: 0100f13c     4 OBJECT  GLOBAL DEFAULT    1 heap
+   191: 01009a38    28 FUNC    GLOBAL DEFAULT    1 __sclose
+   192: 01000000     0 NOTYPE  GLOBAL DEFAULT    1 _boot_address
+   193: 0100b730   284 FUNC    GLOBAL DEFAULT    1 fclose
+   194: 010040f4  5480 FUNC    GLOBAL DEFAULT    1 _dtoa_r
+   195: 01000998  2488 FUNC    GLOBAL DEFAULT    1 _malloc_r
+   196: 0100b550    52 FUNC    GLOBAL DEFAULT    1 __ascii_wctomb
+   197: 0104f1b4     0 NOTYPE  GLOBAL DEFAULT    1 _top_of_heap
+   198: 01006d90   136 FUNC    GLOBAL DEFAULT    1 _fwalk
+   199: 010072a4    56 FUNC    GLOBAL DEFAULT    1 _mbtowc_r
+   200: 0100c610     8 FUNC    GLOBAL DEFAULT    1 _link_r
+   201: 0100e674    20 OBJECT  GLOBAL HIDDEN     1 __thenan_df
+   202: 0100640c   380 FUNC    GLOBAL DEFAULT    1 _malloc_trim_r
+   203: 01009a54   316 FUNC    GLOBAL DEFAULT    1 strcmp
+   204: 0100b46c    32 FUNC    GLOBAL DEFAULT    1 vfiprintf
+   205: 0100d75c   100 FUNC    GLOBAL HIDDEN     1 __nedf2
+   206: 0100e688   256 OBJECT  GLOBAL HIDDEN     1 __clz_tab
+   207: 0104f1a8     4 OBJECT  GLOBAL DEFAULT    1 _PathLocale
+   208: 00a00000     0 NOTYPE  GLOBAL DEFAULT    1 _bkram
+   209: 0100c85c   128 FUNC    GLOBAL DEFAULT    1 _write_r
+   210: 0100c5c0     8 FUNC    GLOBAL DEFAULT    1 _execve_r
+   211: 01006fd8   144 FUNC    GLOBAL DEFAULT    1 setlocale
+   212: 0100e788     4 OBJECT  GLOBAL DEFAULT    1 _impure_ptr
+   213: 01005930   688 FUNC    GLOBAL DEFAULT    1 __sflush_r
+   214: 01000728    52 FUNC    GLOBAL DEFAULT    1 out2inpbuf
+   215: 010072dc   116 FUNC    GLOBAL DEFAULT    1 __ascii_mbtowc
+   216: 01008894    92 FUNC    GLOBAL DEFAULT    1 __ulp
+   217: 010063ec    32 FUNC    GLOBAL DEFAULT    1 __fp_unlock_all
+   218: 01006ed4    36 FUNC    GLOBAL DEFAULT    1 localeconv
+   219: 010071f4   176 FUNC    GLOBAL DEFAULT    1 __swhatbuf_r
+   220: 0100b84c   208 FUNC    GLOBAL DEFAULT    1 __fputwc
+   221: 0100043c   356 FUNC    GLOBAL DEFAULT    1 ilift
+   222: 01009964   120 FUNC    GLOBAL DEFAULT    1 __swrite
+   223: 010005a0   348 FUNC    GLOBAL DEFAULT    1 lifting
+   224: 0100ebc0     8 OBJECT  GLOBAL DEFAULT    1 __malloc_trim_threshold
+   225: 0100091c    60 FUNC    GLOBAL DEFAULT    1 exit
+   226: 01009c5c  6160 FUNC    GLOBAL DEFAULT    1 _vfiprintf_r
+   227: 01006e18   144 FUNC    GLOBAL DEFAULT    1 _fwalk_reent
+   228: 010085ec   680 FUNC    GLOBAL DEFAULT    1 __mdiff
+   229: 010063c0     4 FUNC    GLOBAL DEFAULT    1 __sfp_lock_release
+   230: 0100e570   257 OBJECT  GLOBAL DEFAULT    1 _ctype_
+   231: 0100d8ec    84 FUNC    GLOBAL HIDDEN     1 __unorddf2
+   232: 0100c90c    28 FUNC    GLOBAL DEFAULT    1 _exit
+   233: 01007068   396 FUNC    GLOBAL DEFAULT    1 __smakebuf_r
+   234: 01001918   276 FUNC    GLOBAL DEFAULT    1 strlen
+   235: 010002e4   344 FUNC    GLOBAL DEFAULT    1 singlelift
+   236: 01006fac     8 FUNC    GLOBAL DEFAULT    1 __locale_ctype_ptr_l
+   237: 01009b90   204 FUNC    GLOBAL DEFAULT    1 __sprint_r
+   238: 0100becc     0 FUNC    GLOBAL DEFAULT    1 cltz
+   239: 0100b540    16 FUNC    GLOBAL DEFAULT    1 _wctomb_r
+   240: 0100cd24  1036 FUNC    GLOBAL HIDDEN     1 __subdf3
+   241: 01001a2c  8340 FUNC    GLOBAL DEFAULT    1 _vfprintf_r
+   242: 01007d8c   184 FUNC    GLOBAL DEFAULT    1 __lo0bits
+   243: 0100be48   132 FUNC    GLOBAL DEFAULT    1 wcrtomb
+   244: 0100efd0   364 OBJECT  GLOBAL DEFAULT    1 __global_locale
+   245: 0100db68   956 FUNC    GLOBAL HIDDEN     1 __pack_d
+   246: 01003ac0    32 FUNC    GLOBAL DEFAULT    1 vfprintf
+   247: 0100ba14   288 FUNC    GLOBAL DEFAULT    1 fputwc
+   248: 01000978    32 FUNC    GLOBAL DEFAULT    1 free
+   249: 010063c4     4 FUNC    GLOBAL DEFAULT    1 __sinit_lock_acquire
+   250: 010077b8   356 FUNC    GLOBAL DEFAULT    1 __multadd
+   251: 01007798    32 FUNC    GLOBAL DEFAULT    1 _Bfree
+
+No version information found in this file.
+
+jpeg map
+Archive member included to satisfy reference by file (symbol)
+
+/home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-exit.o)
+                              obj-zip/jpeg.o (exit)
+/home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-impure.o)
+                              /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-exit.o) (_global_impure_ptr)
+/home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-malloc.o)
+                              obj-zip/jpeg.o (malloc)
+/home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-mallocr.o)
+                              /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-malloc.o) (_malloc_r)
+/home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-memcpy.o)
+                              obj-zip/jpeg.o (memcpy)
+/home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-memset.o)
+                              obj-zip/jpeg.o (memset)
+/home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-mlock.o)
+                              /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-mallocr.o) (__malloc_lock)
+/home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-printf.o)
+                              obj-zip/jpeg.o (printf)
+/home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-puts.o)
+                              obj-zip/lifting.o (puts)
+/home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-strlen.o)
+                              /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-puts.o) (strlen)
+/home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-vfprintf.o)
+                              /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-printf.o) (_vfprintf_r)
+/home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-wsetup.o)
+                              /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-vfprintf.o) (__swsetup_r)
+/home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-__call_atexit.o)
+                              /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-exit.o) (__call_exitprocs)
+/home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-dtoa.o)
+                              /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-vfprintf.o) (_dtoa_r)
+/home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-fflush.o)
+                              /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-vfprintf.o) (_fflush_r)
+/home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-findfp.o)
+                              /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-puts.o) (__sinit)
+/home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-freer.o)
+                              /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-malloc.o) (_free_r)
+/home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-fvwrite.o)
+                              /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-puts.o) (__sfvwrite_r)
+/home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-fwalk.o)
+                              /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-findfp.o) (_fwalk)
+/home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-localeconv.o)
+                              /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-vfprintf.o) (_localeconv_r)
+/home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-locale.o)
+                              /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-localeconv.o) (__global_locale)
+/home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-makebuf.o)
+                              /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-wsetup.o) (__smakebuf_r)
+/home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-mbtowc_r.o)
+                              /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-locale.o) (__ascii_mbtowc)
+/home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-memchr.o)
+                              /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-vfprintf.o) (memchr)
+/home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-memmove.o)
+                              /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-fvwrite.o) (memmove)
+/home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-mprec.o)
+                              /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-dtoa.o) (_Balloc)
+/home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-reallocr.o)
+                              /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-fvwrite.o) (_realloc_r)
+/home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-stdio.o)
+                              /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-findfp.o) (__sread)
+/home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-strcmp.o)
+                              /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-locale.o) (strcmp)
+/home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-vfiprintf.o)
+                              /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-vfprintf.o) (__sprint_r)
+/home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-wctomb_r.o)
+                              /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-locale.o) (__ascii_wctomb)
+/home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-callocr.o)
+                              /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-mprec.o) (_calloc_r)
+/home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-ctype_.o)
+                              /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-locale.o) (_ctype_)
+/home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-fclose.o)
+                              /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-findfp.o) (_fclose_r)
+/home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-fputwc.o)
+                              /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-vfiprintf.o) (_fputwc_r)
+/home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-wbuf.o)
+                              /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-fputwc.o) (__swbuf_r)
+/home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-wcrtomb.o)
+                              /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-fputwc.o) (_wcrtomb_r)
+../zlib/libcatzip.a(udiv.o)   /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-vfprintf.o) (__udivdi3)
+../zlib/libcatzip.a(umod.o)   /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-vfprintf.o) (__umoddi3)
+../zlib/libcatzip.a(syscalls.o)
+                              /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-stdio.o) (_close_r)
+../zlib/libcatzip.a(crt0.o)   (_start)
+/home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_addsub_df.o)
+                              /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-dtoa.o) (__adddf3)
+/home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_mul_df.o)
+                              /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-dtoa.o) (__muldf3)
+/home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_div_df.o)
+                              /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-dtoa.o) (__divdf3)
+/home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_eq_df.o)
+                              /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-vfprintf.o) (__eqdf2)
+/home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_ne_df.o)
+                              /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-vfprintf.o) (__nedf2)
+/home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_gt_df.o)
+                              /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-dtoa.o) (__gtdf2)
+/home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_lt_df.o)
+                              /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-vfprintf.o) (__ltdf2)
+/home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_le_df.o)
+                              /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-vfprintf.o) (__ledf2)
+/home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_unord_df.o)
+                              /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-vfprintf.o) (__unorddf2)
+/home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_si_to_df.o)
+                              /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-dtoa.o) (__floatsidf)
+/home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_df_to_si.o)
+                              /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-dtoa.o) (__fixdfsi)
+/home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_thenan_df.o)
+                              /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_addsub_df.o) (__thenan_df)
+/home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_usi_to_df.o)
+                              /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-dtoa.o) (__floatunsidf)
+/home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_clzsi2.o)
+                              /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_si_to_df.o) (__clzsi2)
+/home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_pack_df.o)
+                              /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_addsub_df.o) (__pack_d)
+/home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_unpack_df.o)
+                              /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_addsub_df.o) (__unpack_d)
+/home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_fpcmp_parts_df.o)
+                              /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_eq_df.o) (__fpcmp_parts_d)
+/home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_clz.o)
+                              /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_clzsi2.o) (__clz_tab)
+/home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-errno.o)
+                              ../zlib/libcatzip.a(syscalls.o) (__errno)
+
+Allocating common symbols
+Common symbol       size              file
+
+ptrs                0x40024           obj-zip/jpeg.o
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+bkram            0x00a00000         0x00002000         xw
+sdram            0x01000000         0x01000000         xw
+*default*        0x00000000         0xffffffff
+
+Linker script and memory map
+
+LOAD obj-zip/lifting.o
+LOAD obj-zip/jpeg.o
+LOAD /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a
+LOAD ../zlib/libcatzip.a
+LOAD /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a
+LOAD /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a
+                0x00a00000                _bkram = ORIGIN (bkram)
+                0x01000000                _sdram = ORIGIN (sdram)
+                0x02000000                _top_of_stack = (ORIGIN (sdram) + LENGTH (sdram))
+
+.ramcode        0x01000000    0x4f1b4
+                0x01000000                _boot_address = .
+ *(.start)
+ .start         0x01000000       0x40 ../zlib/libcatzip.a(crt0.o)
+                0x01000000                _start
+                0x0100002c                _hw_shutdown
+ *(.boot)
+ .boot          0x01000040        0x4 ../zlib/libcatzip.a(crt0.o)
+                0x01000040                __define_the_top_of_the_stack__
+ *(.kernel)
+ *(.text.startup)
+ .text.startup  0x01000044      0x2a0 obj-zip/jpeg.o
+                0x01000044                main
+ *(.text*)
+ .text          0x010002e4      0x418 obj-zip/lifting.o
+                0x010002e4                singlelift
+                0x0100043c                ilift
+                0x010005a0                lifting
+ .text          0x010006fc      0x220 obj-zip/jpeg.o
+                0x010006fc                clrram
+                0x01000728                out2inpbuf
+                0x0100075c                split
+ .text          0x0100091c       0x3c /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-exit.o)
+                0x0100091c                exit
+ .text          0x01000958        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-impure.o)
+ .text          0x01000958       0x40 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-malloc.o)
+                0x01000958                malloc
+                0x01000978                free
+ .text          0x01000998      0x9b8 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-mallocr.o)
+                0x01000998                _malloc_r
+ .text          0x01001350      0x1d0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-memcpy.o)
+                0x01001350                memcpy
+ .text          0x01001520      0x24c /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-memset.o)
+                0x01001520                memset
+ .text          0x0100176c        0x8 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-mlock.o)
+                0x0100176c                __malloc_lock
+                0x01001770                __malloc_unlock
+ .text          0x01001774       0x4c /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-printf.o)
+                0x01001774                _printf_r
+                0x01001794                printf
+ .text          0x010017c0      0x158 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-puts.o)
+                0x010017c0                _puts_r
+                0x01001868                puts
+ .text          0x01001918      0x114 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-strlen.o)
+                0x01001918                strlen
+ .text          0x01001a2c     0x2168 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-vfprintf.o)
+                0x01001a2c                _vfprintf_r
+                0x01003ac0                vfprintf
+ .text          0x01003b94      0x168 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-wsetup.o)
+                0x01003b94                __swsetup_r
+ .text          0x01003cfc      0x224 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-__call_atexit.o)
+                0x01003cfc                __call_exitprocs
+ .text          0x01003f20     0x173c /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-dtoa.o)
+                0x010040f4                _dtoa_r
+ .text          0x0100565c      0x884 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-fflush.o)
+                0x0100565c                _fflush_r
+                0x01005930                __sflush_r
+                0x01005be0                fflush
+ .text          0x01005ee0      0x52c /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-findfp.o)
+                0x01005ee4                _cleanup_r
+                0x01005f00                __sfmoreglue
+                0x01005f60                __sfp
+                0x01006204                _cleanup
+                0x01006228                __sinit
+                0x010063bc                __sfp_lock_acquire
+                0x010063c0                __sfp_lock_release
+                0x010063c4                __sinit_lock_acquire
+                0x010063c8                __sinit_lock_release
+                0x010063cc                __fp_lock_all
+                0x010063ec                __fp_unlock_all
+ .text          0x0100640c      0x4f8 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-freer.o)
+                0x0100640c                _malloc_trim_r
+                0x01006588                _free_r
+ .text          0x01006904      0x48c /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-fvwrite.o)
+                0x01006904                __sfvwrite_r
+ .text          0x01006d90      0x118 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-fwalk.o)
+                0x01006d90                _fwalk
+                0x01006e18                _fwalk_reent
+ .text          0x01006ea8       0x50 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-localeconv.o)
+                0x01006ea8                __localeconv_l
+                0x01006eb0                _localeconv_r
+                0x01006ed4                localeconv
+ .text          0x01006ef8      0x170 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-locale.o)
+                0x01006ef8                _setlocale_r
+                0x01006f88                __locale_mb_cur_max
+                0x01006fac                __locale_ctype_ptr_l
+                0x01006fb4                __locale_ctype_ptr
+                0x01006fd8                setlocale
+ .text          0x01007068      0x23c /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-makebuf.o)
+                0x01007068                __smakebuf_r
+                0x010071f4                __swhatbuf_r
+ .text          0x010072a4       0xac /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-mbtowc_r.o)
+                0x010072a4                _mbtowc_r
+                0x010072dc                __ascii_mbtowc
+ .text          0x01007350      0x184 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-memchr.o)
+                0x01007350                memchr
+ .text          0x010074d4      0x228 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-memmove.o)
+                0x010074d4                memmove
+ .text          0x010076fc     0x1c54 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-mprec.o)
+                0x010076fc                _Balloc
+                0x01007798                _Bfree
+                0x010077b8                __multadd
+                0x0100791c                __s2b
+                0x01007d08                __hi0bits
+                0x01007d8c                __lo0bits
+                0x01007e44                __i2b
+                0x01007ee8                __multiply
+                0x01008164                __pow5mult
+                0x01008408                __lshift
+                0x01008590                __mcmp
+                0x010085ec                __mdiff
+                0x01008894                __ulp
+                0x010088f0                __b2d
+                0x01008a9c                __d2b
+                0x01008de4                __ratio
+                0x01009178                _mprec_log10
+                0x010091d4                __copybits
+                0x0100924c                __any_on
+ .text          0x01009350      0x5a8 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-reallocr.o)
+                0x01009350                _realloc_r
+ .text          0x010098f8      0x15c /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-stdio.o)
+                0x010098f8                __sread
+                0x01009960                __seofread
+                0x01009964                __swrite
+                0x010099dc                __sseek
+                0x01009a38                __sclose
+ .text          0x01009a54      0x13c /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-strcmp.o)
+                0x01009a54                strcmp
+ .text          0x01009b90     0x19b0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-vfiprintf.o)
+                0x01009b90                __sprint_r
+                0x01009c5c                _vfiprintf_r
+                0x0100b46c                vfiprintf
+ .text          0x0100b540       0x44 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-wctomb_r.o)
+                0x0100b540                _wctomb_r
+                0x0100b550                __ascii_wctomb
+ .text          0x0100b584       0x9c /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-callocr.o)
+                0x0100b584                _calloc_r
+ .text          0x0100b620        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-ctype_.o)
+ .text          0x0100b620      0x22c /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-fclose.o)
+                0x0100b620                _fclose_r
+                0x0100b730                fclose
+ .text          0x0100b84c      0x2e8 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-fputwc.o)
+                0x0100b84c                __fputwc
+                0x0100b91c                _fputwc_r
+                0x0100ba14                fputwc
+ .text          0x0100bb34      0x284 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-wbuf.o)
+                0x0100bb34                __swbuf_r
+                0x0100bc70                __swbuf
+ .text          0x0100bdb8      0x114 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-wcrtomb.o)
+                0x0100bdb8                _wcrtomb_r
+                0x0100be48                wcrtomb
+ .text          0x0100becc      0x5a8 ../zlib/libcatzip.a(udiv.o)
+                0x0100becc                cltz
+                0x0100bf1c                __udivdi3
+                0x0100c18c                __divdi3
+ .text          0x0100c474       0x58 ../zlib/libcatzip.a(umod.o)
+                0x0100c474                __umoddi3
+ .text          0x0100c4cc      0x45c ../zlib/libcatzip.a(syscalls.o)
+                0x0100c4cc                _outbyte
+                0x0100c508                _inbyte
+                0x0100c5b8                _close_r
+                0x0100c5c0                _execve_r
+                0x0100c5c8                _fork_r
+                0x0100c5d0                _fstat_r
+                0x0100c5f0                _getpid_r
+                0x0100c5f4                _gettimeofday_r
+                0x0100c5fc                _isatty_r
+                0x0100c608                _kill_r
+                0x0100c610                _link_r
+                0x0100c618                _lseek_r
+                0x0100c624                _open_r
+                0x0100c62c                _read_r
+                0x0100c82c                _readlink_r
+                0x0100c834                _stat_r
+                0x0100c83c                _unlink_r
+                0x0100c844                _times
+                0x0100c85c                _write_r
+                0x0100c8dc                _wait
+                0x0100c8f4                _sbrk_r
+                0x0100c90c                _exit
+ .text          0x0100c928        0x0 ../zlib/libcatzip.a(crt0.o)
+ .text          0x0100c928      0x808 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_addsub_df.o)
+                0x0100c928                __adddf3
+                0x0100cd24                __subdf3
+ .text          0x0100d130      0x3a8 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_mul_df.o)
+                0x0100d130                __muldf3
+ .text          0x0100d4d8      0x220 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_div_df.o)
+                0x0100d4d8                __divdf3
+ .text          0x0100d6f8       0x64 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_eq_df.o)
+                0x0100d6f8                __eqdf2
+ .text          0x0100d75c       0x64 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_ne_df.o)
+                0x0100d75c                __nedf2
+ .text          0x0100d7c0       0x64 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_gt_df.o)
+                0x0100d7c0                __gtdf2
+ .text          0x0100d824       0x64 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_lt_df.o)
+                0x0100d824                __ltdf2
+ .text          0x0100d888       0x64 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_le_df.o)
+                0x0100d888                __ledf2
+ .text          0x0100d8ec       0x54 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_unord_df.o)
+                0x0100d8ec                __unorddf2
+ .text          0x0100d940       0xac /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_si_to_df.o)
+                0x0100d940                __floatsidf
+ .text          0x0100d9ec       0xb0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_df_to_si.o)
+                0x0100d9ec                __fixdfsi
+ .text          0x0100da9c        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_thenan_df.o)
+ .text          0x0100da9c       0x7c /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_usi_to_df.o)
+                0x0100da9c                __floatunsidf
+ .text          0x0100db18       0x50 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_clzsi2.o)
+                0x0100db18                __clzsi2
+ .text          0x0100db68      0x3bc /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_pack_df.o)
+                0x0100db68                __pack_d
+ .text          0x0100df24      0x154 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_unpack_df.o)
+                0x0100df24                __unpack_d
+ .text          0x0100e078      0x15c /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_fpcmp_parts_df.o)
+                0x0100e078                __fpcmp_parts_d
+ .text          0x0100e1d4        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_clz.o)
+ .text          0x0100e1d4        0xc /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-errno.o)
+                0x0100e1d4                __errno
+ *(.rodata*)
+ .rodata.str1.4
+                0x0100e1e0       0x22 obj-zip/lifting.o
+ *fill*         0x0100e202        0x2 
+ .rodata.str1.4
+                0x0100e204      0x199 obj-zip/jpeg.o
+ *fill*         0x0100e39d        0x3 
+ .rodata        0x0100e3a0        0x4 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-impure.o)
+                0x0100e3a0                _global_impure_ptr
+ .rodata.str1.4
+                0x0100e3a4        0x2 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-puts.o)
+ *fill*         0x0100e3a6        0x2 
+ .rodata.str1.4
+                0x0100e3a8       0x42 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-vfprintf.o)
+ *fill*         0x0100e3ea        0x2 
+ .rodata        0x0100e3ec       0x20 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-vfprintf.o)
+ .rodata.str1.4
+                0x0100e40c       0x10 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-dtoa.o)
+                                 0x12 (size before relaxing)
+ .rodata.str1.4
+                0x0100e41c       0x10 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-locale.o)
+                                 0x12 (size before relaxing)
+ .rodata        0x0100e42c      0x124 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-mprec.o)
+                0x0100e438                __mprec_tinytens
+                0x0100e460                __mprec_bigtens
+                0x0100e488                __mprec_tens
+ .rodata.str1.4
+                0x0100e550       0x2f /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-vfiprintf.o)
+ .rodata        0x0100e550       0x20 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-vfiprintf.o)
+ .rodata        0x0100e570      0x101 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-ctype_.o)
+                0x0100e570                _ctype_
+ *fill*         0x0100e671        0x3 
+ .rodata        0x0100e674       0x14 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_thenan_df.o)
+                0x0100e674                __thenan_df
+ .rodata        0x0100e688      0x100 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_clz.o)
+                0x0100e688                __clz_tab
+ *(.strings)
+ *(.data)
+ .data          0x0100e788        0x0 obj-zip/lifting.o
+ .data          0x0100e788        0x0 obj-zip/jpeg.o
+ .data          0x0100e788        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-exit.o)
+ .data          0x0100e788      0x434 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-impure.o)
+                0x0100e788                _impure_ptr
+ .data          0x0100ebbc        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-malloc.o)
+ .data          0x0100ebbc      0x414 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-mallocr.o)
+                0x0100ebbc                __malloc_sbrk_base
+                0x0100ebc0                __malloc_trim_threshold
+                0x0100ebc8                __malloc_av_
+ .data          0x0100efd0        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-memcpy.o)
+ .data          0x0100efd0        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-memset.o)
+ .data          0x0100efd0        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-mlock.o)
+ .data          0x0100efd0        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-printf.o)
+ .data          0x0100efd0        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-puts.o)
+ .data          0x0100efd0        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-strlen.o)
+ .data          0x0100efd0        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-vfprintf.o)
+ .data          0x0100efd0        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-wsetup.o)
+ .data          0x0100efd0        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-__call_atexit.o)
+ .data          0x0100efd0        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-dtoa.o)
+ .data          0x0100efd0        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-fflush.o)
+ .data          0x0100efd0        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-findfp.o)
+ .data          0x0100efd0        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-freer.o)
+ .data          0x0100efd0        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-fvwrite.o)
+ .data          0x0100efd0        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-fwalk.o)
+ .data          0x0100efd0        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-localeconv.o)
+ .data          0x0100efd0      0x16c /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-locale.o)
+                0x0100efd0                __global_locale
+ .data          0x0100f13c        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-makebuf.o)
+ .data          0x0100f13c        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-mbtowc_r.o)
+ .data          0x0100f13c        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-memchr.o)
+ .data          0x0100f13c        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-memmove.o)
+ .data          0x0100f13c        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-mprec.o)
+ .data          0x0100f13c        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-reallocr.o)
+ .data          0x0100f13c        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-stdio.o)
+ .data          0x0100f13c        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-strcmp.o)
+ .data          0x0100f13c        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-vfiprintf.o)
+ .data          0x0100f13c        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-wctomb_r.o)
+ .data          0x0100f13c        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-callocr.o)
+ .data          0x0100f13c        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-ctype_.o)
+ .data          0x0100f13c        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-fclose.o)
+ .data          0x0100f13c        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-fputwc.o)
+ .data          0x0100f13c        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-wbuf.o)
+ .data          0x0100f13c        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-wcrtomb.o)
+ .data          0x0100f13c        0x0 ../zlib/libcatzip.a(udiv.o)
+ .data          0x0100f13c        0x0 ../zlib/libcatzip.a(umod.o)
+ .data          0x0100f13c        0x8 ../zlib/libcatzip.a(syscalls.o)
+                0x0100f13c                heap
+                0x0100f140                environ
+ .data          0x0100f144        0x0 ../zlib/libcatzip.a(crt0.o)
+ .data          0x0100f144        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_addsub_df.o)
+ .data          0x0100f144        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_mul_df.o)
+ .data          0x0100f144        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_div_df.o)
+ .data          0x0100f144        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_eq_df.o)
+ .data          0x0100f144        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_ne_df.o)
+ .data          0x0100f144        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_gt_df.o)
+ .data          0x0100f144        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_lt_df.o)
+ .data          0x0100f144        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_le_df.o)
+ .data          0x0100f144        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_unord_df.o)
+ .data          0x0100f144        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_si_to_df.o)
+ .data          0x0100f144        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_df_to_si.o)
+ .data          0x0100f144        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_thenan_df.o)
+ .data          0x0100f144        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_usi_to_df.o)
+ .data          0x0100f144        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_clzsi2.o)
+ .data          0x0100f144        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_pack_df.o)
+ .data          0x0100f144        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_unpack_df.o)
+ .data          0x0100f144        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_fpcmp_parts_df.o)
+ .data          0x0100f144        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_clz.o)
+ .data          0x0100f144        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-errno.o)
+ *(COMMON)
+ COMMON         0x0100f144    0x40024 obj-zip/jpeg.o
+                0x0100f144                ptrs
+ *(.bss)
+ .bss           0x0104f168        0x0 obj-zip/lifting.o
+ .bss           0x0104f168        0x0 obj-zip/jpeg.o
+ .bss           0x0104f168        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-exit.o)
+ .bss           0x0104f168        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-impure.o)
+ .bss           0x0104f168        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-malloc.o)
+ .bss           0x0104f168       0x40 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-mallocr.o)
+                0x0104f168                __malloc_current_mallinfo
+                0x0104f190                __malloc_max_total_mem
+                0x0104f198                __malloc_max_sbrked_mem
+                0x0104f1a0                __malloc_top_pad
+ .bss           0x0104f1a8        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-memcpy.o)
+ .bss           0x0104f1a8        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-memset.o)
+ .bss           0x0104f1a8        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-mlock.o)
+ .bss           0x0104f1a8        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-printf.o)
+ .bss           0x0104f1a8        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-puts.o)
+ .bss           0x0104f1a8        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-strlen.o)
+ .bss           0x0104f1a8        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-vfprintf.o)
+ .bss           0x0104f1a8        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-wsetup.o)
+ .bss           0x0104f1a8        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-__call_atexit.o)
+ .bss           0x0104f1a8        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-dtoa.o)
+ .bss           0x0104f1a8        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-fflush.o)
+ .bss           0x0104f1a8        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-findfp.o)
+ .bss           0x0104f1a8        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-freer.o)
+ .bss           0x0104f1a8        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-fvwrite.o)
+ .bss           0x0104f1a8        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-fwalk.o)
+ .bss           0x0104f1a8        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-localeconv.o)
+ .bss           0x0104f1a8        0x4 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-locale.o)
+                0x0104f1a8                _PathLocale
+ .bss           0x0104f1ac        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-makebuf.o)
+ .bss           0x0104f1ac        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-mbtowc_r.o)
+ .bss           0x0104f1ac        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-memchr.o)
+ .bss           0x0104f1ac        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-memmove.o)
+ .bss           0x0104f1ac        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-mprec.o)
+ .bss           0x0104f1ac        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-reallocr.o)
+ .bss           0x0104f1ac        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-stdio.o)
+ .bss           0x0104f1ac        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-strcmp.o)
+ .bss           0x0104f1ac        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-vfiprintf.o)
+ .bss           0x0104f1ac        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-wctomb_r.o)
+ .bss           0x0104f1ac        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-callocr.o)
+ .bss           0x0104f1ac        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-ctype_.o)
+ .bss           0x0104f1ac        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-fclose.o)
+ .bss           0x0104f1ac        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-fputwc.o)
+ .bss           0x0104f1ac        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-wbuf.o)
+ .bss           0x0104f1ac        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-wcrtomb.o)
+ .bss           0x0104f1ac        0x0 ../zlib/libcatzip.a(udiv.o)
+ .bss           0x0104f1ac        0x0 ../zlib/libcatzip.a(umod.o)
+ .bss           0x0104f1ac        0x8 ../zlib/libcatzip.a(syscalls.o)
+                0x0104f1ac                __env
+ .bss           0x0104f1b4        0x0 ../zlib/libcatzip.a(crt0.o)
+ .bss           0x0104f1b4        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_addsub_df.o)
+ .bss           0x0104f1b4        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_mul_df.o)
+ .bss           0x0104f1b4        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_div_df.o)
+ .bss           0x0104f1b4        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_eq_df.o)
+ .bss           0x0104f1b4        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_ne_df.o)
+ .bss           0x0104f1b4        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_gt_df.o)
+ .bss           0x0104f1b4        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_lt_df.o)
+ .bss           0x0104f1b4        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_le_df.o)
+ .bss           0x0104f1b4        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_unord_df.o)
+ .bss           0x0104f1b4        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_si_to_df.o)
+ .bss           0x0104f1b4        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_df_to_si.o)
+ .bss           0x0104f1b4        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_thenan_df.o)
+ .bss           0x0104f1b4        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_usi_to_df.o)
+ .bss           0x0104f1b4        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_clzsi2.o)
+ .bss           0x0104f1b4        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_pack_df.o)
+ .bss           0x0104f1b4        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_unpack_df.o)
+ .bss           0x0104f1b4        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_fpcmp_parts_df.o)
+ .bss           0x0104f1b4        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_clz.o)
+ .bss           0x0104f1b4        0x0 /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-errno.o)
+                0x0104f1b4                _top_of_heap = .
+OUTPUT(jpeg elf32-zip)
+
+.comment        0x00000000       0x1c
+ .comment       0x00000000       0x1c obj-zip/lifting.o
+                                 0x1d (size before relaxing)
+ .comment       0x0000001c       0x1d obj-zip/jpeg.o
+ .comment       0x0000001c       0x1d /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-exit.o)
+ .comment       0x0000001c       0x1d /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-impure.o)
+ .comment       0x0000001c       0x1d /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-malloc.o)
+ .comment       0x0000001c       0x1d /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-mallocr.o)
+ .comment       0x0000001c       0x1d /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-memcpy.o)
+ .comment       0x0000001c       0x1d /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-memset.o)
+ .comment       0x0000001c       0x1d /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-mlock.o)
+ .comment       0x0000001c       0x1d /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-printf.o)
+ .comment       0x0000001c       0x1d /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-puts.o)
+ .comment       0x0000001c       0x1d /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-strlen.o)
+ .comment       0x0000001c       0x1d /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-vfprintf.o)
+ .comment       0x0000001c       0x1d /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-wsetup.o)
+ .comment       0x0000001c       0x1d /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-__call_atexit.o)
+ .comment       0x0000001c       0x1d /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-dtoa.o)
+ .comment       0x0000001c       0x1d /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-fflush.o)
+ .comment       0x0000001c       0x1d /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-findfp.o)
+ .comment       0x0000001c       0x1d /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-freer.o)
+ .comment       0x0000001c       0x1d /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-fvwrite.o)
+ .comment       0x0000001c       0x1d /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-fwalk.o)
+ .comment       0x0000001c       0x1d /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-localeconv.o)
+ .comment       0x0000001c       0x1d /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-locale.o)
+ .comment       0x0000001c       0x1d /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-makebuf.o)
+ .comment       0x0000001c       0x1d /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-mbtowc_r.o)
+ .comment       0x0000001c       0x1d /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-memchr.o)
+ .comment       0x0000001c       0x1d /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-memmove.o)
+ .comment       0x0000001c       0x1d /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-mprec.o)
+ .comment       0x0000001c       0x1d /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-reallocr.o)
+ .comment       0x0000001c       0x1d /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-stdio.o)
+ .comment       0x0000001c       0x1d /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-strcmp.o)
+ .comment       0x0000001c       0x1d /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-vfiprintf.o)
+ .comment       0x0000001c       0x1d /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-wctomb_r.o)
+ .comment       0x0000001c       0x1d /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-callocr.o)
+ .comment       0x0000001c       0x1d /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-ctype_.o)
+ .comment       0x0000001c       0x1d /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-fclose.o)
+ .comment       0x0000001c       0x1d /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-fputwc.o)
+ .comment       0x0000001c       0x1d /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-wbuf.o)
+ .comment       0x0000001c       0x1d /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-wcrtomb.o)
+ .comment       0x0000001c       0x1d ../zlib/libcatzip.a(udiv.o)
+ .comment       0x0000001c       0x1d ../zlib/libcatzip.a(umod.o)
+ .comment       0x0000001c       0x1d ../zlib/libcatzip.a(syscalls.o)
+ .comment       0x0000001c       0x1d ../zlib/libcatzip.a(crt0.o)
+ .comment       0x0000001c       0x1d /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_addsub_df.o)
+ .comment       0x0000001c       0x1d /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_mul_df.o)
+ .comment       0x0000001c       0x1d /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_div_df.o)
+ .comment       0x0000001c       0x1d /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_eq_df.o)
+ .comment       0x0000001c       0x1d /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_ne_df.o)
+ .comment       0x0000001c       0x1d /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_gt_df.o)
+ .comment       0x0000001c       0x1d /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_lt_df.o)
+ .comment       0x0000001c       0x1d /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_le_df.o)
+ .comment       0x0000001c       0x1d /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_unord_df.o)
+ .comment       0x0000001c       0x1d /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_si_to_df.o)
+ .comment       0x0000001c       0x1d /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_df_to_si.o)
+ .comment       0x0000001c       0x1d /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_thenan_df.o)
+ .comment       0x0000001c       0x1d /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_usi_to_df.o)
+ .comment       0x0000001c       0x1d /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_clzsi2.o)
+ .comment       0x0000001c       0x1d /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_pack_df.o)
+ .comment       0x0000001c       0x1d /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_unpack_df.o)
+ .comment       0x0000001c       0x1d /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_fpcmp_parts_df.o)
+ .comment       0x0000001c       0x1d /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/libgcc.a(_clz.o)
+ .comment       0x0000001c       0x1d /home/devel/zipcpu/sw/install/cross-tools/lib/gcc/zip/6.2.0/../../../../zip/lib/libc.a(lib_a-errno.o)

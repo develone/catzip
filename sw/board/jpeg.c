@@ -8,7 +8,6 @@
 #define imgsize 256
 #define DBUG 1
 #define DBUG1 1
-#define	zip_break()		asm("BREAK\n")
 /* ./arm-zipload -v ../board/jpeg
  * ./arm-wbregs 0x00A01000 0x0
  * ./arm-wbregs 0x00A01004 0x1
@@ -108,7 +107,7 @@ int main(int argc, char **argv) {
 	red_s_ptr = buf_red;
 	
 	fwd_inv = (int *)malloc(sizeof( int)*1);
-	zip_break();
+ 
 	if(buf_red == NULL) return 2;
 	
 	if(fwd_inv == NULL) return 5;
@@ -124,9 +123,7 @@ int main(int argc, char **argv) {
      * packed in bits blu 9-0 
     */ 
  	i = ptrs.w*ptrs.h*2;
- 	
  	clrram(i,buf_red);
- 	
 	i = 65535;
 	 
 		ptrs.flag = ptrs.ptr_blkram_flag[0];

@@ -1,3 +1,8 @@
+02000030 <_kernel_is_dead>:
+ 2000030:       70 c0 00 10     HALT
+ 2000034:       78 83 ff f8     BRA        @0x02000030    // 2000030 <_kernel_is_dead>
+
+
 #define	zip_break()		asm("BREAK\n")
 insert line 128 zip_break(); after clrram(i,buf_red);
 
@@ -38,6 +43,55 @@ uR0 : 00000000 uR1 : 00000000 uR2 : 00000000 uR3 : 00000000
 uR4 : 00000000 uR5 : 00000000 uR6 : 00000000 uR7 : 00000000
 uR8 : 00000000 uR9 : 00000000 uR10: 00000000 uR11: 00000000
 uR12: 00000000 uSP : 00000000 uCC : 00000020 uPC : 02000030
+
+BOMB : CPU BREAK RECEIVED
+ZIPM--DUMP: Supervisor mode
+
+sR0 : 020000b8 sR1 : 020cf0f8 sR2 : 00000000 sR3 : 00000000
+sR4 : 00000000 sR5 : 0204f0f0 sR6 : 00000000 sR7 : 0200f074
+sR8 : 0204f078 sR9 : 0204f07c sR10: 0204f090 sR11: 0204f094
+sR12: 00000000 sSP : 02ffffc8 sCC : 00000000 sPC : 020000b8
+
+uR0 : 00000000 uR1 : 00000000 uR2 : 00000000 uR3 : 00000000
+uR4 : 00000000 uR5 : 00000000 uR6 : 00000000 uR7 : 00000000
+uR8 : 00000000 uR9 : 00000000 uR10: 00000000 uR11: 00000000
+uR12: 00000000 uSP : 00000000 uCC : 00000020 uPC : 02000030
+
+without a break point in simulation.
+devel@mypi3-16:~/testbuilds/catzip-tst/catzip/sw/host $ ./arm-wbregs 0x020000a8
+020000a8 (        ) : [....] 02000888
+devel@mypi3-16:~/testbuilds/catzip-tst/catzip/sw/host $ ./arm-wbregs 0x020000ac
+020000ac (        ) : [....] af888e04
+devel@mypi3-16:~/testbuilds/catzip-tst/catzip/sw/host $ ./arm-wbregs 0x020000b0
+020000b0 (        ) : [....] 87fafcf8
+devel@mypi3-16:~/testbuilds/catzip-tst/catzip/sw/host $ ./arm-wbregs 0x020000b4
+020000b4 (        ) : [....] 02000888
+devel@mypi3-16:~/testbuilds/catzip-tst/catzip/sw/host $ ./arm-wbregs 0x020000b8
+020000b8 (        ) : [....] 7f000000
+devel@mypi3-16:~/testbuilds/catzip-tst/catzip/sw/host $ ./arm-wbregs 0x020000bc
+020000bc (        ) : [,...] 2c000000
+
+BOMB : CPU BREAK RECEIVED
+ZIPM--DUMP: Supervisor mode
+
+sR0 : 020000b8 sR1 : 020cf0f8 sR2 : 00000000 sR3 : 00000000
+sR4 : 00000000 sR5 : 0204f0f0 sR6 : 00000000 sR7 : 0200f074
+sR8 : 0204f078 sR9 : 0204f07c sR10: 0204f090 sR11: 0204f094
+sR12: 00000000 sSP : 02ffffc8 sCC : 00000000 sPC : 020000b8
+
+uR0 : 00000000 uR1 : 00000000 uR2 : 00000000 uR3 : 00000000
+uR4 : 00000000 uR5 : 00000000 uR6 : 00000000 uR7 : 00000000
+uR8 : 00000000 uR9 : 00000000 uR10: 00000000 uR11: 00000000
+uR12: 00000000 uSP : 00000000 uCC : 00000020 uPC : 02000030
+
+devel@mypi3-21:~/catzip-tst/catzip/sw/host $ ./arm-wbregs 0x02000030
+02000030 (        ) : [p...] 70c00010
+04000000 (     CPU)-> 0000000f
+in hw
+Command port is now connected
+< A04000001Wf
+> A04000001K00000000
+Command port disconnect
 
 Nothing was seen 
 devel@mypi3-21:~/testbuilds/tb3-16/catzip/sw/board $ git diff jpeg.c

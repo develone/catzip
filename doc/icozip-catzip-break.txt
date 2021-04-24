@@ -1,0 +1,378 @@
+devel@mypi3-16:~/testbuilds/icozip/sw/board $ git diff cputest.c
+diff --git a/sw/board/cputest.c b/sw/board/cputest.c
+index c6eadd5..d4b3ebe 100644
+--- a/sw/board/cputest.c
++++ b/sw/board/cputest.c
+@@ -77,6 +77,7 @@ asm("\t.section\t.start\n"
+        "\tCLR\tR2\n"
+        "\tCLR\tR3\n"
+        "\tCLR\tR4\n"
++       "BREAK\n"
+        "\tCLR\tR5\n"
+        "\tCLR\tR6\n"
+        "\tCLR\tR7\n"
+BOMB : CPU BREAK RECEIVED
+ZIPM--DUMP: Supervisor mode
+
+sR0 : 00000000 sR1 : 00000000 sR2 : 00000000 sR3 : 00000000
+sR4 : 00000000 sR5 : 00000000 sR6 : 00000000 sR7 : 00000000
+sR8 : 00000000 sR9 : 00000000 sR10: 00000000 sR11: 00000000
+sR12: 00000000 sSP : 00000000 sCC : 00000000 sPC : 00e00014
+
+uR0 : 00000000 uR1 : 00000000 uR2 : 00000000 uR3 : 00000000
+uR4 : 00000000 uR5 : 00000000 uR6 : 00000000 uR7 : 00000000
+uR8 : 00000000 uR9 : 00000000 uR10: 00000000 uR11: 00000000
+uR12: 00000000 uSP : 00000000 uCC : 00000020 uPC : 00000000
+
+
+cputest:     file format elf32-zip
+
+
+Disassembly of section .rocode:
+
+00e00000 <_start>:
+  e00000:       06 00 00 00     CLR        R0
+  e00004:       0e 00 00 00     CLR        R1
+  e00008:       16 00 00 00     CLR        R2
+  e0000c:       1e 00 00 00     CLR        R3
+  e00010:       26 00 00 00     CLR        R4
+  e00014:       7f 00 00 00     BREAK      @0x00e00018    // e00018 <_start+0x18>
+
+Need to restart the simulator for break point to work.
+devel@mypi3-16:~/testbuilds/icozip/sim/verilated $ ./arm-main_tb
+2nd breakpoint 
+00e00000 <_start>:
+  e00000:       06 00 00 00     CLR        R0
+  e00004:       0e 00 00 00     CLR        R1
+  e00008:       16 00 00 00     CLR        R2
+  e0000c:       1e 00 00 00     CLR        R3
+  e00010:       26 00 00 00     CLR        R4
+  e00014:       2e 00 00 00     CLR        R5
+  e00018:       36 00 00 00     CLR        R6
+  e0001c:       3e 00 00 00     CLR        R7
+  e00020:       46 00 00 00     CLR        R8
+  e00024:       4e 00 00 00     CLR        R9
+  e00028:       56 00 00 00     CLR        R10
+  e0002c:       5e 00 00 00     CLR        R11
+  e00030:       66 00 00 00     CLR        R12
+  e00034:       7f 00 00 00     BREAK      @0x00e00038    // e00038 <_start+0x38
+BOMB : CPU BREAK RECEIVED
+ZIPM--DUMP: Supervisor mode
+
+sR0 : 00000000 sR1 : 00000000 sR2 : 00000000 sR3 : 00000000
+sR4 : 00000000 sR5 : 00000000 sR6 : 00000000 sR7 : 00000000
+sR8 : 00000000 sR9 : 00000000 sR10: 00000000 sR11: 00000000
+sR12: 00000000 sSP : 00000000 sCC : 00000000 sPC : 00e00034
+
+uR0 : 00000000 uR1 : 00000000 uR2 : 00000000 uR3 : 00000000
+uR4 : 00000000 uR5 : 00000000 uR6 : 00000000 uR7 : 00000000
+uR8 : 00000000 uR9 : 00000000 uR10: 00000000 uR11: 00000000
+uR12: 00000000 uSP : 00000000 uCC : 00000020 uPC : 00000000
+
+**********************************************************************************
+Testing break in catzip-tst
+BOMB : CPU BREAK RECEIVED
+ZIPM--DUMP: Supervisor mode
+
+sR0 : 00000000 sR1 : 00000000 sR2 : 00000000 sR3 : 00000000
+sR4 : 00000000 sR5 : 00000000 sR6 : 00000000 sR7 : 00000000
+sR8 : 00000000 sR9 : 00000000 sR10: 00000000 sR11: 00000000
+sR12: 00000000 sSP : 00000000 sCC : 00000000 sPC : 02000030
+
+uR0 : 00000000 uR1 : 00000000 uR2 : 00000000 uR3 : 00000000
+uR4 : 00000000 uR5 : 00000000 uR6 : 00000000 uR7 : 00000000
+uR8 : 00000000 uR9 : 00000000 uR10: 00000000 uR11: 00000000
+uR12: 00000000 uSP : 00000000 uCC : 00000020 uPC : 00000000
+
+
+cputest:     file format elf32-zip
+
+
+Disassembly of section .rocode:
+
+02000000 <_start>:
+ 2000000:       06 00 00 00     CLR        R0
+ 2000004:       0e 00 00 00     CLR        R1
+ 2000008:       16 00 00 00     CLR        R2
+ 200000c:       1e 00 00 00     CLR        R3
+ 2000010:       26 00 00 00     CLR        R4
+ 2000014:       2e 00 00 00     CLR        R5
+ 2000018:       36 00 00 00     CLR        R6
+ 200001c:       3e 00 00 00     CLR        R7
+ 2000020:       46 00 00 00     CLR        R8
+ 2000024:       4e 00 00 00     CLR        R9
+ 2000028:       56 00 00 00     CLR        R10
+ 200002c:       5e 00 00 00     CLR        R11
+ 2000030:       7f 00 00 00     BREAK      @0x02000034    // 2000034 <_start+0x3
+devel@mypi3-16:~/testbuilds/catzip-tst/catzip/sw/board $ git diff
+diff --git a/sw/board/cputest.c b/sw/board/cputest.c
+index 9f0c316..10ba9b8 100644
+--- a/sw/board/cputest.c
++++ b/sw/board/cputest.c
+@@ -84,6 +84,7 @@ asm("\t.section\t.start\n"
+        "\tCLR\tR9\n"
+        "\tCLR\tR10\n"
+        "\tCLR\tR11\n"
++       "BREAK\n"
+        "\tCLR\tR12\n"
+        "\tLDI\t_top_of_stack,SP\n"
+        "\tCLR\tCC\n"
+devel@mypi3-16:~/testbuilds/catzip-tst/catzip/sw/host $ ./arm-zipload -v ../board/cputest
+Halting the CPU
+Memory regions:
+	Block RAM: 01400000 - 01402000
+	SDRAM       : 02000000 - 03000000
+Loading: ../board/cputest
+Section 0: 02000000 - 02003e98
+Writing to MEM: 02000000-02003e98
+Clearing the CPUs registers
+Setting PC to 02000000
+The CPU should be fully loaded, you may now
+start it (from reset/reboot) with:
+> wbregs cpu 0x0f
+
+CPU Status is: 0000060f
+devel@mypi3-16:~/testbuilds/catzip-tst/catzip/sw/host $ ./arm-zipdbg 
+SUCCESS
+
+devel@mypi3-16:~/testbuilds/catzip-tst/catzip/sw/board $ git diff
+diff --git a/sw/board/cputest.c b/sw/board/cputest.c
+index 9f0c316..2065bee 100644
+--- a/sw/board/cputest.c
++++ b/sw/board/cputest.c
+@@ -112,6 +112,7 @@ asm("\t.text\n\t.global\trun_test\n"
+        "\t.type\trun_test,@function\n"
+ "run_test:\n"
+        "\tCLR\tR3\n"
++       "BREAK\n"
+        "\tMOV\ttest_return(PC),uR0\n"
+        "\tMOV\tR3,uR1\n"
+        "\tMOV\tR3,uR2\n"
+
+devel@mypi3-16:~/testbuilds/catzip-tst/catzip/sw/board $ git diff
+diff --git a/sw/board/cputest.c b/sw/board/cputest.c
+index 9f0c316..8cdd717 100644
+--- a/sw/board/cputest.c
++++ b/sw/board/cputest.c
+@@ -87,6 +87,7 @@ asm("\t.section\t.start\n"
+        "\tCLR\tR12\n"
+        "\tLDI\t_top_of_stack,SP\n"
+        "\tCLR\tCC\n"
++        "BREAK\n"
+        "\tMOV\tbusy_failure(PC),R0\n"
+        "\tBRA\tentry\n"
+ "busy_failure:\n"
+
+02000000 <_start>:
+ 2000000:       06 00 00 00     CLR        R0
+ 2000004:       0e 00 00 00     CLR        R1
+ 2000008:       16 00 00 00     CLR        R2
+ 200000c:       1e 00 00 00     CLR        R3
+ 2000010:       26 00 00 00     CLR        R4
+ 2000014:       2e 00 00 00     CLR        R5
+ 2000018:       36 00 00 00     CLR        R6
+ 200001c:       3e 00 00 00     CLR        R7
+ 2000020:       46 00 00 00     CLR        R8
+ 2000024:       4e 00 00 00     CLR        R9
+ 2000028:       56 00 00 00     CLR        R10
+ 200002c:       5e 00 00 00     CLR        R11
+ 2000030:       66 00 00 00     CLR        R12
+ 2000034:       6a 00 00 c0     LDI        0x03000000,SP  // 3000000 <_top_of_st
+ack>
+ 2000038:       6a 40 00 00 
+ 200003c:       76 00 00 00     TRAP
+ 2000040:       7f 00 00 00     BREAK      @0x02000044    // 2000044 <_start+0x44>
+
+
+BOMB : CPU BREAK RECEIVED
+ZIPM--DUMP: Supervisor mode
+
+sR0 : 00000000 sR1 : 00000000 sR2 : 00000000 sR3 : 00000000
+sR4 : 00000000 sR5 : 00000000 sR6 : 00000000 sR7 : 00000000
+sR8 : 00000000 sR9 : 00000000 sR10: 00000000 sR11: 00000000
+sR12: 00000000 sSP : 03000000 sCC : 00000000 sPC : 02000040
+
+uR0 : 00000000 uR1 : 00000000 uR2 : 00000000 uR3 : 00000000
+uR4 : 00000000 uR5 : 00000000 uR6 : 00000000 uR7 : 00000000
+uR8 : 00000000 uR9 : 00000000 uR10: 00000000 uR11: 00000000
+uR12: 00000000 uSP : 00000000 uCC : 00000020 uPC : 00000000
+
+diff --git a/sw/board/cputest.c b/sw/board/cputest.c
+index 9f0c316..95c50d3 100644
+--- a/sw/board/cputest.c
++++ b/sw/board/cputest.c
+@@ -110,6 +110,7 @@ asm("\t.section\t.start\n"
+ extern int     run_test(void *pc, void *stack);
+ asm("\t.text\n\t.global\trun_test\n"
+        "\t.type\trun_test,@function\n"
++       "BREAK\n"
+ "run_test:\n"
+        "\tCLR\tR3\n"
+        "\tMOV\ttest_return(PC),uR0\n"
+This break failed.
+devel@mypi3-16:~/testbuilds/catzip-tst/catzip/sw/board $ git diff cputest.c
+diff --git a/sw/board/cputest.c b/sw/board/cputest.c
+index 9f0c316..60a077d 100644
+--- a/sw/board/cputest.c
++++ b/sw/board/cputest.c
+@@ -42,7 +42,7 @@
+ #include "board.h"
+ #include "zipcpu.h"
+ #include "cpudefs.h"
+-
++#define        zip_break()             asm("BREAK\n")
+ #ifndef        NULL
+ #define NULL   (void *)0
+ #endif
+@@ -1226,6 +1226,7 @@ void      testid(const char *str) {
+ int    testlist[32];
+ 
+ void entry(void) {
++       zip_break();
+        int     context[16];
+        int     user_stack[256], *user_stack_ptr = &user_stack[256];
+        int     start_time, i;
+BOMB : CPU BREAK RECEIVED
+ZIPM--DUMP: Supervisor mode
+
+sR0 : 0200004c sR1 : 00000000 sR2 : 00000000 sR3 : 00000000
+sR4 : 00000000 sR5 : 00000000 sR6 : 00000000 sR7 : 00000000
+sR8 : 00000000 sR9 : 00000000 sR10: 00000000 sR11: 00000000
+sR12: 00000000 sSP : 02fffba4 sCC : 00000000 sPC : 020021f4
+
+uR0 : 00000000 uR1 : 00000000 uR2 : 00000000 uR3 : 00000000
+uR4 : 00000000 uR5 : 00000000 uR6 : 00000000 uR7 : 00000000
+uR8 : 00000000 uR9 : 00000000 uR10: 00000000 uR11: 00000000
+uR12: 00000000 uSP : 00000000 uCC : 00000020 uPC : 00000000
+ 20021e8:       44 c7 44 50     SW         R8,$1104(SP)
+ 20021ec:       4c c7 44 54     SW         R9,$1108(SP)
+ 20021f0:       54 c7 44 58     SW         R10,$1112(SP)
+ 20021f4:       7f 00 00 00     BREAK      @0x020021f8    // 20021f8 <entry+0x24>
+
+
+BOMB : CPU BREAK RECEIVED
+ZIPM--DUMP: Supervisor mode
+
+sR0 : 0200004c sR1 : 00000000 sR2 : 00000000 sR3 : 00000000
+sR4 : 00000000 sR5 : 00000000 sR6 : 00000000 sR7 : 00000000
+sR8 : 00000000 sR9 : 00000000 sR10: 00000000 sR11: 00000000
+sR12: 00000000 sSP : 02fffba4 sCC : 00000000 sPC : 020021f4
+
+uR0 : 00000000 uR1 : 00000000 uR2 : 00000000 uR3 : 00000000
+uR4 : 00000000 uR5 : 00000000 uR6 : 00000000 uR7 : 00000000
+uR8 : 00000000 uR9 : 00000000 uR10: 00000000 uR11: 00000000
+uR12: 00000000 uSP : 00000000 uCC : 00000020 uPC : 00000000
+
+BOMB : CPU BREAK RECEIVED
+ZIPM--DUMP: Supervisor mode
+
+sR0 : ffffffff sR1 : 02003e98 sR2 : 02003e98 sR3 : 00000000
+sR4 : 00000000 sR5 : 00000000 sR6 : 02003e18 sR7 : 00000000
+sR8 : 00000000 sR9 : 00000000 sR10: 00000000 sR11: 00000000
+sR12: 00000000 sSP : 02fffba4 sCC : 00000001 sPC : 02002218
+
+uR0 : 00000000 uR1 : 00000000 uR2 : 00000000 uR3 : 00000000
+uR4 : 00000000 uR5 : 00000000 uR6 : 00000000 uR7 : 00000000
+uR8 : 00000000 uR9 : 00000000 uR10: 00000000 uR11: 00000000
+uR12: 00000000 uSP : 00000000 uCC : 00000020 uPC : 00000000
+
+sR0 : ffffffff sR1 : 02003e98 sR2 : 02003e98 sR3 : 00000000
+sR4 : 00000000 sR5 : 00000000 sR6 : 02003e18 sR7 : 00000000
+sR8 : 00000000 sR9 : 00000000 sR10: 00000000 sR11: 00000000
+sR12: 00000000 sSP : 02fffba4 sCC : 00000001 sPC : 02002218
+
+uR0 : 00000000 uR1 : 00000000 uR2 : 00000000 uR3 : 00000000
+uR4 : 00000000 uR5 : 00000000 uR6 : 00000000 uR7 : 00000000
+uR8 : 00000000 uR9 : 00000000 uR10: 00000000 uR11: 00000000
+uR12: 00000000 uSP : 00000000 uCC : 00000020 uPC : 00000000
+
+BOMB : CPU BREAK RECEIVED
+ZIPM--DUMP: Supervisor mode
+
+sR0 : 7fffffff sR1 : 02003ea0 sR2 : 02003ea0 sR3 : 00000000
+sR4 : 00000000 sR5 : 00400000 sR6 : 02003e20 sR7 : 00000000
+sR8 : 00000000 sR9 : 00000000 sR10: 00000000 sR11: 00000000
+sR12: 00000000 sSP : 02fffba4 sCC : 00000001 sPC : 02002224
+
+uR0 : 00000000 uR1 : 00000000 uR2 : 00000000 uR3 : 00000000
+uR4 : 00000000 uR5 : 00000000 uR6 : 00000000 uR7 : 00000000
+uR8 : 00000000 uR9 : 00000000 uR10: 00000000 uR11: 00000000
+uR12: 00000000 uSP : 00000000 uCC : 00000020 uPC : 00000000
+devel@mypi3-16:~/testbuilds/catzip-tst/catzip/sw/board $ git diff
+diff --git a/sw/board/cputest.c b/sw/board/cputest.c
+index 9f0c316..3f3ef47 100644
+--- a/sw/board/cputest.c
++++ b/sw/board/cputest.c
+@@ -42,7 +42,7 @@
+ #include "board.h"
+ #include "zipcpu.h"
+ #include "cpudefs.h"
+-
++#define        zip_break()             asm("BREAK\n")
+ #ifndef        NULL
+ #define NULL   (void *)0
+ #endif
+@@ -1226,17 +1226,22 @@ void    testid(const char *str) {
+ int    testlist[32];
+ 
+ void entry(void) {
++//     zip_break();
+        int     context[16];
+        int     user_stack[256], *user_stack_ptr = &user_stack[256];
+        int     start_time, i;
+        int     cc_fail, cis_insns = 0;
++//     zip_break();
+ 
+ 
+        for(i=0; i<32; i++)
+                testlist[i] = -1;
++//     zip_break();
+ 
+ #ifdef TIMER
++//     zip_break();
+        TIMER = 0x7fffffff;
++       zip_break();
+ #endif
+ #ifdef COUNTER
+ #include "board.h"
+ #include "zipcpu.h"
+ #include "cpudefs.h"
+-
++#define        zip_break()             asm("BREAK\n")
+ #ifndef        NULL
+ #define NULL   (void *)0
+ #endif
+@@ -1226,17 +1226,22 @@ void    testid(const char *str) {
+ int    testlist[32];
+ 
+ void entry(void) {
++//     zip_break();
+        int     context[16];
+        int     user_stack[256], *user_stack_ptr = &user_stack[256];
+        int     start_time, i;
+        int     cc_fail, cis_insns = 0;
++//     zip_break();
+ 
+ 
+        for(i=0; i<32; i++)
+                testlist[i] = -1;
++//     zip_break();
+ 
+ #ifdef TIMER
++//     zip_break();
+        TIMER = 0x7fffffff;
++       zip_break();
+ #endif
+ #ifdef COUNTER
+        COUNTER = 0;
+@@ -1246,7 +1251,10 @@ void entry(void) {
+ #endif
+ 
+        txstr("\r\n");
++//     zip_break();
++       TIMER = 0x7fffffff;
+        txstr("Running CPU self-test\r\n");
++//     zip_break(); did not break
+        txstr("-----------------------------------\r\n");
+ 
+        int     tnum = 0;

@@ -7,6 +7,9 @@
 /* A C++ program to implement itoa() */
 #include <iostream>
 #include <fstream>
+#include <unistd.h>
+#include <thread>         // std::this_thread::sleep_for
+#include <chrono>         // std::chrono::seconds
 
 using namespace std;
   
@@ -68,10 +71,19 @@ char* itoa(int num, char* str, int base)
 int main()
 {
     char str[100];
+    std::string Wr,Rd,randval,nextaddr;
+    unsigned int microseconds;
                        //0   1   2   3    4  5   6   7   8   9   0   1   2   3   4   5   6   7   8   9   0   1   2   3   4   5   6   7   8   9   0   1   2   3   4   5   6   7   8   9   0   1   2   3
-    char commandwr[]={ '.','/','a','r','m','-','w','b','r','e','g','s',' ','0','x','0','1','4','0','0','0','0','0',' ','0','x','1','9','e','1','3','a','a','f',' ','>',' ','W','r','.','t','x','t','\0' };
-    char commandrd[]={ '.','/','a','r','m','-','w','b','r','e','g','s',' ','0','x','0','1','4','0','0','0','0','0',' ','>',' ','R','d','.','t','x','t','\0' };
-   
+    //char commandwr[]={ '.','/','a','r','m','-','w','b','r','e','g','s',' ','0','x','0','1','4','0','0','0','0','0',' ','0','x','1','9','e','1','3','a','a','f',' ','>',' ','W','r','.','t','x','t','\0' };
+    std::string commandwr="./arm-wbregs 0x1400000 0x19e13aaf > Wr.txt\n";
+    Wr = commandwr;
+    cout << Wr  ; 
+    
+    
+    //char commandrd[]={ '.','/','a','r','m','-','w','b','r','e','g','s',' ','0','x','0','1','4','0','0','0','0','0',' ','>',' ','R','d','.','t','x','t','\0' };
+    std::string commandrd="./arm-wbregs 0x01400000  > Rd.txt\n";
+    Rd = commandrd;
+    cout << Rd; 
     int addr=0x01400000;
     string wrline, rdline;
     int iWrMem;
@@ -89,15 +101,41 @@ int main()
    
    for (i=0; i<8191; i++){
       addr+=4;
+      nextaddr = itoa(addr, str, 16);
+      cout << nextaddr.length() << endl;
+      cout << nextaddr << endl;
       iWrMem = rand() % 2147483648 + 0;
       cout << "Base:10 " << itoa(iWrMem, str, 16) << endl; 
       printf("addr 0x%x 0x%x\n",addr,iWrMem);
       cout << "Base:16 " << itoa(iWrMem, str, 16) << endl;
+      randval = itoa(iWrMem, str, 16);
+      cout << randval << endl;
+      Wr.replace(15,7,nextaddr);
+      if (randval.length() < 8 ) {
+        cout << randval.length() << endl;
+        //Wr.replace(26,7,randval);
+        //Wr.replace(32,1," ");
+      }
+      else Wr.replace(25,8,randval);
+      
+      cout << randval.length() << endl;
+      
+      cout << Wr.length() << endl;
+      cout << Wr << endl;
+       
+      
    }
    
    //system("./arm-wbregs 0x01400000 0x19e13aaf > Wr.txt");
-   system(commandwr);
-   system(commandrd);
+   cout << Wr.length() << endl;
+   char* cmdstr = const_cast<char*>(Wr.c_str());
+   std::cout << cmdstr;
+   system(cmdstr);
+   //usleep(25000);
+   //sleep(10);
+   //std::this_thread::sleep_for (std::chrono::seconds(10));
+   //for(i=0;i<2147483648;i++);
+   //system(commandrd);
    /*01400000 (     RAM)-> 19e13aaf*/
    
    fstream myfile;
@@ -108,6 +146,7 @@ int main()
         while(getline(myfile, wrline))
         {
            cout << wrline << '\n';
+           cout << wrline.substr (22,30) << '\n';
         }
         myfile.close();
   }
@@ -117,6 +156,7 @@ int main()
         while(getline(myfile, rdline))
         {
            cout << rdline << '\n';
+           cout << rdline.substr (29,37) << '\n';
         }
         myfile.close();
   }

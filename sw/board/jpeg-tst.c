@@ -29,7 +29,13 @@ This change requires changes in sw/host/wrsdram.cpp, and sw/host/rdsdram.cpp.
  ./arm-wbregs 0x0201f150
 0201f150 (        ) : [.P.N] 0a50fc4e	h
 
-
+start of inpbuf	with zip_break
+00000000   7C 24 22 0E  83 20 E2 0D  75 14 22 0E  7B 20 32 0E
+./arm-wbregs 0x0200f148
+0200f148 (        ) : [."$|] 0e22247c
+0003FFF0   57 08 61 09  55 20 81 0A  4C 0C 21 0B  51 24 71 0B
+./arm-wbregs 0x0204f144
+0204f144 (        ) : [.q$Q] 0b712451
 */
 #include <stdio.h>
 #include <stdlib.h>

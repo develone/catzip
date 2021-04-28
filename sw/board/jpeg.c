@@ -1,4 +1,36 @@
+/*
+ * 
+With a change in bkram & sdram
+from
+	   bkram(wx) : ORIGIN = 0x00A00000, LENGTH = 0x00002000
+	   sdram(wx) : ORIGIN = 0x01000000, LENGTH = 0x01000000
+to
+	   bkram(wx) : ORIGIN = 0x01400000, LENGTH = 0x00002000
+	   sdram(wx) : ORIGIN = 0x02000000, LENGTH = 0x01000000
+	   
+Files that are dependent on above change are sw/board/jpeg.c, sw/board/boardram.ld,
+sw/host/wrsdram.cpp, and sw/host/rdsdram.cpp
 
+Note:
+Without a break point in jpeg.c 0x0200f144 <ptrs>: in jpeg-disasm.txt 
+With a break point in jpeg.c 0x0200f148 <ptrs>: jpeg-disasm.txt.
+This change requires changes in sw/host/wrsdram.cpp, and sw/host/rdsdram.cpp.
+
+./arm-wbregs 0x0200f148					inpbuf
+0200f148 (        ) : [."$|] 0e22247c value read from rgb_pack.bin 
+
+./arm-wbregs 0x0201f148
+0201f148 (        ) : [...E] 0a00d845	flag
+
+
+./arm-wbregs 0x0201f14c
+0201f14c (        ) : [.@.L] 0a40f04c	w
+
+ ./arm-wbregs 0x0201f150
+0201f150 (        ) : [.P.N] 0a50fc4e	h
+
+
+*/
 #include <stdio.h>
 #include <stdlib.h>
 #include "board.h"
@@ -8,6 +40,7 @@
 #define imgsize 256
 #define DBUG 1
 #define DBUG1 1
+#define	zip_break()		asm("BREAK\n")
 /* ./arm-zipload -v ../board/jpeg
  * ./arm-wbregs 0x00A01000 0x0
  * ./arm-wbregs 0x00A01004 0x1
@@ -42,19 +75,19 @@ for(i=0;i<loop;i++) {
 }
 //0xc0024	786468	0x008093b0
 struct PTRs {
-	int inpbuf[65536];
+	int inpbuf[65536]; //0x0200f144 0e22247c value read from rgb_pack.bin 
 	 
-	int flag;
-	int w;
-	int h;
+	int flag; //0x0201f144 0a00d845 pointing to wh bkram was before upgrade/
+	int w; //0x0201f148 0x0a40f04c						"
+	int h; //0x0201f14c 0x0a50fc4e						"
 	 
-	 int *red;
+	 int *red; //0x0201f150								"
 	
-	 int *grn;
-	 int *blu;
-	 int *alt;
-	 int *ptr_blkram_flag;
-	 int *ptr_blkram_invfwd;
+	 int *grn; //0x0201f154								"
+	 int *blu; //0x0201f158								"
+	 int *alt; //0x0201f15c
+	 int *ptr_blkram_flag; //0x0201f160 0x0a70fc4c		"
+	 int *ptr_blkram_invfwd; //0x0201f164 0x0ac10051	"
 	//int *fwd_inv;
 } ptrs;
 
@@ -107,12 +140,42 @@ int main(int argc, char **argv) {
 	red_s_ptr = buf_red;
 	
 	fwd_inv = (int *)malloc(sizeof( int)*1);
- 
+	//zip_break(); //break #2
+/*
+BOMB : CPU BREAK RECEIVED
+ZIPM--DUMP: Supervisor mode
+
+sR0 : 020000b8 sR1 : 020cf1c8 sR2 : 00000000 sR3 : 00000000
+sR4 : 00000000 sR5 : 0204f1c0 sR6 : 00000000 sR7 : 0200f148
+sR8 : 0204f14c sR9 : 0204f150 sR10: 0204f164 sR11: 0204f168
+sR12: 00000000 sSP : 02ffffc8 sCC : 00000000 sPC : 020000b8
+
+uR0 : 00000000 uR1 : 00000000 uR2 : 00000000 uR3 : 00000000
+uR4 : 00000000 uR5 : 00000000 uR6 : 00000000 uR7 : 00000000
+uR8 : 00000000 uR9 : 00000000 uR10: 00000000 uR11: 00000000
+uR12: 00000000 uSP : 00000000 uCC : 00000020 uPC : 02000030
+*/
 	if(buf_red == NULL) return 2;
 	
 	if(fwd_inv == NULL) return 5;
 	red_s_ptr = buf_red;
+	//zip_break();//break #3
+/*
+BOMB : CPU BREAK RECEIVED
+ZIPM--DUMP: Supervisor mode
+
+sR0 : 020000b8 sR1 : 020cf1c8 sR2 : 00000000 sR3 : 00000000
+sR4 : 00000000 sR5 : 0204f1c0 sR6 : 020cf1c8 sR7 : 0200f148
+sR8 : 0204f14c sR9 : 0204f150 sR10: 0204f164 sR11: 0204f168
+sR12: 00000000 sSP : 02ffffc8 sCC : 00000000 sPC : 020000c8
+
+uR0 : 00000000 uR1 : 00000000 uR2 : 00000000 uR3 : 00000000
+uR4 : 00000000 uR5 : 00000000 uR6 : 00000000 uR7 : 00000000
+uR8 : 00000000 uR9 : 00000000 uR10: 00000000 uR11: 00000000
+uR12: 00000000 uSP : 00000000 uCC : 00000020 uPC : 02000030
+*/
 	if (DBUG) {
+		zip_break();//break #4
 		printf("ptrs.inpbuf = 0x%x buf_red = 0x%x\n",ptrs.inpbuf,buf_red);
      
 		printf("fwd_inv = 0x%x\n",fwd_inv);
@@ -123,7 +186,9 @@ int main(int argc, char **argv) {
      * packed in bits blu 9-0 
     */ 
  	i = ptrs.w*ptrs.h*2;
+ 	//zip_break();
  	clrram(i,buf_red);
+ 	//zip_break(); //break #1 not reached.
 	i = 65535;
 	 
 		ptrs.flag = ptrs.ptr_blkram_flag[0];

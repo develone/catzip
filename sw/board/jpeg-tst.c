@@ -1,4 +1,36 @@
+/*
+ * 
+With a change in bkram & sdram
+from
+	   bkram(wx) : ORIGIN = 0x00A00000, LENGTH = 0x00002000
+	   sdram(wx) : ORIGIN = 0x01000000, LENGTH = 0x01000000
+to
+	   bkram(wx) : ORIGIN = 0x01400000, LENGTH = 0x00002000
+	   sdram(wx) : ORIGIN = 0x02000000, LENGTH = 0x01000000
+	   
+Files that are dependent on above change are sw/board/jpeg.c, sw/board/boardram.ld,
+sw/host/wrsdram.cpp, and sw/host/rdsdram.cpp
 
+Note:
+Without a break point in jpeg.c 0x0200f144 <ptrs>: in jpeg-disasm.txt 
+With a break point in jpeg.c 0x0200f148 <ptrs>: jpeg-disasm.txt.
+This change requires changes in sw/host/wrsdram.cpp, and sw/host/rdsdram.cpp.
+
+./arm-wbregs 0x0200f148					inpbuf
+0200f148 (        ) : [."$|] 0e22247c value read from rgb_pack.bin 
+
+./arm-wbregs 0x0201f148
+0201f148 (        ) : [...E] 0a00d845	flag
+
+
+./arm-wbregs 0x0201f14c
+0201f14c (        ) : [.@.L] 0a40f04c	w
+
+ ./arm-wbregs 0x0201f150
+0201f150 (        ) : [.P.N] 0a50fc4e	h
+
+
+*/
 #include <stdio.h>
 #include <stdlib.h>
 #include "board.h"

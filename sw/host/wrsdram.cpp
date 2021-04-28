@@ -53,7 +53,13 @@
 FPGA	*m_fpga;
 
 //#define	DUMPMEM		SDRAMBASE
-#define	DUMPMEM 	0x0200f120
+
+/* The value of DUMPMEM is found from the file jpeg-disasm.txt 
+ * 0200f144 <ptrs>:
+ * zip-objdump -d jpeg > jpeg-disasm.txt
+ * */
+#define	DUMPMEM 	0x0200f144
+
 //#define	DUMPWORDS	(FLASHLEN>>2)	// 16MB Flash
 //#define	DUMPWORDS (4000>>2)
 #define	DUMPWORDS 	65536

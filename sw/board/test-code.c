@@ -42,7 +42,7 @@ CPU Status is: 0000060f
 #define BLKRAM_INVFWD 0x01401004
 
 struct PTRs {
- 
+	
 	int w; 
 	int h;  					
 	 
@@ -54,7 +54,9 @@ struct PTRs {
 	 int *ptr_blkram_flag;  
 	 int *ptr_blkram_invfwd;
 	 int *buf_red;
-	 int *fwd_inv;	  
+	 int *fwd_inv;
+	 int flag;
+	 int inpbuf[65536];	  
 
 } ptrs;
 
@@ -63,10 +65,13 @@ int main(int argc, char **argv) {
 	ptrs.h = 256;
 	ptrs.ptr_blkram_flag = (int *)BLKRAM_FLAG; 
 	ptrs.ptr_blkram_invfwd = (int *)BLKRAM_INVFWD;  
-	//ptrs.buf_red = ( int *)malloc(sizeof( int)* ptrs.w*ptrs.h*2);
-	//ptrs.fwd_inv = (int *)malloc(sizeof( int)*1);
-	//free(buf_red);
-	//free(fwd_inv);
+	ptrs.buf_red = ( int *)malloc(sizeof( int)* ptrs.w*ptrs.h*2);
+	 
+	ptrs.fwd_inv = (int *)malloc(sizeof( int)*1);
+	ptrs.flag = ptrs.ptr_blkram_flag[0];
+	//ptrs.fwd_inv = (int *)ptrs.ptr_blkram_invfwd[0];
+	free(ptrs.buf_red);
+	free(ptrs.fwd_inv);
 	while(1);
 	return 0;
 }

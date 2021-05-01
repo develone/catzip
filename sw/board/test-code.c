@@ -40,7 +40,7 @@ CPU Status is: 0000060f
 #include "lifting.h"
 #define BLKRAM_FLAG 0x01401000
 #define BLKRAM_INVFWD 0x01401004
-
+#define	zip_break()		asm("BREAK\n")
 struct PTRs {
 	
 	int w; 
@@ -64,7 +64,9 @@ int main(int argc, char **argv) {
 	ptrs.w = 256;
 	ptrs.h = 256;
 	ptrs.ptr_blkram_flag = (int *)BLKRAM_FLAG; 
-	ptrs.ptr_blkram_invfwd = (int *)BLKRAM_INVFWD;  
+	ptrs.ptr_blkram_invfwd = (int *)BLKRAM_INVFWD; 
+	
+	/*Allocating memory for 2 images 256x256 */ 
 	ptrs.buf_red = ( int *)malloc(sizeof( int)* ptrs.w*ptrs.h*2);
 	
 	ptrs.fwd_inv = (int *)malloc(sizeof( int)*1);
@@ -73,6 +75,16 @@ int main(int argc, char **argv) {
 	ptrs.fwd_inv = ptrs.ptr_blkram_invfwd;
 	
 	ptrs.red = &ptrs.inpbuf[0];
+	
+	/*Setting ptr.alt to 2nd img size*/ 
+	
+	ptrs.alt = ptrs.buf_red + ptrs.w*ptrs.h;
+	
+	/*calling lifting which performs the dwt on the image*/
+	ptrs.red = ptrs.buf_red;
+	
+	lifting(ptrs.w,ptrs.red,ptrs.alt,ptrs.fwd_inv);
+	
 	free(ptrs.buf_red);
 	free(ptrs.fwd_inv);
 	while(1);

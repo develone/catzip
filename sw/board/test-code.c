@@ -66,10 +66,13 @@ int main(int argc, char **argv) {
 	ptrs.ptr_blkram_flag = (int *)BLKRAM_FLAG; 
 	ptrs.ptr_blkram_invfwd = (int *)BLKRAM_INVFWD;  
 	ptrs.buf_red = ( int *)malloc(sizeof( int)* ptrs.w*ptrs.h*2);
-	 
+	
 	ptrs.fwd_inv = (int *)malloc(sizeof( int)*1);
+	
 	ptrs.flag = ptrs.ptr_blkram_flag[0];
-	//ptrs.fwd_inv = (int *)ptrs.ptr_blkram_invfwd[0];
+	ptrs.fwd_inv = ptrs.ptr_blkram_invfwd;
+	
+	ptrs.red = &ptrs.inpbuf[0];
 	free(ptrs.buf_red);
 	free(ptrs.fwd_inv);
 	while(1);

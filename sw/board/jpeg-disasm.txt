@@ -5,7 +5,7 @@ jpeg:     file format elf32-zip
 Disassembly of section .rocode:
 
 02000000 <_boot_address>:
- 2000000:	6a 00 01 40 	LDI        0x02800000,SP  // 2800000 <_bss_image_end+0x7b0e4c>
+ 2000000:	6a 00 00 c0 	LDI        0x03000000,SP  // 3000000 <_top_of_stack>
  2000004:	6a 40 00 00 
  2000008:	7b 47 c0 09 	MOV        $36+PC,uPC
  200000c:	0e 00 00 00 	CLR        R1

@@ -6,6 +6,7 @@
 #./arm-wrsdram rbe.bin
 #le
 ./arm-wrsdram r.bin
+#./arm-wrsdram red.bin
 ./arm-wbregs cpu 0x0f
 ./test-code.sh
 ./arm-wbregs 0x01401004 

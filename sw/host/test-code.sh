@@ -1,21 +1,35 @@
 #!/bin/bash
-#w
-./arm-wbregs 0x020022e8
-#h
-./arm-wbregs 0x020022ec
-#*red
-./arm-wbregs 0x020022f0
-#alt
-./arm-wbregs 0x020022fc
-#*ptr_blkram_flag; 
-./arm-wbregs 0x02002300
-#*ptr_blkram_invfwd
-./arm-wbregs 0x02002304
-#buf_red
-./arm-wbregs 0x02002308
-#*fwd_inv
-./arm-wbregs 0x0200230c
-#flag
-./arm-wbregs 0x02002310
-#inpbuf
-./arm-wbregs 0x02002314
+
+echo "inpbuf"
+./arm-wbregs 0x02002354
+echo "altbuf"
+./arm-wbregs 0x02042354
+echo "w"
+./arm-wbregs 0x02082354
+echo "h"
+./arm-wbregs 0x02082358
+echo "*red"
+./arm-wbregs 0x0208235c
+echo "*grn"
+./arm-wbregs 0x02082360
+echo "*blu"
+./arm-wbregs 0x02082364
+echo "*alt"
+./arm-wbregs 0x02082368
+echo "*ptr_blkram_flag"
+./arm-wbregs 0x0208236c
+
+echo "*ptr_blkram_invfwd"
+./arm-wbregs 0x02082370
+
+echo "buf_red"
+./arm-wbregs 0x02082374
+echo "ptr to fwd_inv"
+./arm-wbregs 0x02082378
+echo "flag"
+./arm-wbregs 0x0208237c
+ 
+echo "*inbuf"
+./arm-wbregs 0x02082390
+
+#./arm-wbregs 0x020823d0

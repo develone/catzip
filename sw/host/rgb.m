@@ -21,7 +21,7 @@ title "r,bin 05/04/21"
 figure;
 imagesc(im4);
 colorbar;
-title "DWT  test-exe.sh 1Lvl 05/04/21"
+title "DWT  test-exe.sh 3 Lvls 05/04/21"
 
 %title "RPi3B fwd lifting step blue sub band ./pi_jpeg 2 1 05/29/19"
 %title "FPGA HX8K fwd lifting step green sub band catboard 0x0100f204 05/29/19"

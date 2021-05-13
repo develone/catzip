@@ -1,0 +1,902 @@
+05/13/21	
+Summary of changes:
+Trying to understand what breaks as upgrades catzip, and icestorm.  The version of catzip is using rtl/catzip/wbsdram.v
+md5sum wbsdram.v 
+6a2ad3772c345b6f6057d8aafafa356f  wbsdram.v
+catzip	master
+devel@mypi3-19:~/catzip/sim/verilated $ md5sum sdramsim.cpp sdramsim.h
+4c1f9b67a66d762f3fc836d817d910cf  sdramsim.cpp
+355e33cdd1c19c2861aaf0c224c2f69a  sdramsim.h
+The were upgraded in icozip-catzip-br
+
+devel@mypi3-16:~/testbuilds/icozip-catzip-br/icozip/sim/verilated $ md5sum sdramsim.cpp sdramsim.h
+028b6cab0b2da61b869ff14af3c6d33d  sdramsim.cpp
+32bea034791f4f97b032e3d93c5a57c7  sdramsim.h
+
+Hardware an issue generation dwt.bin This issue was fixed with chg in rdsdram.cpp #define	DUMPMEM 	0x0100f120	#define	DUMPMEM 	0x0100f144
+
+*******************************first test updating catzip in ~/ 	04/19/21	37c46be*******************************
+*******************************2nd test updating icestorm in ~/ 	03/09/21	37c46be*******************************
+This updgrade effects the hardware, pll, timning, and pack.
+*******************************3rd test updating nextpnr in ~/ 	03/26/21	4419c3*******************************
+This updgrade effects the hardware generating catzip.bin
+mypi3-18 test
+
+************************************************************************************
+localparam	ZIP_ADDRESS_WIDTH = 23; // Zip-CPU address width
+wb_sdram_addr[(23-1):0],
+wb_addr[(24-2):0],
+wb_sdram_addr[(23-1):0],
+
+catzip	addr23		simulation 		hardware
+localparam	ZIP_ADDRESS_WIDTH = 24; // Zip-CPU address width
+wb_sdram_addr[(23-1):0],
+testing 	28aff5bfa3	github	f4542b0
+crt0.c does not build.
+crt0.c:230:18: error: '_kram' undeclared (first use in this function)
+      *kramdev = (_kram) ? _kram : _ram;
+                  ^~~~~
+crt0.c:230:35: error: '_ram' undeclared (first use in this function)
+      *kramdev = (_kram) ? _kram : _ram;
+                                   ^~~~
+crt0.c:281:13: error: '_kram_start' undeclared (first use in this function)
+  int *rdp = _kram_start, *wrp = (_kram) ? _kram : _ram;
+             ^~~~~~~~~~~
+crt0.c:290:6: error: '_kram_end' undeclared (first use in this function)
+  if (_kram_end != _kram_start) {
+      ^~~~~~~~~
+make: *** [Makefile:61: obj-zip/crt0.o] Error 1
+
+cp  ~/icozip-catzip-br/icozip/sw/zlib/bootloader.h .
+
+icozip-catzip-br
+localparam	ZIP_ADDRESS_WIDTH = 24; // Zip-CPU address width
+/* verilator lint_off WIDTH */
+wb_sdram_addr[(23-1):0],
+/* verilator lint_off WIDTH */
+	.
+wb_sdram_stall, wb_sdram_ack, wb_sdram_idata,
+
+mypi3-19
+catzip	master	02/12/20	9891c9e3	github	37c446
+autofpga 01/01/20
+icstorm  	09/13/19
+nextnpr		02/03/20
+yosys		02/09/20	Yosys 0.9+1706 (git sha1 7cc9d487, clang 7.0.1-8+rpi3 -fPIC -Os)
+zipcpu 		11/11/20	nextpnr-ice40 -- Next Generation Place and Route (Version b4d029a)
+verilator	09/07/20 	Verilator 4.100 2020-09-07 rev v4.100-10-g39eea781
+
+devel@mypi3-19:~/testbuilds/catzip/sw/host $ sudo config_cat ../../rtl/catzip/catzip.bin
+devel@mypi3-19:~/testbuilds/catzip/sw/host $ sudo ./arm-netpport 
+Listening on port 8363
+Listening on port 8364
+	
+devel@mypi3-19:~/testbuilds/catzip/sw/host $ ./arm-wbregs version
+00800010 ( VERSION) : [....] 20200617
+. ptrs.inpbuf = 0x100f120 buf_red = 0x104f198
+. fwd_inv = 0x10cf1a0
+. x = 0xe22247c sp = 0x7c z = 0x7c
+. x = 0xde22083 sp = 0x83 z = 0x83
+. x = 0xe221475 sp = 0x75 z = 0x75
+. x = 0xe32207b sp = 0x7b z = 0x7b
+. x = 0xa812055 sp = 0x55 z = 0x55
+. x = 0xb210c4c sp = 0x4c z = 0x4c
+. spliting blue sub band
+. fwd lifting step only
+. w = 0x100 wptr = 0x104f198 alt =  0x108f198 fwd_inverse =  0x10cf1a0 fwd_inver.  =  0x1 
+. starting red dwt
+. in singlelift 
+. in singlelift 
+. in singlelift 
+. in singlelift 
+. in singlelift 
+. in singlelift 
+. testing test_fwd 
+. finished ted dwt
+*******************************first test updating catzip in ~/ 	04/19/21	37c46be*******************************
+sw/board/bootram.ld not being modified by toplevel Makefile.
+MEMORY
+{
+           bkram(wx) : ORIGIN = 0x00A00000, LENGTH = 0x00002000
+           sdram(wx) : ORIGIN = 0x01000000, LENGTH = 0x01000000     
+}
+
+Hardware an issue generation dwt.bin 
+catzip	master	04/19/20	37c446	github	37c446
+autofpga 01/01/20
+icstorm  	09/13/19
+nextnpr		02/03/20
+yosys		02/09/20	Yosys 0.9+1706 (git sha1 7cc9d487, clang 7.0.1-8+rpi3 -fPIC -Os)
+zipcpu 		11/11/20	nextpnr-ice40 -- Next Generation Place and Route (Version b4d029a)
+verilator	09/07/20 	Verilator 4.100 2020-09-07 rev v4.100-10-g39eea781
+
+devel@mypi3-19:~/catzip/sw/host $ ./arm-wbregs version
+00800010 ( VERSION) : [.!..] 20210513
+devel@mypi3-19:~/catzip/sw/host $ ./runjpeg.sh 
+00a01000 (        )-> 00000002
+00a01004 (        )-> 00000001
+Halting the CPU
+Memory regions:
+	Block RAM: 00a00000 - 00a02000
+	SDRAM       : 01000000 - 02000000
+Loading: ../board/jpeg
+Section 0: 01000000 - 0104f1b4
+Writing to MEM: 01000000-0104f1b4
+Clearing the CPUs registers
+Setting PC to 01000000
+The CPU should be fully loaded, you may now
+start it (from reset/reboot) with:
+> wbregs cpu 0x0f
+
+CPU Status is: 0000060f
+The size of the buffer is 0x010000 or 65536 words
+
+READ-COMPLETE
+02000000 (        )-> 0000000f
+
+Write-COMPLETE
+The size of the buffer is 0x010000 or 65536 words
+
+. ptrs.inpbuf = 0x100f144 buf_red = 0xdd20c80
+. fwd_inv = 0xdda0c88
+. x = 0xde22c76 sp = 0x76 z = 0x76
+. x = 0xdf2006a sp = 0x6a z = 0x6a
+. x = 0xde20c69 sp = 0x69 z = 0x69
+. x = 0xdb2106f sp = 0x6f z = 0x6f
+. x = 0x0 sp = 0x0 z = 0x0
+. x = 0x0 sp = 0x0 z = 0x0
+. spliting blue sub band
+. fwd lifting step only
+. w = 0x100 wptr = 0xdd20c80 alt =  0xdd60c80 fwd_inverse =  0xdda0c88 fwd_inver.  =  0x1 
+. starting red dwt
+. in singlelift 
+. in singlelift 
+. in singlelift 
+. in singlelift 
+. in singlelift 
+. in singlelift 
+. testing test_fwd 
+. finished ted dwt
+0100f144 <ptrs>:	#define	DUMPMEM 	0x0100f120		#define	DUMPMEM 	0x0100f144
+. ptrs.inpbuf = 0x100f144 buf_red = 0x104f1c0
+. fwd_inv = 0x10cf1c8
+. x = 0xe22247c sp = 0x7c z = 0x7c
+. x = 0xde22083 sp = 0x83 z = 0x83
+. x = 0xe221475 sp = 0x75 z = 0x75
+. x = 0xe32207b sp = 0x7b z = 0x7b
+. x = 0xa812055 sp = 0x55 z = 0x55
+. x = 0xb210c4c sp = 0x4c z = 0x4c
+. spliting blue sub band
+. fwd lifting step only
+. w = 0x100 wptr = 0x104f1c0 alt =  0x108f1c0 fwd_inverse =  0x10cf1c8 fwd_inver.  =  0x1 
+. starting red dwt
+. in singlelift 
+. in singlelift 
+. in singlelift 
+. in singlelift 
+. in singlelift 
+. in singlelift 
+. testing test_fwd 
+. finished ted dwt
+
+ Columns 1 through 7:
+
+          0          0         -3          0          1         -4          3
+          0          0          1          0         -3          1          2
+          0          0          0          4          3         -4         10
+          0          0         -1         -3         -3          7          0
+          0          0         -2          2          2         -3         -2
+          0          0          0          3          4         -3          4
+          0          0         -1          1          0         -8         -3
+   19213028          0         14        -10         -2          0          4
+   17101228          0          7         -2         -5          1          4
+          0          3        -13         -1          1         -9         -2
+          
+im4(1:10,1:1)
+octave:19> im4(8:8,1:1)=0;
+octave:20> im4(9:9,1:1)=0;
+octave:21> imagesc(im4);colorbar
+devel@mypi3-19:~/catzip/sw/host $ ./arm-zipload -v ../board/cputest
+Halting the CPU
+Memory regions:
+	Block RAM: 00a00000 - 00a02000
+	SDRAM       : 01000000 - 02000000
+Loading: ../board/cputest
+Section 0: 01000000 - 01003e94
+Writing to MEM: 01000000-01003e94
+Clearing the CPUs registers
+Setting PC to 01000000
+The CPU should be fully loaded, you may now
+start it (from reset/reboot) with:
+> wbregs cpu 0x0f
+
+CPU Status is: 0000060f
+devel@mypi3-19:~/catzip/sw/host $ ./arm-wbregs cpu 0x0f
+02000000 (        )-> 0000000f
+. Running CPU self-test
+. -----------------------------------
+. SIM Instructions                Pass
+. CIS Instructions                Supported
+. Break test #1                   Pass
+. Break test #2                   Pass
+. Break test #3                   Pass
+. Early Branch test               Pass
+. Trap test/AND                   Pass
+. Trap test/CLR                   Pass
+. Overflow test                   Pass
+. Carry test                      Pass
+. Loop test                       Pass
+. Shift test                      Pass
+. Pipeline test                   Pass
+. Mem-Pipeline test               Pass
+. Conditional Execution test      Pass
+. No-waiting pipeline test        Pass
+. Conditional Branching test      Pass
+. Ill Instruction test, NULL PC   Pass
+. Ill Instruction test, two       Pass
+. Comparison test, ==             Pass
+. Comparison test, !=             Pass
+. CC Register test                Pass
+. Multi-Arg test                  Pass
+. Multiply test                   Pass
+. Multiply HI-word test           Pass
+. Divide test                     Pass
+. 
+. -----------------------------------
+. All tests passed.  Halting CPU.
+
+
+devel@mypi3-19:~/catzip/sw/host $ ./arm-zipload -v ../board/hello
+Halting the CPU
+Memory regions:
+	Block RAM: 00a00000 - 00a02000
+	SDRAM       : 01000000 - 02000000
+Loading: ../board/hello
+Section 0: 01000000 - 010048ec
+Writing to MEM: 01000000-010048ec
+Clearing the CPUs registers
+Setting PC to 01000000
+The CPU should be fully loaded, you may now
+start it (from reset/reboot) with:
+> wbregs cpu 0x0f
+
+CPU Status is: 0000060f
+devel@mypi3-19:~/catzip/sw/host $ ./arm-wbregs cpu 0x0f
+02000000 (        )-> 0000000f
+*******************************first test updating catzip in ~/ 	04/19/21	37c46be*******************************
+*******************************2nd test updating icestorm in ~/ 	03/09/21	37c46be*******************************
+devel@mypi3-19:~ $ mv icestorm icestorm091319 
+devel@mypi3-19:~ $ sudo unsquashfs -d /home/devel/icestorm icestorm030921_c495861.img 
+[sudo] password for devel: 
+Parallel unsquashfs: Using 4 processors
+433 inodes (1356 blocks) to write
+
+[=============================================================|] 1356/1356 100%
+
+created 432 files
+created 73 directories
+created 1 symlinks
+created 0 devices
+created 0 fifos
+
+devel@mypi3-19:~/icestorm $ sudo make install
+for dir in icebox icepack icemulti icepll icebram icetime iceprog; do \
+	make -C $dir install || exit; \
+done
+make[1]: Entering directory '/home/devel/icestorm/icebox'
+mkdir -p /usr/local/share/icebox
+mkdir -p /usr/local/bin
+cp chipdb-384.txt    /usr/local/share/icebox/
+cp chipdb-1k.txt     /usr/local/share/icebox/
+cp chipdb-8k.txt     /usr/local/share/icebox/
+cp chipdb-5k.txt     /usr/local/share/icebox/
+cp chipdb-u4k.txt    /usr/local/share/icebox/
+cp chipdb-lm4k.txt   /usr/local/share/icebox/
+cp icebox.py         /usr/local/bin/icebox.py
+cp iceboxdb.py       /usr/local/bin/iceboxdb.py
+cp icebox_chipdb.py  /usr/local/bin/icebox_chipdb
+cp icebox_diff.py    /usr/local/bin/icebox_diff
+cp icebox_explain.py /usr/local/bin/icebox_explain
+cp icebox_asc2hlc.py /usr/local/bin/icebox_asc2hlc
+cp icebox_hlc2asc.py /usr/local/bin/icebox_hlc2asc
+cp icebox_colbuf.py  /usr/local/bin/icebox_colbuf
+cp icebox_html.py    /usr/local/bin/icebox_html
+cp icebox_maps.py    /usr/local/bin/icebox_maps
+cp icebox_vlog.py    /usr/local/bin/icebox_vlog
+cp icebox_stat.py    /usr/local/bin/icebox_stat
+sed -i 's+import iceboxdb+import iceboxdb as iceboxdb+g' /usr/local/bin/icebox.py
+sed -i 's+import icebox+import icebox as icebox+g' /usr/local/bin/icebox_chipdb
+sed -i 's+import icebox+import icebox as icebox+g' /usr/local/bin/icebox_diff
+sed -i 's+from icebox+from icebox+g' /usr/local/bin/icebox_diff
+sed -i 's+import icebox+import icebox as icebox+g' /usr/local/bin/icebox_explain
+sed -i 's+from icebox+from icebox+g' /usr/local/bin/icebox_explain
+sed -i 's+import icebox+import icebox as icebox+g' /usr/local/bin/icebox_asc2hlc
+sed -i 's+from icebox+from icebox+g' /usr/local/bin/icebox_asc2hlc
+sed -i 's+import icebox+import icebox as icebox+g' /usr/local/bin/icebox_hlc2asc
+sed -i 's+from icebox+from icebox+g' /usr/local/bin/icebox_hlc2asc
+sed -i 's+import icebox+import icebox as icebox+g' /usr/local/bin/icebox_colbuf
+sed -i 's+from icebox+from icebox+g' /usr/local/bin/icebox_colbuf
+sed -i 's+import icebox+import icebox as icebox+g' /usr/local/bin/icebox_html
+sed -i 's+from icebox+from icebox+g' /usr/local/bin/icebox_html
+sed -i 's+import icebox+import icebox as icebox+g' /usr/local/bin/icebox_maps
+sed -i 's+from icebox+from icebox+g' /usr/local/bin/icebox_maps
+sed -i 's+import icebox+import icebox as icebox+g' /usr/local/bin/icebox_vlog
+sed -i 's+from icebox+from icebox+g' /usr/local/bin/icebox_vlog
+sed -i 's+/usr/local/share/icebox+/usr/local/share/icebox+g' /usr/local/bin/icebox_vlog
+sed -i 's+import icebox+import icebox as icebox+g' /usr/local/bin/icebox_stat
+sed -i 's+from icebox+from icebox+g' /usr/local/bin/icebox_stat
+make[1]: Leaving directory '/home/devel/icestorm/icebox'
+make[1]: Entering directory '/home/devel/icestorm/icepack'
+mkdir -p /usr/local/bin
+cp icepack /usr/local/bin/icepack
+ln -sf icepack /usr/local/bin/iceunpack
+make[1]: Leaving directory '/home/devel/icestorm/icepack'
+make[1]: Entering directory '/home/devel/icestorm/icemulti'
+mkdir -p /usr/local/bin
+cp icemulti /usr/local/bin/icemulti
+make[1]: Leaving directory '/home/devel/icestorm/icemulti'
+make[1]: Entering directory '/home/devel/icestorm/icepll'
+mkdir -p /usr/local/bin
+cp icepll /usr/local/bin/icepll
+make[1]: Leaving directory '/home/devel/icestorm/icepll'
+make[1]: Entering directory '/home/devel/icestorm/icebram'
+mkdir -p /usr/local/bin
+cp icebram /usr/local/bin/icebram
+make[1]: Leaving directory '/home/devel/icestorm/icebram'
+make[1]: Entering directory '/home/devel/icestorm/icetime'
+mkdir -p /usr/local/bin
+mkdir -p /usr/local/share/icebox
+cp icetime /usr/local/bin/icetime
+cp ../icefuzz/timings_*.txt /usr/local/share/icebox/
+make[1]: Leaving directory '/home/devel/icestorm/icetime'
+make[1]: Entering directory '/home/devel/icestorm/iceprog'
+mkdir -p /usr/local/bin
+cp iceprog /usr/local/bin/iceprog
+make[1]: Leaving directory '/home/devel/icestorm/iceprog'
+
+devel@mypi3-19:~/icestorm $ cd ~/catzip/rtl/catzip/
+devel@mypi3-19:~/catzip/rtl/catzip $ make clean; make
+
+icepack catzip.asc catzip.bin
+icetime -d hx8k -c 40 catzip.asc
+// Reading input .asc file..
+// Reading 8k chipdb file..
+// Creating timing netlist..
+// Timing estimate: 15.33 ns (65.22 MHz)
+// Checking 25.00 ns (40.00 MHz) clock constraint: PASSED.
+
+devel@mypi3-19:~/catzip/sw/host $ sudo config_cat ../../rtl/catzip/catzip.bin
+
+devel@mypi3-19:~/catzip/sw/host $ sudo ./arm-netpport 
+Listening on port 8363
+Listening on port 8364
+. ptrs.inpbuf = 0x100f144 buf_red = 0x104f1c0
+. fwd_inv = 0x10cf1c8
+. x = 0xe22247c sp = 0x7c z = 0x7c
+. x = 0xde22083 sp = 0x83 z = 0x83
+. x = 0xe221475 sp = 0x75 z = 0x75
+. x = 0xe32207b sp = 0x7b z = 0x7b
+. x = 0xa812055 sp = 0x55 z = 0x55
+. x = 0xb210c4c sp = 0x4c z = 0x4c
+. spliting blue sub band
+. fwd lifting step only
+. w = 0x100 wptr = 0x104f1c0 alt =  0x108f1c0 fwd_inverse =  0x10cf1c8 fwd_inver.  =  0x1 
+. starting red dwt
+. in singlelift 
+. in singlelift 
+. in singlelift 
+. in singlelift 
+. in singlelift 
+. in singlelift 
+. testing test_fwd 
+. finished ted dwt
+
+octave:19> im4(8:8,1:1)=0;
+octave:20> im4(9:9,1:1)=0;
+octave:21> imagesc(im4);colorbar
+
+devel@mypi3-19:~/catzip/sw/host $ ./arm-zipload -v ../board/cputest
+Halting the CPU
+Memory regions:
+	Block RAM: 00a00000 - 00a02000
+	SDRAM       : 01000000 - 02000000
+Loading: ../board/cputest
+Section 0: 01000000 - 01003e94
+Writing to MEM: 01000000-01003e94
+Clearing the CPUs registers
+Setting PC to 01000000
+The CPU should be fully loaded, you may now
+start it (from reset/reboot) with:
+> wbregs cpu 0x0f
+
+CPU Status is: 0000060f
+devel@mypi3-19:~/catzip/sw/host $ ./arm-wbregs cpu 0x0f
+02000000 (        )-> 0000000f
+. Running CPU self-test
+. -----------------------------------
+. SIM Instructions                Pass
+. CIS Instructions                Supported
+. Break test #1                   Pass
+. Break test #2                   Pass
+. Break test #3                   Pass
+. Early Branch test               Pass
+. Trap test/AND                   Pass
+. Trap test/CLR                   Pass
+. Overflow test                   Pass
+. Carry test                      Pass
+. Loop test                       Pass
+. Shift test                      Pass
+. Pipeline test                   Pass
+. Mem-Pipeline test               Pass
+. Conditional Execution test      Pass
+. No-waiting pipeline test        Pass
+. Conditional Branching test      Pass
+. Ill Instruction test, NULL PC   Pass
+. Ill Instruction test, two       Pass
+. Comparison test, ==             Pass
+. Comparison test, !=             Pass
+. CC Register test                Pass
+. Multi-Arg test                  Pass
+. Multiply test                   Pass
+. Multiply HI-word test           Pass
+. Divide test                     Pass
+. 
+. -----------------------------------
+. All tests passed.  Halting CPU.
+
+devel@mypi3-19:~/catzip/sw/host $ ./arm-zipload -v ../board/hello
+Halting the CPU
+Memory regions:
+	Block RAM: 00a00000 - 00a02000
+	SDRAM       : 01000000 - 02000000
+Loading: ../board/hello
+Section 0: 01000000 - 010048ec
+Writing to MEM: 01000000-010048ec
+Clearing the CPUs registers
+Setting PC to 01000000
+The CPU should be fully loaded, you may now
+start it (from reset/reboot) with:
+> wbregs cpu 0x0f
+
+CPU Status is: 0000060f
+devel@mypi3-19:~/catzip/sw/host $ ./arm-wbregs cpu 0x0f
+02000000 (        )-> 0000000f
+
+. Hello, World!
+
+
+*******************************2nd test updating icestorm in ~/ 	03/09/21	37c46be*******************************
+
+*******************************3rd test updating nextpnr in ~/ 	03/26/21	4419c3*******************************
+devel@mypi3-19:~ $ mv nextpnr/ nextpnr020320
+devel@mypi3-19:~ $ sudo unsquashfs -d nextpnr nextpnr032621_4419c36.img
+devel@mypi3-19:~ $ cd nextpnr
+devel@mypi3-19:~/nextpnr $ sudo make install
+[  1%] Built target absl_log_severity
+[  2%] Built target absl_raw_logging_internal
+[  4%] Built target absl_bad_optional_access
+[  8%] Built target chipdb-ice40-bbas
+[ 10%] Built target bbasm
+[ 13%] Built target chipdb-ice40-bins
+[ 18%] Built target chipdb-ice40
+[ 20%] Built target absl_spinlock_wait
+[ 21%] Built target absl_throw_delegate
+[ 26%] Built target absl_base
+[ 27%] Built target absl_malloc_internal
+[ 28%] Built target absl_exponential_biased
+[ 34%] Built target absl_time_zone
+[ 37%] Built target absl_strings_internal
+[ 39%] Built target absl_int128
+[ 47%] Built target absl_strings
+[ 49%] Built target absl_demangle_internal
+[ 52%] Built target absl_debugging_internal
+[ 52%] Built target absl_symbolize
+[ 53%] Built target absl_stacktrace
+[ 55%] Built target absl_graphcycles_internal
+[ 56%] Built target absl_civil_time
+[ 59%] Built target absl_time
+[ 65%] Built target absl_synchronization
+[ 66%] Built target absl_hashtablez_sampler
+[ 66%] Built target absl_raw_hash_set
+[ 66%] Built target absl_city
+[ 68%] Built target absl_wyhash
+[ 69%] Built target absl_bad_variant_access
+[ 71%] Built target absl_hash
+[ 73%] Built target absl_cord
+[100%] Built target nextpnr-ice40
+Install the project...
+-- Install configuration: "Release"
+-- Installing: /usr/local/bin/nextpnr-ice40
+devel@mypi3-19:~/nextpnr $ git log
+commit 4419c36db5556d2a7f600517d6a4b5673067579d (HEAD -> master, upstream/master)
+Merge: 0e9a1abc d0bc033a
+Author: gatecat <gatecat@ds0.me>
+Date:   Fri Mar 26 18:39:18 2021 +0000
+
+devel@mypi3-19:~/nextpnr $ nextpnr-ice40 -V
+nextpnr-ice40 -- Next Generation Place and Route (Version 4419c36d)
+
+devel@mypi3-19:~/nextpnr $ cd ~/catzip/rtl/catzip/
+
+devel@mypi3-19:~/nextpnr $ cd ~/catzip/rtl/catzip/
+devel@mypi3-19:~/catzip/rtl/catzip $ make clean ; make
+
+rdsdram.cpp #define	DUMPMEM 	0x0100f120	#define	DUMPMEM 	0x0100f144
+
+devel@mypi3-19:~/catzip/sw/host $ make
+g++ -g -Wall -I. -I../../rtl/catzip -c rdsdram.cpp -o obj-arm/rdsdram.o
+g++ -g obj-arm/hexbus.o obj-arm/llcomms.o obj-arm/regdefs.o obj-arm/byteswap.o obj-arm/zipelf.o obj-arm/rdsdram.o -lelf -o arm-rdsdram
+
+Info: Program finished normally.
+icepack catzip.asc catzip.bin
+icetime -d hx8k -c 40 catzip.asc
+// Reading input .asc file..
+// Reading 8k chipdb file..
+// Creating timing netlist..
+// Timing estimate: 14.74 ns (67.86 MHz)
+// Checking 25.00 ns (40.00 MHz) clock constraint: PASSED.
+devel@mypi3-19:~/catzip/sw/host $ sudo config_cat ../../rtl/catzip/catzip.bin
+devel@mypi3-19:~/catzip/sw/host $ sudo ./arm-netpport 
+Listening on port 8363
+Listening on port 8364
+# 
+. ptrs.inpbuf = 0x100f144 buf_red = 0x104f1c0
+. fwd_inv = 0x10cf1c8
+. x = 0xe22247c sp = 0x7c z = 0x7c
+. x = 0xde22083 sp = 0x83 z = 0x83
+. x = 0xe221475 sp = 0x75 z = 0x75
+. x = 0xe32207b sp = 0x7b z = 0x7b
+. x = 0xa812055 sp = 0x55 z = 0x55
+. x = 0xb210c4c sp = 0x4c z = 0x4c
+. spliting blue sub band
+. fwd lifting step only
+. w = 0x100 wptr = 0x104f1c0 alt =  0x108f1c0 fwd_inverse =  0x10cf1c8 fwd_inver.  =  0x1 
+. starting red dwt
+. in singlelift 
+. in singlelift 
+. in singlelift 
+. in singlelift 
+. in singlelift 
+. in singlelift 
+. testing test_fwd 
+. finished ted dwt
+
+devel@mypi3-19:~/catzip/sw/host $ ./runjpeg.sh 
+00a01000 (        )-> 00000002
+00a01004 (        )-> 00000001
+Halting the CPU
+Memory regions:
+	Block RAM: 00a00000 - 00a02000
+	SDRAM       : 01000000 - 02000000
+Loading: ../board/jpeg
+Section 0: 01000000 - 0104f1b4
+Writing to MEM: 01000000-0104f1b4
+Clearing the CPUs registers
+Setting PC to 01000000
+The CPU should be fully loaded, you may now
+start it (from reset/reboot) with:
+> wbregs cpu 0x0f
+
+CPU Status is: 0000060f
+The size of the buffer is 0x010000 or 65536 words
+
+READ-COMPLETE
+02000000 (        )-> 0000000f
+
+Write-COMPLETE
+The size of the buffer is 0x010000 or 65536 words
+          62          63          69   191964241
+
+im4(256:256,256:256)=0;
+devel@mypi3-19:~/catzip/sw/host $ ./arm-zipload -v ../board/cputest
+Halting the CPU
+Memory regions:
+	Block RAM: 00a00000 - 00a02000
+	SDRAM       : 01000000 - 02000000
+Loading: ../board/cputest
+Section 0: 01000000 - 01003e94
+Writing to MEM: 01000000-01003e94
+Clearing the CPUs registers
+Setting PC to 01000000
+The CPU should be fully loaded, you may now
+start it (from reset/reboot) with:
+> wbregs cpu 0x0f
+
+CPU Status is: 0000060f
+devel@mypi3-19:~/catzip/sw/host $ ./arm-wbregs cpu 0x0f
+02000000 (        )-> 0000000f
+
+. Running CPU self-test
+. -----------------------------------
+. SIM Instructions                Pass
+. CIS Instructions                Supported
+. Break test #1                   Pass
+. Break test #2                   Pass
+. Break test #3                   Pass
+. Early Branch test               Pass
+. Trap test/AND                   Pass
+. Trap test/CLR                   Pass
+. Overflow test                   Pass
+. Carry test                      Pass
+. Loop test                       Pass
+. Shift test                      Pass
+. Pipeline test                   Pass
+. Mem-Pipeline test               Pass
+. Conditional Execution test      Pass
+. No-waiting pipeline test        Pass
+. Conditional Branching test      Pass
+. Ill Instruction test, NULL PC   Pass
+. Ill Instruction test, two       Pass
+. Comparison test, ==             Pass
+. Comparison test, !=             Pass
+. CC Register test                Pass
+. Multi-Arg test                  Pass
+. Multiply test                   Pass
+. Multiply HI-word test           Pass
+. Divide test                     Pass
+. 
+. -----------------------------------
+. All tests passed.  Halting CPU.
+
+devel@mypi3-19:~/catzip/sw/host $ ./arm-zipload -v ../board/hello
+Halting the CPU
+Memory regions:
+	Block RAM: 00a00000 - 00a02000
+	SDRAM       : 01000000 - 02000000
+Loading: ../board/hello
+Section 0: 01000000 - 010048ec
+Writing to MEM: 01000000-010048ec
+Clearing the CPUs registers
+Setting PC to 01000000
+The CPU should be fully loaded, you may now
+start it (from reset/reboot) with:
+> wbregs cpu 0x0f
+
+CPU Status is: 0000060f
+devel@mypi3-19:~/catzip/sw/host $ ./arm-wbregs cpu 0x0f
+02000000 (        )-> 0000000f
+Command port disconnect
+. Hello, World!
+*******************************3rd test updating nextpnr in ~/ 	03/26/21	4419c3*******************************
+
+*******************************4th  test updating rtl/catzip/Makefile to include -Wall*******************************
+
+-       verilator -Wno-TIMESCALEMOD -O3 -Mdir $(VDIRFB) -trace -cc $(AUTOVDIRS) main.v
++       verilator -Wall -Wno-TIMESCALEMOD -O3 -Mdir $(VDIRFB) -trace -cc $(AUTOVDIRS) main.v
+diff --git a/auto-data/sdramdev.txt b/auto-data/sdramdev.txt
+index 08ecc56..281421a 100644
+--- a/auto-data/sdramdev.txt
++++ b/auto-data/sdramdev.txt
+@@ -94,8 +94,9 @@
+        output  wire            o_ram_udqm, o_ram_ldqm;
+        inout   wire    [15:0]  io_ram_data;
+        wire    [15:0]          i_ram_data, o_ram_data;
+-       
++       /* verilator lint_off UNUSED */
+        wire    [15:0]  ram_data;
++       /* verilator lint_off UNUSED */
+        reg [15:0] r_ram_data;
+        wire            ram_drive_data;  
+        reg     [1:0]   o_ram_dqm;
+        
+devel@mypi3-19:~/catzip/sw/board $ git diff ../../rtl/catzip/toplevel.v
+diff --git a/rtl/catzip/toplevel.v b/rtl/catzip/toplevel.v
+index 0df0840..447d879 100644
+--- a/rtl/catzip/toplevel.v
++++ b/rtl/catzip/toplevel.v
+@@ -98,8 +98,9 @@ i_clk,
+        output  wire            o_ram_udqm, o_ram_ldqm;
+        inout   wire    [15:0]  io_ram_data;
+        wire    [15:0]          i_ram_data, o_ram_data;
+-       
++       /* verilator lint_off UNUSED */
+        wire    [15:0]  ram_data;
++       /* verilator lint_off UNUSED */
+        reg [15:0] r_ram_data;
+        wire            ram_drive_data;  
+        reg     [1:0]   o_ram_dqm 
+devel@mypi3-19:~/catzip/
+
+make clean;make
+
+. ptrs.inpbuf = 0x100f144 buf_red = 0x104f1c0
+. fwd_inv = 0x10cf1c8
+. x = 0xe22247c sp = 0x7c z = 0x7c
+. x = 0xde22083 sp = 0x83 z = 0x83
+. x = 0xe221475 sp = 0x75 z = 0x75
+. x = 0xe32207b sp = 0x7b z = 0x7b
+. x = 0xa812055 sp = 0x55 z = 0x55
+. x = 0xb210c4c sp = 0x4c z = 0x4c
+. spliting blue sub band
+. fwd lifting step only
+. w = 0x100 wptr = 0x104f1c0 alt =  0x108f1c0 fwd_inverse =  0x10cf1c8 fwd_inver.  =  0x1 
+. starting red dwt
+. in singlelift 
+. in singlelift 
+. in singlelift 
+. in singlelift 
+. in singlelift 
+. in singlelift 
+. testing test_fwd 
+. finished ted dwt
+
+octave:1> rgb
+octave:2> testvalue
+i =  242
+j =  229
+testvalue =  216
+i =  243
+j =  230
+testvalue =  211
+i =  244
+j =  231
+testvalue =  203
+i =  244
+j =  232
+testvalue =  209
+i =  245
+j =  239
+testvalue =  209
+i =  246
+j =  251
+testvalue =  215
+i =  246
+j =  252
+testvalue =  209
+i =  247
+j =  255
+testvalue =  210
+i =  256
+j =  256
+testvalue =  191964241
+
+
+*******************************4th  test updating rtl/catzip/Makefile to include -Wall*******************************
+
+*******************************5th  test testing on mypi3-18*******************************
+autofpga
+commit 95df250da1d829d9ec0ad67822ebe7e85bac00eb (HEAD -> master, origin/master, origin/HEAD)
+Author: ZipCPU <dgisselq@ieee.org>
+Date:   Wed Jan 1 11:38:32 2020 -0500
+
+
+cd catzip
+
+On branch master
+Your branch is up to date with 'origin/master'.
+
+Changes to be committed:
+  (use "git reset HEAD <file>..." to unstage)
+
+        new file:   sw/host/testvalue.m
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git checkout -- <file>..." to discard changes in working directory)
+
+        modified:   auto-data/sdramdev.txt
+        modified:   rtl/catzip/Makefile
+        modified:   sw/host/rdsdram.cpp
+        modified:   sw/host/wrsdram.cpp
+
+devel@mypi3-18:~ $ mv autofpga autofpga081420
+devel@mypi3-18:~ $ rsync -avl --delete mypi3-16:/media/devel/1b763776-4e1d-499c-9f24-a116a58c161f/fpgatools/previous-ver-tools/autofpga .
+
+cd autofpga
+
+commit 95df250da1d829d9ec0ad67822ebe7e85bac00eb (HEAD -> master, origin/master, origin/HEAD)
+Author: ZipCPU <dgisselq@ieee.org>
+Date:   Wed Jan 1 11:38:32 2020 -0500
+
+devel@mypi3-18:~/icestorm $ git log
+commit c495861c19bd0976c88d4964f912abe76f3901c3 (HEAD -> master, upstream/master)
+Author: gatecat <gatecat@ds0.me>
+Date:   Tue Mar 9 09:51:12 2021 +0000
+
+yosys
+
+commit 7cc9d487ff806f91fa09815243d4d8091671b88b (HEAD -> master, origin/master, origin/HEAD)
+Merge: 2e8d6ec0 161eba25
+Author: whitequark <whitequark@whitequark.org>
+Date:   Sun Feb 9 20:29:16 2020 +0000
+Yosys 0.9+1706 (git sha1 7cc9d487, clang 7.0.1-8+rpi3+deb10u2 -fPIC -Os)
+devel@mypi3-18:~ $ nextpnr-ice40 -V
+nextpnr-ice40 -- Next Generation Place and Route (Version 4419c36d)
+
+cd catzip
+
+. myenv-a.sh
+
+make
+
+cd ../
+
+devel@mypi3-18:~ $ rsync -avl --delete catzip mypi3-19:~/catzipmyp3-18
+
+devel@mypi3-19:~/catzipmyp3-18/catzip/sw/host $ sudo config_cat ../../rtl/catzip/catzip.bin 
+[sudo] password for devel: 
+
+OK: GPIO 25 exported
+OK: GPIO 17 exported
+OK: GPIO 22 exported
+
+OK: SPI driver loaded
+
+Setting GPIO directions
+out
+out
+in
+Setting output to low
+0
+Reseting FPGA
+0
+1
+Checking DONE pin
+0
+Continuing with configuration procedure
+263+1 records in
+263+1 records out
+135100 bytes (135 kB, 132 KiB) copied, 0.0231886 s, 5.8 MB/s
+Setting output to high
+1
+Checking DONE pin
+1
+devel@mypi3-19:~/catzipmyp3-18/catzip/sw/host $ sudo ./arm-netpport 
+Listening on port 8363
+Listening on port 8364
+# 
+. ptrs.inpbuf = 0x100f144 buf_red = 0x104f1c0
+. fwd_inv = 0x10cf1c8
+. x = 0xe22247c sp = 0x7c z = 0x7c
+. x = 0xde22083 sp = 0x83 z = 0x83
+. x = 0xe221475 sp = 0x75 z = 0x75
+. x = 0xe32207b sp = 0x7b z = 0x7b
+. x = 0xa812055 sp = 0x55 z = 0x55
+. x = 0xb210c4c sp = 0x4c z = 0x4c
+. spliting blue sub band
+. fwd lifting step only
+. w = 0x100 wptr = 0x104f1c0 alt =  0x108f1c0 fwd_inverse =  0x10cf1c8 fwd_inver.  =  0x1 
+. starting red dwt
+. in singlelift 
+. in singlelift 
+. in singlelift 
+. in singlelift 
+. in singlelift 
+. in singlelift 
+. testing test_fwd 
+. finished ted dwt
+devel@mypi3-19:~/catzipmyp3-18/catzip/sw/host $ ./runjpeg.sh 
+00a01000 (        )-> 00000002
+00a01004 (        )-> 00000001
+Halting the CPU
+Memory regions:
+	Block RAM: 00a00000 - 00a02000
+	SDRAM       : 01000000 - 02000000
+Loading: ../board/jpeg
+Section 0: 01000000 - 0104f1b4
+Writing to MEM: 01000000-0104f1b4
+Clearing the CPUs registers
+Setting PC to 01000000
+The CPU should be fully loaded, you may now
+start it (from reset/reboot) with:
+> wbregs cpu 0x0f
+
+CPU Status is: 0000060f
+The size of the buffer is 0x010000 or 65536 words
+
+READ-COMPLETE
+02000000 (        )-> 0000000f
+
+Write-COMPLETE
+The size of the buffer is 0x010000 or 65536 words
+
+octave
+rgb
+
+octave:3> testvalue
+i =  256
+j =  256
+testvalue =  191964241
+octave:4> im4(256,256)=69;
+octave:5> imagesc(im4);colorbar;title 'iCE40 mypi3-18 mypi3-19 05/13/21 red subband'
+

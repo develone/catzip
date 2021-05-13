@@ -68,7 +68,7 @@ verilated: $(VDIRFB)/Vmain__ALL.a
 $(VDIRFB)/Vmain.cpp: $(VDIRFB)/Vmain.h
 $(VDIRFB)/Vmain.mk:  $(VDIRFB)/Vmain.h
 $(VDIRFB)/Vmain.h: main.v $(VFLIST)
-	verilator -Wno-TIMESCALEMOD -O3 -Mdir $(VDIRFB) -trace -cc $(AUTOVDIRS) main.v
+	verilator -Wall -Wno-TIMESCALEMOD -O3 -Mdir $(VDIRFB) -trace -cc $(AUTOVDIRS) main.v
 
 cpudefs.h: cpu/cpudefs.v
 	@echo "Building cpudefs.h"

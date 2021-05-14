@@ -148,8 +148,9 @@ parameter	RDLY = 6;
 				o_ram_ras_n, o_ram_cas_n, o_ram_we_n;
 	output	wire	[1:0]	o_ram_bs;
 	output	wire	[12:0]	o_ram_addr;
-	 
+	 /* verilator lint_off UNUSED */
 	input	wire	[15:0]	i_ram_data;
+        /* verilator lint_off UNUSED */
 	output	wire	[15:0]	o_ram_data;
 	output	wire	[1:0]	o_ram_dqm;
 	output	wire	[31:0]	o_debug;

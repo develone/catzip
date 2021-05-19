@@ -51,51 +51,41 @@ MEMORY
 	* are given by the @LD.PERM tag.  If no permission tag exists, a
 	* permission of 'r' will be assumed.
 	*/
-	/* No memories found */
+	   bkram(wx) : ORIGIN = 0x00a00000, LENGTH = 0x00002000
+	   sdram(wx) : ORIGIN = 0x01000000, LENGTH = 0x01000000
 }
 
 /* For each defined memory peripheral, we also define a pointer to that
 * memory.  The name of this pointer is given by the @LD.NAME tag within
 * the memory peripheral's configuration
 */
-/* LD.DEFNS from zipbones.txt */
-_kram  = 0; /* No high-speed kernel RAM */
-_ram   = ORIGIN(bkram);
-_rom   = ORIGIN(flash);
-_top_of_stack = ORIGIN(bkram) + LENGTH(bkram);
-
-
-/* LD.SCRIPT from zipbones.txt */
-MEMORY
-{
-		bkram(wx) : ORIGIN = 0x00A00000, LENGTH = 0x00002000
-		sdram(wx) : ORIGIN = 0x01000000, LENGTH = 0x01000000
-}
-
 _bkram    = ORIGIN(bkram);
 _sdram    = ORIGIN(sdram);
+/* LD.DEFNS from zipbones.txt */
+_kram  = ORIGIN(bkram); /* Can be used for high-speed kernel RAM */
+_ram   = ORIGIN(sdram);
+_rom   = 0;	/* Disable the flash */
+_top_of_stack = ORIGIN(sdram) + LENGTH(sdram);
 
+
+/* LD.SCRIPT from mem_sdram_bkram.txt */
 SECTIONS
 {
-       .rocode @$[0x%08x](zip.RESET_ADDRESS) : ALIGN(4) {
-               _boot_address = .;
-               *(.start) *(.boot)
-       } > flash
-       _kram_start = . ;
-       _kram_end = . ;
-       _ram_image_start = . ;
-       .kernel : ALIGN_WITH_INPUT {
-               *(.kernel)
-               *(.text.startup)
-               *(.text*)
-               *(.rodata*) *(.strings)
-               *(.data) *(COMMON)
-               }> bkram AT> flash
-       _ram_image_end = . ;
-       .bss : ALIGN_WITH_INPUT {
-               *(.bss)
-               _bss_image_end = . ;
-               } > bkram
+	.rocode ORIGIN(sdram) : ALIGN(4) {
+		_boot_address = .;
+		*(.start) *(.boot)
+                _kram_start = . ;
+		*(.kernel)
+                _kram_end = . ;
+		_ram_image_start = . ;
+		*(.text.startup)
+		*(.text*)
+		*(.rodata*) *(.strings)
+		*(.data) *(COMMON)
+                _ram_image_end = . ;
+		*(.bss)
+		_bss_image_end = . ;
+		} > sdram
        _top_of_heap = .;
 }
 
